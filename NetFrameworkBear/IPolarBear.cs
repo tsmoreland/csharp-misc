@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace NetFrameworkBear
 {
     [Guid("0a40fade-0443-493a-adf5-c92122d0a380")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(true)]
     public interface IPolarBear
     {

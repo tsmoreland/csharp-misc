@@ -18,6 +18,9 @@
     <ClCompile Include="RoarTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ComEnvironment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="manifest.xml">
@@ -26,6 +29,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Imports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComEnvironment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

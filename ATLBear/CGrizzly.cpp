@@ -53,7 +53,7 @@ HRESULT CGrizzly::SafeComCall(F functor) noexcept
     {
         return comEx.Error();
     }
-    catch (const exception & ex)
+    catch (const exception &)
     {
         return E_FAIL;
     }
