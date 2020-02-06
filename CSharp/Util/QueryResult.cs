@@ -29,10 +29,15 @@ namespace Maple.Util
         public static QueryResult<TValue> Failed(string reason, Exception? cause = null) => 
             new QueryResult<TValue>(default!, false, reason, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
 
-        public TValue Value => ValueResult.Value;
+        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException("Cannot access resulting value when Query failed");
         public bool Success => ValueResult.Success;
         public string Reason => ValueResult.Reason;
         public Exception? Cause => ValueResult.Cause;
+
+        public static bool operator==(QueryResult<TValue>? leftHandSide, QueryResult<TValue>? rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
+        public static bool operator!=(QueryResult<TValue>? leftHandSide, QueryResult<TValue>? rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator!=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
 
         private ValueResultCore<TValue> ValueResult { get; }
 
