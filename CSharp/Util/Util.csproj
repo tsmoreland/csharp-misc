@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;netstandard2.0;netstandard2.1;net45;net46;net472;net48</TargetFrameworks>
+    <RootNamespace>Maple.Util</RootNamespace>
+    <AssemblyName>Maple.Util</AssemblyName>
+    <LangVersion>8</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+</Project>
