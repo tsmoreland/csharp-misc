@@ -55,7 +55,7 @@ namespace Maple.Util.Internal
             other != null  &&
             Success == other.Success &&
             Reason == other.Reason &&
-            Cause?.Equals(other.Cause) == true;
+            (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
 
     }

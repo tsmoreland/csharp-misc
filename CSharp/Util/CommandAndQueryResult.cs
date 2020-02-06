@@ -25,10 +25,15 @@ namespace Maple.Util
             ValueResult = new ValueResultCore<TValue>(value, success, reason, cause);
         }
 
-        public TValue Value => ValueResult.Value;
+        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException("Cannot access resulting value when Query failed");
         public bool Success => ValueResult.Success;
         public string Reason => ValueResult.Reason;
         public Exception? Cause => ValueResult.Cause;
+
+        public static bool operator==(CommandAndQueryResult<TValue>? leftHandSide, CommandAndQueryResult<TValue>? rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
+        public static bool operator!=(CommandAndQueryResult<TValue>? leftHandSide, CommandAndQueryResult<TValue>? rightHandSide) =>!(leftHandSide == rightHandSide);
+        public static bool operator==(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator!=(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
 
         private ValueResultCore<TValue> ValueResult { get; }
 
