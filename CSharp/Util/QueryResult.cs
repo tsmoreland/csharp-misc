@@ -14,28 +14,37 @@
 using Maple.Util.Internal;
 using System;
 using System.Diagnostics;
+using Resources = Maple.Util.Properties.Resources;
 
 namespace Maple.Util
 {
+    public static class QueryResult
+    {
+        public static QueryResult<TValue> Ok<TValue>(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
+        public static QueryResult<TValue> Failed<TValue>(string reason, Exception? cause = null) => 
+            new QueryResult<TValue>(default!, false, reason, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+    }
+
+    /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>
+    /// <typeparam name="TValue"></typeparam>
     [DebuggerDisplay("{Value} {Success} {Reason}")]
     public struct QueryResult<TValue> : IEquatable<QueryResult<TValue>>
     {
-        private QueryResult(TValue value, bool success, string reason, Exception? cause = null)
+        internal QueryResult(TValue value, bool success, string reason, Exception? cause = null)
         {
             ValueResult = new ValueResultCore<TValue>(value, success, reason, cause);
         }
 
-        public static QueryResult<TValue> Ok(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
-        public static QueryResult<TValue> Failed(string reason, Exception? cause = null) => 
-            new QueryResult<TValue>(default!, false, reason, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
-
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException("Cannot access resulting value when Query failed");
+        /// <summary>Resulting Value of the Query</summary>
+        /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
+        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(Resources.InvalidQueryResultValueAccess);
+        /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
+        /// <summary>The reason for failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public string Reason => ValueResult.Reason;
+        /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
 
-        public static bool operator==(QueryResult<TValue>? leftHandSide, QueryResult<TValue>? rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
-        public static bool operator!=(QueryResult<TValue>? leftHandSide, QueryResult<TValue>? rightHandSide) => !(leftHandSide == rightHandSide);
         public static bool operator==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
 

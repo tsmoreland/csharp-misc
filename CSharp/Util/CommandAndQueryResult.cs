@@ -14,24 +14,37 @@
 using Maple.Util.Internal;
 using System;
 using System.Diagnostics;
+using Resources = Maple.Util.Properties.Resources; 
 
 namespace Maple.Util
 {
-    [DebuggerDisplay("{Value} {Success} {Reason}")]
-    public struct CommandAndQueryResult<TValue>
+    /// <summary>The result of executing a Command which also returns a result (other than simple success/failure)</summary>
+    [Obsolete("violates command query seperation but is provided to allow for legacy code which has not yet attained that separation")]
+    public static class CommandAndQueryResult
     {
-        public CommandAndQueryResult(TValue value, bool success, string reason, Exception? cause)
+        public static CommandAndQueryResult<TValue> Ok<TValue>(TValue value) => new CommandAndQueryResult<TValue>(value, true, string.Empty, null);
+        public static CommandAndQueryResult<TValue> Failed<TValue>(string reason, Exception? cause = null) => 
+            new CommandAndQueryResult<TValue>(default!, false, reason, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+    }
+
+    [DebuggerDisplay("{Value} {Success} {Reason}")]
+    public struct CommandAndQueryResult<TValue> : IEquatable<CommandAndQueryResult<TValue>>
+    {
+        internal CommandAndQueryResult(TValue value, bool success, string reason, Exception? cause)
         {
             ValueResult = new ValueResultCore<TValue>(value, success, reason, cause);
         }
 
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException("Cannot access resulting value when Query failed");
+        /// <summary>Resulting Value of the Query</summary>
+        /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
+        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(Resources.InvalidQueryResultValueAccess);
+        /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
+        /// <summary>The reason for failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public string Reason => ValueResult.Reason;
+        /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
 
-        public static bool operator==(CommandAndQueryResult<TValue>? leftHandSide, CommandAndQueryResult<TValue>? rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
-        public static bool operator!=(CommandAndQueryResult<TValue>? leftHandSide, CommandAndQueryResult<TValue>? rightHandSide) =>!(leftHandSide == rightHandSide);
         public static bool operator==(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
 

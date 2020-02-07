@@ -23,11 +23,19 @@ namespace Maple.Util
         #region Public
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);
         public HashCodeBuilder AddValues(params object?[] objects) =>
-            new HashCodeBuilder(objects.Select(o => (o?.GetHashCode() ?? 0) * 7)?.Sum() ?? 0);
+            new HashCodeBuilder(_piewiseCode + objects.Select(o => (o?.GetHashCode() ?? 0) * 7)?.Sum() ?? 0);
         public int Build() => 31 * _piewiseCode;
 
         public static bool operator==(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => leftHandSide?._piewiseCode == rightHandSide?._piewiseCode;
         public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator <(HashCodeBuilder left, HashCodeBuilder right) =>
+            ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+        public static bool operator <=(HashCodeBuilder left, HashCodeBuilder right) =>
+            ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+        public static bool operator >(HashCodeBuilder left, HashCodeBuilder right) =>
+            !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+        public static bool operator >=(HashCodeBuilder left, HashCodeBuilder right) =>
+            ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
 
         #endregion
         #region Private
@@ -61,6 +69,7 @@ namespace Maple.Util
             other is HashCodeBuilder hashCode 
             ? _piewiseCode.CompareTo(hashCode._piewiseCode) 
             : 1; // 1 is based on the decompiled version of System.String's response to the equivalent criteria
+
         #endregion
     }
 }

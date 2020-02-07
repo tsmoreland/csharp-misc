@@ -29,8 +29,10 @@ namespace Maple.Util.Internal
         public bool Success => Result.Success;
         public string Reason => Result.Reason;
         public Exception? Cause => Result.Cause;
+        public static bool operator==(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator!=(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
 
-        private ResultCore Result { get; }
+        private ResultCore Result { get; } 
 
         #region ValueType
 

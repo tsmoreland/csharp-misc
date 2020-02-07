@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Maple.Tests.Util
 {
-    public class QueryResult
+    public class QueryResultTest
     {
         [Fact]
         public void SuccessfulQueryResultReportsSuccess()
@@ -26,7 +26,7 @@ namespace Maple.Tests.Util
             Guid value = Guid.NewGuid();
 
             // Act
-            QueryResult<Guid> uid = QueryResult<Guid>.Ok(value);
+            var uid = QueryResult.Ok(value);
 
             // Assert
             Assert.True(uid.Success);
@@ -39,7 +39,7 @@ namespace Maple.Tests.Util
             Guid value = Guid.NewGuid();
 
             // Act
-            QueryResult<Guid> uid = QueryResult<Guid>.Ok(value);
+            var uid = QueryResult.Ok(value);
 
             // Assert
             Assert.Equal(value, uid.Value); 
@@ -52,7 +52,7 @@ namespace Maple.Tests.Util
             string value = Guid.NewGuid().ToString();
 
             // Act
-            QueryResult<string> @string = QueryResult<string>.Ok(value);
+            var @string = QueryResult.Ok(value);
 
             // Assert
             Assert.Equal(value, @string.Value); 
@@ -65,7 +65,7 @@ namespace Maple.Tests.Util
             Guid value = Guid.NewGuid();
 
             // Act
-            QueryResult<Guid> uid = QueryResult<Guid>.Ok(value);
+            QueryResult<Guid> uid = QueryResult.Ok(value);
 
             // Assert
             Assert.Empty(uid.Reason);
@@ -78,7 +78,7 @@ namespace Maple.Tests.Util
             Guid value = Guid.NewGuid();
 
             // Act
-            QueryResult<Guid> uid = QueryResult<Guid>.Ok(value);
+            QueryResult<Guid> uid = QueryResult.Ok(value);
 
             // Assert
             Assert.Null(uid.Cause);
@@ -89,8 +89,8 @@ namespace Maple.Tests.Util
         {
             // Arrange
             Guid value = Guid.NewGuid();
-            QueryResult<Guid> leftHandSide = QueryResult<Guid>.Ok(value);
-            QueryResult<Guid> rightHandSide = QueryResult<Guid>.Ok(value);
+            QueryResult<Guid> leftHandSide = QueryResult.Ok(value);
+            QueryResult<Guid> rightHandSide = QueryResult.Ok(value);
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
@@ -104,8 +104,8 @@ namespace Maple.Tests.Util
         {
             // Arrange
             Exception value = new Exception("ERROR");
-            QueryResult<Exception> leftHandSide = QueryResult<Exception>.Ok(value);
-            QueryResult<Exception> rightHandSide = QueryResult<Exception>.Ok(value);
+            QueryResult<Exception> leftHandSide = QueryResult.Ok(value);
+            QueryResult<Exception> rightHandSide = QueryResult.Ok(value);
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
@@ -115,10 +115,23 @@ namespace Maple.Tests.Util
         }
 
         [Fact]
+        public void FailureQueryResultByDefault()
+        {
+            // Arrange
+            QueryResult<Guid> result;
+
+            // Act
+            result = new QueryResult<Guid>();
+
+            // Assert
+            Assert.False(result.Success);
+        }
+
+        [Fact]
         public void FailedQueryResultThrowsOnValueAccess()
         {
             // Arrange
-            var failed = QueryResult<Guid>.Failed(Guid.NewGuid().ToString());
+            var failed = QueryResult.Failed<Guid>(Guid.NewGuid().ToString());
 
             // Act / Assert
             Assert.Throws<InvalidOperationException>(() => _ = failed.Value);
