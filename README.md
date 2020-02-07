@@ -1,5 +1,6 @@
-# Maple
-Utility objects for results, optional values, ... implemented in multiple languages
+# Util
+
+Utilty object library provided generic support types such as results, optionals, etc.. for use in other software packages
 
 ## Result Types
 

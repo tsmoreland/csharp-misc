@@ -13,8 +13,9 @@
 
 using System;
 using System.Diagnostics;
+using Util.Hashing;
 
-namespace Maple.Util.Internal
+namespace Util.Internal
 {
     [DebuggerDisplay("{Value} {Success} {Reason}")]
     public struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>
