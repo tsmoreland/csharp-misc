@@ -11,11 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Maple.Util;
 using System;
 using Xunit;
+using Util.Results;
 
-namespace Maple.Tests.Util
+namespace Test
 {
     public class QueryResultTest
     {

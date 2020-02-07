@@ -11,11 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Maple.Util.Internal;
+using Util.Internal;
 using System;
 using System.Diagnostics;
 
-namespace Maple.Util
+namespace Util.Results
 {
     /// <summary>Wrapper around the result of a command provided boolean result with additional reason or cause on failure</summary>
     [DebuggerDisplay("{Success} {Reason}")]

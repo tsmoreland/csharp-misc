@@ -15,7 +15,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Maple.Util
+namespace Util.Hashing
 {
     [DebuggerDisplay("{_piecewiseHashCodeBuilder}")]
     public class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>

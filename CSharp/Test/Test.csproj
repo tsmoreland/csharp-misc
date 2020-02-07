@@ -2,12 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
-    <RootNamespace>Maple.Tests.Util</RootNamespace>
-
-    <AssemblyName>Maple.Tests.Util</AssemblyName>
+    <RootNamespace>Tests.Util</RootNamespace>
+    <AssemblyName>Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Util\Util.csproj" />
+    <ProjectReference Include="..\Util\Util.csproj" />
   </ItemGroup>
 
 </Project>

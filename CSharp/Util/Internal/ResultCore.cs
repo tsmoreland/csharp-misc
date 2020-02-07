@@ -14,8 +14,9 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Util.Hashing;
 
-namespace Maple.Util.Internal
+namespace Util.Internal
 {
     [DebuggerDisplay("{Success} {Reason} {Reason}")]
     internal struct ResultCore : IEquatable<ResultCore>
