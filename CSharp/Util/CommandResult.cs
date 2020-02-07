@@ -14,10 +14,10 @@
 using Maple.Util.Internal;
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Maple.Util
 {
+    /// <summary>Wrapper around the result of a command provided boolean result with additional reason or cause on failure</summary>
     [DebuggerDisplay("{Success} {Reason}")]
     public struct CommandResult : IEquatable<CommandResult>
     {
@@ -30,9 +30,15 @@ namespace Maple.Util
         public static CommandResult Failure(string reason) => new CommandResult(false, reason ?? throw new ArgumentNullException(nameof(reason)), null);
         public static CommandResult UnkownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 
+        /// <summary>The result of the operation</summary>
         public bool Success => Result.Success;
+        /// <summary>The reason for failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public string Reason => Result.Reason;
+        /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => Result.Cause;
+
+        public static bool operator==(CommandResult leftHandSide, CommandResult rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator!=(CommandResult leftHandSide, CommandResult rightHandSide) => !(leftHandSide == rightHandSide);
 
         private ResultCore Result { get; }
 
