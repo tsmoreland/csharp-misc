@@ -14,8 +14,9 @@
 using System;
 using Xunit;
 using Util.Results;
+using System.Security.Cryptography;
 
-namespace Test
+namespace Test.Util.Results
 {
     public class QueryResultTest
     {
@@ -103,6 +104,24 @@ namespace Test
         public void SuccessfulQueryResultEqualsReturnsTrueForEqualResultsWithSameReference()
         {
             // Arrange
+            var generator = RNGCryptoServiceProvider.Create();
+            byte[] data = new byte[sizeof(int)];
+            generator.GetBytes(data);
+            int randomNumber = BitConverter.ToInt32(data);
+
+            QueryResult<EquatableReferenceType> leftHandSide = QueryResult.Ok(new EquatableReferenceType(randomNumber));
+            QueryResult<EquatableReferenceType> rightHandSide = QueryResult.Ok(new EquatableReferenceType(randomNumber));
+
+            // Act
+            bool equals = leftHandSide.Equals(rightHandSide);
+
+            // Assert
+            Assert.True(equals);
+        }
+        [Fact]
+        public void SuccessfulQueryResultEqualsReturnsTrueForEqualResultsForEquatableReferenceType()
+        {
+            // Arrange
             Exception value = new Exception("ERROR");
             QueryResult<Exception> leftHandSide = QueryResult.Ok(value);
             QueryResult<Exception> rightHandSide = QueryResult.Ok(value);
@@ -112,6 +131,23 @@ namespace Test
 
             // Assert
             Assert.True(equals);
+        }
+
+        [Fact]
+        public void SuccessfulQueryResultImplicitBoolEqualsSuccessFailureState()
+        {
+            // Arrange
+            QueryResult<Guid> result = QueryResult.Ok<Guid>(Guid.NewGuid());
+
+            // Act
+            bool @implicit = result;
+            bool @explicit = result.ToBoolean();
+            bool success = result.Success;
+
+            // Assert
+            Assert.Equal(success, @implicit);
+            Assert.Equal(@explicit, @implicit);
+            Assert.True(success);
         }
 
         [Fact]
@@ -135,6 +171,38 @@ namespace Test
 
             // Act / Assert
             Assert.Throws<InvalidOperationException>(() => _ = failed.Value);
+        }
+
+        [Fact]
+        public void FailureQueryStoresExceptionCause()
+        {
+            // Arrange
+            var exception = new Exception(Guid.NewGuid().ToString(), new Exception($"Inner {Guid.NewGuid()}"));
+            var message = Guid.NewGuid().ToString();
+
+            // Act
+            var result = QueryResult.Failed<Guid>(message, exception);
+
+            // Assert
+            Assert.Equal(exception, result.Cause);
+            Assert.Equal(message, result.Reason);
+        }
+
+        [Fact]
+        public void FailureQueryResultImplicitBoolEqualsSuccessFailureState()
+        {
+            // Arrange
+            QueryResult<Guid> result = QueryResult.Failed<Guid>(Guid.NewGuid().ToString());
+
+            // Act
+            bool @implicit = result;
+            bool @explicit = result.ToBoolean();
+            bool success = result.Success;
+
+            // Assert
+            Assert.Equal(success, @implicit);
+            Assert.Equal(@explicit, @implicit);
+            Assert.False(success);
         }
     }
 }

@@ -27,8 +27,8 @@ namespace Util.Results
         }
 
         public static CommandResult Ok { get; } = new CommandResult(true, string.Empty, null);
-        public static CommandResult Failure(string reason) => new CommandResult(false, reason ?? throw new ArgumentNullException(nameof(reason)), null);
-        public static CommandResult UnkownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
+        public static CommandResult Failed(string reason, Exception? cause = null) => new CommandResult(false, reason ?? throw new ArgumentNullException(nameof(reason)), cause);
+        public static CommandResult UnknownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 
         /// <summary>The result of the operation</summary>
         public bool Success => Result.Success;
@@ -36,9 +36,11 @@ namespace Util.Results
         public string Reason => Result.Reason;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => Result.Cause;
+        public bool ToBoolean() => Success;
 
         public static bool operator==(CommandResult leftHandSide, CommandResult rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(CommandResult leftHandSide, CommandResult rightHandSide) => !(leftHandSide == rightHandSide);
+        public static implicit operator bool(CommandResult result) => result.ToBoolean();
 
         private ResultCore Result { get; }
 

@@ -13,8 +13,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using Util.Hashing;
 
 namespace Util.Internal
 {
@@ -26,7 +24,6 @@ namespace Util.Internal
             Success = success;
             Reason = reason;
             Cause = cause;
-            HashCode = HashCodeBuilder.Create(Success, Reason, Cause);
         }
 
         /// <summary>success or failure of which ever operation this represents the result for</summary>
@@ -38,8 +35,6 @@ namespace Util.Internal
         /// <summary>Optional additional exception detail</summary>
         public Exception? Cause { get; }
 
-        public HashCodeBuilder HashCode { get; }
-
         public static bool operator==(ResultCore leftHandSide, ResultCore rightHandSide) =>
             leftHandSide.Equals(rightHandSide) == true;
         public static bool operator!=(ResultCore leftHandSide, ResultCore rightHandSide) =>
@@ -48,7 +43,12 @@ namespace Util.Internal
         #region ValueType
 
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
-        public override int GetHashCode() => HashCode.Build();
+        public override int GetHashCode() => 
+            #if NETCOREAPP3_1 || NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
+            HashCode.Combine(Success, Reason, Cause);
+            #else
+            HashCodeBuilder.Create(Success, Reason, Cause).ToHashCode();
+            #endif
 
         #endregion
         #region IEquatable{ResultCore}

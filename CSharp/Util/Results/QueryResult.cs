@@ -44,9 +44,13 @@ namespace Util.Results
         public string Reason => ValueResult.Reason;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
+        public bool ToBoolean() => Success;
 
         public static bool operator==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static implicit operator bool(QueryResult<TValue> result) => result.ToBoolean();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
         private ValueResultCore<TValue> ValueResult { get; }
 
@@ -59,6 +63,8 @@ namespace Util.Results
         #region IEquatable{QueryResult{TValue}}
         public bool Equals(QueryResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
+
+
         #endregion
     }
 }

@@ -13,18 +13,18 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 
-namespace Util.Hashing
+namespace Util.Internal
 {
-    [DebuggerDisplay("{_piecewiseHashCodeBuilder}")]
+    #if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
+    [DebuggerDisplay("{_piewiseCode}")]
     public class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
         #region Public
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);
         public HashCodeBuilder AddValues(params object?[] objects) =>
-            new HashCodeBuilder(_piewiseCode + objects.Select(o => (o?.GetHashCode() ?? 0) * 7)?.Sum() ?? 0);
-        public int Build() => 31 * _piewiseCode;
+            new HashCodeBuilder(CalculateHashCode(_piewiseCode, objects));
+        public int ToHashCode() => 13 * _piewiseCode;
 
         public static bool operator==(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => leftHandSide?._piewiseCode == rightHandSide?._piewiseCode;
         public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => !(leftHandSide == rightHandSide);
@@ -44,12 +44,19 @@ namespace Util.Hashing
         private HashCodeBuilder() : this(0)
         {
         }
-        private HashCodeBuilder(params object?[] objects) : this(objects.Select(o => (o?.GetHashCode() ?? 0) * 7)?.Sum() ?? 0)
+        private HashCodeBuilder(params object?[] objects) : this(CalculateHashCode(0, objects))
         {
         }
         private HashCodeBuilder(int piecewiseHashCodeBuilder)
         {
             _piewiseCode = piecewiseHashCodeBuilder;
+        }
+        private static int CalculateHashCode(in int initialValue, object?[] objects)
+        {
+            var result = initialValue;
+            foreach (var @object in objects)
+                result = (result * 397) ^ (@object?.GetHashCode() ?? 0);
+            return result;
         }
         #endregion
 
@@ -72,4 +79,5 @@ namespace Util.Hashing
 
         #endregion
     }
+    #endif
 }
