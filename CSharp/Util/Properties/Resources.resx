@@ -120,4 +120,10 @@
   <data name="InvalidQueryResultValueAccess" xml:space="preserve">
     <value>Value not available when query has failed</value>
   </data>
+  <data name="NoSuchValue" xml:space="preserve">
+    <value>Value is not present</value>
+  </data>
+  <data name="NullValue" xml:space="preserve">
+    <value>(null)</value>
+  </data>
 </root>

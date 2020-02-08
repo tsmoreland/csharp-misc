@@ -68,5 +68,23 @@ namespace Util.Properties {
                 return ResourceManager.GetString("InvalidQueryResultValueAccess", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value is not present.
+        /// </summary>
+        internal static string NoSuchValue {
+            get {
+                return ResourceManager.GetString("NoSuchValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (null).
+        /// </summary>
+        internal static string NullValue {
+            get {
+                return ResourceManager.GetString("NullValue", resourceCulture);
+            }
+        }
     }
 }
