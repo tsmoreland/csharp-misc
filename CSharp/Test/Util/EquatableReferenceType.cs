@@ -11,13 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Util;
-using System;
-using Xunit;
-
 namespace Test
 {
-    public class CommandAndQueryResultTest
+    internal class EquatableReferenceType 
     {
+        public EquatableReferenceType(int value)
+        {
+            Value = value;
+        }
+
+        public int Value { get; }
+
+        public override bool Equals(object obj) =>
+            obj is EquatableReferenceType equatable && equatable.Value == Value;
+        public override int GetHashCode() => Value.GetHashCode();
     }
 }

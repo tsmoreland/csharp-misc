@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Tests.Util</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
+    <RootNamespace>Test.Util</RootNamespace>
+    <AssemblyName>Test.Util</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Util\Util.csproj" />
+    <Folder Include="Results\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Util\Util.csproj" />
   </ItemGroup>
 
 </Project>

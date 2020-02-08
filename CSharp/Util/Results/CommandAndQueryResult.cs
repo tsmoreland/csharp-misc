@@ -18,7 +18,10 @@ using Resources = Util.Properties.Resources;
 
 namespace Util.Results
 {
-    /// <summary>The result of executing a Command which also returns a result (other than simple success/failure)</summary>
+    /// <summary>
+    /// The result of executing a Command which also returns a result (other than simple success/failure)
+    /// The type is identical except in name to <see cref="QueryResult{TValue}"/> and exists only to make it more clear the origin of the result
+    /// </summary>
     [Obsolete("violates command query seperation but is provided to allow for legacy code which has not yet attained that separation")]
     public static class CommandAndQueryResult
     {
@@ -44,9 +47,13 @@ namespace Util.Results
         public string Reason => ValueResult.Reason;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
+        public bool ToBoolean() => Success;
 
         public static bool operator==(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(CommandAndQueryResult<TValue> leftHandSide, CommandAndQueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static implicit operator bool(CommandAndQueryResult<TValue> result) => result.ToBoolean();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        public static explicit operator TValue(CommandAndQueryResult<TValue> result) => result.Value;
 
         private ValueResultCore<TValue> ValueResult { get; }
 
