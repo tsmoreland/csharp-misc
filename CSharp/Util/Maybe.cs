@@ -45,7 +45,7 @@ namespace Util
         public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper);
+                throw new ArgumentNullException(nameof(mapper));
             if (!IsPresent)
                 return Maybe.Empty<TMappedValue>();
             return Maybe.Of(mapper.Invoke(Value));
