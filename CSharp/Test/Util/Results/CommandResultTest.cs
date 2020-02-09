@@ -12,10 +12,10 @@
 // 
 
 using System;
-using Util.Results;
+using SystemEx.Util.Results;
 using Xunit;
 
-namespace Test.Util.Results
+namespace SystemEx.Test.Util.Results
 {
     public class CommandResultTest
     {

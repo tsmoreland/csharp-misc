@@ -11,16 +11,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
 using System;
 using System.Diagnostics;
+#endif
 
-namespace Util.Internal
+namespace SystemEx.Util.Internal
 {
-    #if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
+#if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
     [DebuggerDisplay("{_piewiseCode}")]
     public class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
-        #region Public
+    #region Public
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);
         public HashCodeBuilder AddValues(params object?[] objects) =>
             new HashCodeBuilder(CalculateHashCode(_piewiseCode, objects));
@@ -37,8 +39,8 @@ namespace Util.Internal
         public static bool operator >=(HashCodeBuilder left, HashCodeBuilder right) =>
             ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
 
-        #endregion
-        #region Private
+    #endregion
+    #region Private
         private readonly int _piewiseCode;
 
         private HashCodeBuilder() : this(0)
@@ -58,26 +60,26 @@ namespace Util.Internal
                 result = (result * 397) ^ (@object?.GetHashCode() ?? 0);
             return result;
         }
-        #endregion
+    #endregion
 
-        #region Object
+    #region Object
 
         public override bool Equals(object? obj) => Equals(obj as HashCodeBuilder);
         public override int GetHashCode() => _piewiseCode.GetHashCode();
 
-        #endregion
-        #region IEquatable{HashCodeBuilder}
+    #endregion
+    #region IEquatable{HashCodeBuilder}
         public bool Equals(HashCodeBuilder? other) =>
             other != null && other._piewiseCode == _piewiseCode;
 
-        #endregion
-        #region IComparable{HashCodeBuilder}
+    #endregion
+    #region IComparable{HashCodeBuilder}
         public int CompareTo(HashCodeBuilder? other) =>
             other is HashCodeBuilder hashCode 
             ? _piewiseCode.CompareTo(hashCode._piewiseCode) 
             : 1; // 1 is based on the decompiled version of System.String's response to the equivalent criteria
 
-        #endregion
+    #endregion
     }
-    #endif
+#endif
 }

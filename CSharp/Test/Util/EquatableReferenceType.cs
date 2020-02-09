@@ -11,7 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-namespace Test
+namespace SystemEx.Test
 {
     internal class EquatableReferenceType 
     {
@@ -22,7 +22,7 @@ namespace Test
 
         public int Value { get; }
 
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             obj is EquatableReferenceType equatable && equatable.Value == Value;
         public override int GetHashCode() => Value.GetHashCode();
     }

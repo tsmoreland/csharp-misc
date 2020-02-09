@@ -1,0 +1,123 @@
+﻿//
+// Copyright © 2020 Terry Moreland
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// 
+
+using System;
+using Resources = Util.Properties.Resources;
+
+namespace SystemEx.Util
+{
+    public static class Maybe
+    {
+        /// <summary>Returns an empty Maybe instance.</summary>
+        public static Maybe<TValue> Empty<TValue>() => new Maybe<TValue>();
+        /// <summary>Returns a Maybe with the specified present value.</summary>
+        public static Maybe<TValue> Of<TValue>(TValue value) => new Maybe<TValue>(value);
+        /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
+        public static Maybe<TValue> OfNullable<TValue>(TValue? value) where TValue : struct => value.HasValue ? new Maybe<TValue>(value.Value) : Empty<TValue>();
+        /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
+        public static Maybe<TValue> OfNullable<TValue>(TValue value) where TValue : class => value != null ? new Maybe<TValue>(value) : Empty<TValue>();
+    }
+
+    /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
+    public sealed class Maybe<TValue> : IEquatable<Maybe<TValue>>
+    {
+        #region Public
+        /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
+        /// <exception cref="InvalidOperationException">when <see cref="IsPresent"/> is false</exception>
+        public TValue Value => IsPresent ? _value : throw new InvalidOperationException(Resources.NoSuchValue);
+        public bool IsPresent { get; }
+
+        /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
+        public Maybe<TValue> Filter(Predicate<TValue> predicate) =>
+            IsPresent && predicate?.Invoke(Value) == true ? this : Maybe.Empty<TValue>();
+
+        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!IsPresent)
+                return Maybe.Empty<TMappedValue>();
+            return Maybe.Of(mapper.Invoke(Value));
+        }
+
+        public TValue OrElse(TValue other) => IsPresent ? Value : other;
+
+        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
+        public TValue OrElseGet(Func<TValue> other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+            return IsPresent ? _value : other.Invoke();
+        }
+	
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="IsPresent"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        public TValue OrElseThrow(Func<Exception> exceptionSupplier)
+        {
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            if (IsPresent)
+                return _value;
+            throw exceptionSupplier.Invoke();
+        }
+
+        public bool ToBoolean() => IsPresent;
+
+        public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
+        public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static implicit operator bool(Maybe<TValue> maybe) => maybe?.ToBoolean() == true;
+
+        /// <summary>Returns the Value</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
+        /// <exception cref="InvalidOperationException">if <see cref="IsPresent"/> is <c>false</c></exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
+            ? maybe.Value 
+            : throw new ArgumentNullException(nameof(maybe));
+
+        #endregion
+        #region Internal
+        internal Maybe()
+        {
+            IsPresent = false;
+            _value = default!;
+        }
+        internal Maybe(TValue value)
+        {
+            _value = value;
+            IsPresent = true;
+        }
+        #endregion
+        #region Private
+        private readonly TValue _value;
+
+        #endregion
+
+        #region Object
+        public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
+        public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
+        public override string ToString() =>
+            IsPresent ? _value?.ToString() ?? Resources.NullValue : Resources.NoSuchValue;
+        #endregion
+        #region IEquatable{Maybe{TValue}}
+        public bool Equals(Maybe<TValue>? other) =>
+            object.ReferenceEquals(this, other) || 
+            other is Maybe<TValue> nonNullOther &&
+            Value?.Equals(nonNullOther.Value) == true;
+
+        #endregion
+    }
+}

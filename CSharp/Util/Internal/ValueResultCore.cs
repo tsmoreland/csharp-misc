@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Util.Internal
+namespace SystemEx.Util.Internal
 {
     [DebuggerDisplay("{Value} {Success} {Reason}")]
     public struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>
