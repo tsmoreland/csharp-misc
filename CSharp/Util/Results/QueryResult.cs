@@ -11,12 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Util.Internal;
+using SystemEx.Util.Internal;
 using System;
 using System.Diagnostics;
 using Resources = Util.Properties.Resources;
 
-namespace Util.Results
+namespace SystemEx.Util.Results
 {
     public static class QueryResult
     {

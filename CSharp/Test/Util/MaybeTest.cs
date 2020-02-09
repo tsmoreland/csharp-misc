@@ -11,11 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Util;
+using Moq;
+using SystemEx.Util;
 using System;
 using Xunit;
 
-namespace Test.Util
+namespace SystemEx.Test.Util
 {
     public class MaybeTest
     {
@@ -33,6 +34,104 @@ namespace Test.Util
         }
 
         [Fact]
+        public void IsPresentTrueFilterPredicateInvoked()
+        {
+            // Arrange
+            Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
+
+            // Act / Assert
+            var _ = TryApplyFilter(maybe, true); 
+        }
+
+        [Fact]
+        public void IsPresentTrueFilterApplied()
+        {
+            // Arrange
+            Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
+
+            // Act
+            var result = TryApplyFilter(maybe, true);
+
+            // Assert
+            Assert.True(result.IsPresent);
+        }
+
+        [Fact]
+        public void IsPresentTrueFlatMapInvoked()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            string mappedValue = value.ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act / Assert
+            _ = TryApplyFlatMap(maybe, mappedValue);
+        }
+
+        [Fact]
+        public void IsPresentTrueFlatMapAppliedResultHasValue()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            string mappedValue = value.ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyFlatMap(maybe, mappedValue);
+
+            // Assert
+            Assert.True(result.IsPresent);
+        }
+        [Fact]
+        public void IsPresentTrueFlatMapAppliedResultValueMatchesExcpected()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            string mappedValue = value.ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyFlatMap(maybe, mappedValue);
+
+            // Assert
+            Assert.Equal(mappedValue, result.Value);
+        }
+        public void IsPresentTrueOrElseNotUsed()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+        }
+        public void IsPresentTrueOrElseGetNotUsed()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+        }
+        public void IsPresentTrueOrElseThrowDoesNotThrow()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+        }
+        [Fact]
+        public void IsPresentTrueImplicitBoolEqualsIsPresent()
+        {
+            // Arrange
+            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+
+            // Act / Assert
+            IsPresentImplicitBoolEqualsIsPresent(maybe);
+            Assert.True(maybe.IsPresent);
+        }
+
+        [Fact]
         public void IsPresentFalseWhenEmpty()
         {
             // Arrange
@@ -44,5 +143,100 @@ namespace Test.Util
             // Assert
             Assert.False(isPresent);
         }
+        [Fact]
+        public void IsPresentFalseFilterNotApplied()
+        {
+            // Arrange
+            Maybe<Guid> maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyFilter(maybe, false);
+
+            // Assert
+            Assert.False(result.IsPresent);
+        }
+
+        public void IsPresentFalseFlatMapNotApplied()
+        {
+        }
+
+        public void IsPresentFalseOrElseUsed()
+        {
+        }
+
+        public void IsPresentFalseOrElseGetUsed()
+        {
+        }
+
+        public void IsPresentFalseOrElseThrowThrows()
+        {
+        }
+
+        [Fact]
+        public void IsPresentFalseImplicitBoolEqualsIsPresent()
+        {
+            // Arrange
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act / Assert
+            IsPresentImplicitBoolEqualsIsPresent(maybe);
+            Assert.False(maybe);
+        }
+
+        [Fact]
+        public void IsPresentFalseValueThrows()
+        {
+            // Arrange
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act / Assert
+            Assert.Throws<InvalidOperationException>(() => _ = maybe.Value);
+        }
+
+        #region Private
+        private void IsPresentImplicitBoolEqualsIsPresent<T>(Maybe<T> maybe)
+        {
+            // Arrange
+            // handled by caller
+
+            // Act
+            bool @implicit = maybe;
+            bool @explicit = maybe.ToBoolean();
+            bool isPresent = maybe.IsPresent;
+
+            // Assert
+            Assert.Equal(@implicit, isPresent);
+            Assert.Equal(@explicit, isPresent);
+        }
+        private Maybe<T> TryApplyFilter<T>(Maybe<T> maybe, bool @return)
+        {
+            // Arrange
+            Mock<Predicate<T>> predicate = new Mock<Predicate<T>>();
+            predicate.Setup(p => p.Invoke(It.IsAny<T>())).Returns(@return);
+
+            // Act
+            Maybe<T> maybeResult = maybe.Filter(predicate.Object);
+
+            // Assert 
+            if (@return)
+                predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Once);
+            return maybeResult;
+        }
+        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
+        {
+            // Arrange
+            var flatMap = new Mock<Func<T, U>>();
+            flatMap
+                .Setup(mapper => mapper.Invoke(It.IsAny<T>()))
+                .Returns(mappedValue);
+
+            // Act
+            var mapped = maybe.FlatMap(flatMap.Object);
+            if (maybe.IsPresent)
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+            return mapped;
+        }
+
+        #endregion
     }
 }
