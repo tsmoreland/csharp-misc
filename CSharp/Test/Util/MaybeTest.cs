@@ -191,6 +191,116 @@ namespace SystemEx.Test.Util
         }
 
         [Fact]
+        public void IsPresentTrueEqualsReturnsTrueForEqualValueTypeValues()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            var left = Maybe.Of(value);
+            var right = Maybe.Of(value);
+
+            // Act / Assert
+            IsPresentEqualsReturnsTrueForEqualValue(left, right);
+
+        }
+        [Fact]
+        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualValueTypeValues()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            var left = Maybe.Of(value);
+            var right = Maybe.Of(value);
+
+            // Act / Assert
+            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+        }
+        [Fact]
+        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualValueTypeValues()
+        {
+            // Arrange
+            Guid leftValue = Guid.NewGuid();
+            Guid rightValue = Guid.NewGuid();
+            var left = Maybe.Of(leftValue);
+            var right = Maybe.Of(rightValue);
+
+            // Act / Assert
+            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
+            Assert.NotEqual(leftValue, rightValue);
+        }
+
+        [Fact]
+        public void IsPresentTrueEqualsReturnsTrueForEqualEquatableReferenceTypeValues()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            var left = Maybe.Of(value.ToString());
+            var right = Maybe.Of(value.ToString());
+
+            // Act / Assert
+            IsPresentEqualsReturnsTrueForEqualValue(left, right);
+
+        }
+        [Fact]
+        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualEquatableReferenceTypeValues()
+        {
+            // Arrange
+            string value = Guid.NewGuid().ToString();
+            var left = Maybe.Of(value.ToString());
+            var right = Maybe.Of(value.ToString());
+
+            // Act / Assert
+            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+        }
+        [Fact]
+        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualEquatableReferenceTypeValues()
+        {
+            // Arrange
+            string leftValue = Guid.NewGuid().ToString();
+            string rightValue = Guid.NewGuid().ToString();
+            var left = Maybe.Of(leftValue);
+            var right = Maybe.Of(rightValue);
+
+            // Act / Assert
+            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
+            Assert.NotEqual(leftValue, rightValue);
+        }
+        [Fact]
+        public void IsPresentTrueEqualsReturnsTrueForEqualNonEquatableReferenceTypeValues()
+        {
+            // Arrange
+            object @object = new object();
+            var left = Maybe.Of(@object);
+            var right = Maybe.Of(@object);
+
+            // Act / Assert
+            IsPresentEqualsReturnsTrueForEqualValue(left, right);
+
+        }
+        [Fact]
+        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualNonEquatableReferenceTypeValues()
+        {
+            // Arrange
+            object @object = new object();
+            var left = Maybe.Of(@object);
+            var right = Maybe.Of(@object);
+
+            // Act / Assert
+            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+        }
+        [Fact]
+        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualNonEquatableReferenceTypeValues()
+        {
+            // Arrange
+            object leftValue = new object();
+            object rightValue = new object();
+            var left = Maybe.Of(leftValue);
+            var right = Maybe.Of(rightValue);
+
+            // Act / Assert
+            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
+            Assert.NotEqual(leftValue, rightValue);
+        }
+
+        [Fact]
         public void IsPresentFalseWhenEmpty()
         {
             // Arrange
@@ -407,6 +517,36 @@ namespace SystemEx.Test.Util
             return (result, thrown);
         }
 
+        private void IsPresentEqualsReturnsTrueForEqualValue<T>(Maybe<T> left, Maybe<T> right)
+        {
+            // Arrange
+
+            // Act
+            bool equal = left.Equals(right);
+
+            // Assert
+            Assert.True(equal);
+        }
+        private void IsPresentEqualsOpertorReturnsTrueForEqualValue<T>(Maybe<T> left, Maybe<T> right)
+        {
+            // Arrange
+
+            // Act
+            bool equal =  left == right;
+
+            // Assert
+            Assert.True(equal);
+        }
+        private void IsPresentNotEqualsOpertorReturnsFalseForEqualValue<T>(Maybe<T> left, Maybe<T> right)
+        {
+            // Arrange
+
+            // Act
+            bool notEqual = left != right;
+
+            // Assert
+            Assert.True(notEqual);
+        }
         #endregion
     }
 }

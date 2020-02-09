@@ -114,7 +114,7 @@ namespace SystemEx.Util
         #endregion
         #region IEquatable{Maybe{TValue}}
         public bool Equals(Maybe<TValue>? other) =>
-            object.ReferenceEquals(this, other) && 
+            object.ReferenceEquals(this, other) || 
             other is Maybe<TValue> nonNullOther &&
             Value?.Equals(nonNullOther.Value) == true;
 
