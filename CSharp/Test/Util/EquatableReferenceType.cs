@@ -22,7 +22,7 @@ namespace SystemEx.Test
 
         public int Value { get; }
 
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             obj is EquatableReferenceType equatable && equatable.Value == Value;
         public override int GetHashCode() => Value.GetHashCode();
     }
