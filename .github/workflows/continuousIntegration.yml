@@ -1,6 +1,10 @@
-name: .NET Core
+name: develop CI
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - master
+      - develop
 
 jobs:
   build:
@@ -12,6 +16,6 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.2.108
+        dotnet-version: 3.1.1
     - name: Build with dotnet
       run: dotnet build --configuration Release
