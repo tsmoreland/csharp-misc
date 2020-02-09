@@ -96,29 +96,88 @@ namespace SystemEx.Test.Util
             // Assert
             Assert.Equal(mappedValue, result.Value);
         }
+        [Fact]
         public void IsPresentTrueOrElseNotUsed()
         {
             // Arrange
+            Guid value = Guid.NewGuid();
+            Guid @else = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
 
             // Act
+            Guid result = maybe.OrElse(@else);
 
             // Assert
+            Assert.NotEqual(value, @else); // sanity check
+            Assert.Equal(value, result);
+
         }
-        public void IsPresentTrueOrElseGetNotUsed()
+        [Fact]
+        public void IsPresentTrueOrElseGetOtherNotInvoked()
         {
             // Arrange
+            var value = Guid.NewGuid();
+            var @else = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+
+            // Act / Assert
+            _ = OrElseGet(maybe, @else);
+        }
+
+        [Fact]
+        public void IsPresentTrueOrElseGetNotUsedValueMatches()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var @else = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
 
             // Act
+            var result = OrElseGet(maybe, @else);
 
             // Assert
+            Assert.NotEqual(value, @else);
+            Assert.Equal(@value, result);
         }
+        [Fact]
         public void IsPresentTrueOrElseThrowDoesNotThrow()
         {
             // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act / Assert
+            _ = OrElseThrow(maybe, ex);
+        }
+        [Fact]
+        public void IsPresentTrueOrElseThrowDoesIsPresent()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
 
             // Act
+            var (result, _) = OrElseThrow(maybe, ex);
 
             // Assert
+            Assert.True(result.IsPresent);
+        }
+        [Fact]
+        public void IsPresentTrueOrElseThrowDoesValueMatches()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (result, _) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.True(result.IsPresent);
+            Assert.Equal(value, result.Value);
         }
         [Fact]
         public void IsPresentTrueImplicitBoolEqualsIsPresent()
@@ -143,6 +202,7 @@ namespace SystemEx.Test.Util
             // Assert
             Assert.False(isPresent);
         }
+
         [Fact]
         public void IsPresentFalseFilterNotApplied()
         {
@@ -156,20 +216,82 @@ namespace SystemEx.Test.Util
             Assert.False(result.IsPresent);
         }
 
+        [Fact]
         public void IsPresentFalseFlatMapNotApplied()
         {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            string mappedValue = value.ToString();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyFlatMap(maybe, mappedValue);
+
+            // Assert
+            Assert.False(result.IsPresent);
         }
 
+        [Fact]
         public void IsPresentFalseOrElseUsed()
         {
+            // Arrange
+            Guid @else = Guid.NewGuid();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            Guid result = maybe.OrElse(@else);
+
+            // Assert
+            Assert.Equal(@else, result);
         }
 
-        public void IsPresentFalseOrElseGetUsed()
+        [Fact]
+        public void IsPresentFalseOrElseGetUsedOtherInvoked()
         {
+            // Arrange
+            var @else = Guid.NewGuid();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act / Assert
+            var _ = OrElseGet(maybe, @else);
+        }
+        [Fact]
+        public void IsPresentFalseOrElseGetUsedValueMatches()
+        {
+            // Arrange
+            var @else = Guid.NewGuid();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = OrElseGet(maybe, @else);
+
+            // Assert
+            Assert.Equal(@else, result);
         }
 
+        [Fact]
         public void IsPresentFalseOrElseThrowThrows()
         {
+            // Arrange
+            var maybe = Maybe.Empty<Guid>();
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act / Assert
+            var (result, _) = OrElseThrow(maybe, ex);
+            Assert.False(result.IsPresent);
+        }
+        [Fact]
+        public void IsPresentFalseOrElseThrowExceptionThrownProvidedBySupplier()
+        {
+            // Arrange
+            var maybe = Maybe.Empty<Guid>();
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (_, thrown) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.Equal(ex, thrown);
         }
 
         [Fact]
@@ -220,6 +342,8 @@ namespace SystemEx.Test.Util
             // Assert 
             if (@return)
                 predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Once);
+            else
+                predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Never);
             return maybeResult;
         }
         private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
@@ -234,7 +358,53 @@ namespace SystemEx.Test.Util
             var mapped = maybe.FlatMap(flatMap.Object);
             if (maybe.IsPresent)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+            else
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
             return mapped;
+        }
+        private T OrElseGet<T>(Maybe<T> maybe, T @else)
+        {
+            // Arrange
+            var other = new Mock<Func<T>>();
+            other
+                .Setup(o => o.Invoke())
+                .Returns(@else);
+
+            // Act
+            T result = maybe.OrElseGet(other.Object);
+
+            // Assert
+            if (!maybe.IsPresent)
+                other.Verify(o => o.Invoke(), Times.Once);
+            else
+                other.Verify(o => o.Invoke(), Times.Never);
+
+            return result;
+        }
+        private (Maybe<T> result, Exception? thrown) OrElseThrow<T, TException>(Maybe<T> maybe, TException exceptionToThrow) where TException : Exception
+        {
+            // Arrange
+            var supplier = new Mock<Func<Exception>>();
+            supplier
+                .Setup(s => s.Invoke())
+                .Returns(exceptionToThrow);
+
+            Maybe<T> result = Maybe.Empty<T>();
+            Exception? thrown = null;
+
+            // Act
+            if (!maybe.IsPresent)
+            {
+                thrown = Assert.Throws<TException>(() => maybe.OrElseThrow(supplier.Object));
+                supplier.Verify(s => s.Invoke(), Times.Once);
+            }
+            else
+            {
+                result = Maybe.Of(maybe.OrElseThrow(supplier.Object));
+                supplier.Verify(s => s.Invoke(), Times.Never);
+            }
+
+            return (result, thrown);
         }
 
         #endregion
