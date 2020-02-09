@@ -3,7 +3,7 @@ name: develop CI Build
 on: 
   push:
     branches: 
-      - develop
+      - master
 
 jobs:
   build:
