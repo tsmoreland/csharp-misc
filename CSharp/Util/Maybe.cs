@@ -14,7 +14,7 @@
 using System;
 using Resources = Util.Properties.Resources;
 
-namespace Util
+namespace SystemEx.Util
 {
     public static class Maybe
     {
@@ -74,6 +74,20 @@ namespace Util
             throw exceptionSupplier.Invoke();
         }
 
+        public bool ToBoolean() => IsPresent;
+
+        public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
+        public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static implicit operator bool(Maybe<TValue> maybe) => maybe?.ToBoolean() == true;
+
+        /// <summary>Returns the Value</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
+        /// <exception cref="InvalidOperationException">if <see cref="IsPresent"/> is <c>false</c></exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
+            ? maybe.Value 
+            : throw new ArgumentNullException(nameof(maybe));
+
         #endregion
         #region Internal
         internal Maybe()
@@ -89,6 +103,7 @@ namespace Util
         #endregion
         #region Private
         private readonly TValue _value;
+
         #endregion
 
         #region Object
@@ -100,8 +115,8 @@ namespace Util
         #region IEquatable{Maybe{TValue}}
         public bool Equals(Maybe<TValue>? other) =>
             object.ReferenceEquals(this, other) && 
-            other != null && 
-            Value?.Equals(other.Value) == true;
+            other is Maybe<TValue> nonNullOther &&
+            Value?.Equals(nonNullOther.Value) == true;
 
         #endregion
     }
