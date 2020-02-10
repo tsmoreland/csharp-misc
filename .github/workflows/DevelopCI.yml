@@ -1,14 +1,14 @@
-name: develop CI Build
+name: develop CI
 
 on: 
   push:
     branches: 
-      - develop
+      - master
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -18,3 +18,4 @@ jobs:
         dotnet-version: 3.1.100
     - name: Build with dotnet
       run: dotnet build --configuration Release
+      
