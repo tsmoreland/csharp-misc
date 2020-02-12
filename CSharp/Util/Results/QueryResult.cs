@@ -14,25 +14,26 @@
 using SystemEx.Util.Internal;
 using System;
 using System.Diagnostics;
-using Resources = Util.Properties.Resources;
+using Resources = SystemEx.Util.Properties.Resources;
 
 namespace SystemEx.Util.Results
 {
     public static class QueryResult
     {
         public static QueryResult<TValue> Ok<TValue>(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
-        public static QueryResult<TValue> Failed<TValue>(string reason, Exception? cause = null) => 
-            new QueryResult<TValue>(default!, false, reason, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+        public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => new QueryResult<TValue>(value, true, message ?? string.Empty);
+        public static QueryResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
+            new QueryResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
     }
 
     /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>
     /// <typeparam name="TValue"></typeparam>
-    [DebuggerDisplay("{Value} {Success} {Reason}")]
+    [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
     public struct QueryResult<TValue> : IEquatable<QueryResult<TValue>>
     {
-        internal QueryResult(TValue value, bool success, string reason, Exception? cause = null)
+        internal QueryResult(TValue value, bool success, string message, Exception? cause = null)
         {
-            ValueResult = new ValueResultCore<TValue>(value, success, reason, cause);
+            ValueResult = new ValueResultCore<TValue>(value, success, message, cause);
         }
 
         /// <summary>Resulting Value of the Query</summary>
@@ -40,8 +41,8 @@ namespace SystemEx.Util.Results
         public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(Resources.InvalidQueryResultValueAccess);
         /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
-        /// <summary>The reason for failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
-        public string Reason => ValueResult.Reason;
+        /// <summary>Optional message; should be non-null on failure but may contain a value on success</summary>
+        public string Message => ValueResult.Message;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
         public bool ToBoolean() => Success;

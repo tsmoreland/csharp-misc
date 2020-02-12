@@ -23,7 +23,7 @@ namespace SystemEx.Test.Util.Results
         public void SuccessfulCommandResultReportsSuccess()
         {
             // Arrange
-            var uid = CommandResult.Ok;
+            var uid = CommandResult.Ok();
 
             // Act
 
@@ -32,22 +32,22 @@ namespace SystemEx.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandResultHasEmptyReason()
+        public void SuccessfulCommandResultHasEmptyMessageIfNoneProvided()
         {
             // Arrange
-            CommandResult uid = CommandResult.Ok;
+            CommandResult uid = CommandResult.Ok();
 
             // Act
 
             // Assert
-            Assert.Empty(uid.Reason);
+            Assert.Empty(uid.Message);
         }
 
         [Fact]
         public void SuccessfulCommandResultHasNullCause()
         {
             // Arrange
-            CommandResult uid = CommandResult.Ok;
+            CommandResult uid = CommandResult.Ok();
 
             // Act
 
@@ -59,8 +59,8 @@ namespace SystemEx.Test.Util.Results
         public void SuccessfulCommandResultEqualsReturnsTrueForEqualResults()
         {
             // Arrange
-            CommandResult leftHandSide = CommandResult.Ok;
-            CommandResult rightHandSide = CommandResult.Ok;
+            CommandResult leftHandSide = CommandResult.Ok();
+            CommandResult rightHandSide = CommandResult.Ok();
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
@@ -73,7 +73,7 @@ namespace SystemEx.Test.Util.Results
         public void SuccessfulQueryResultImplicitBoolEqualsSuccessFailureState()
         {
             // Arrange
-            CommandResult result = CommandResult.Ok;
+            CommandResult result = CommandResult.Ok();
 
             // Act
             bool @implicit = result;
@@ -111,7 +111,7 @@ namespace SystemEx.Test.Util.Results
 
             // Assert
             Assert.Equal(exception, result.Cause);
-            Assert.Equal(message, result.Reason);
+            Assert.Equal(message, result.Message);
         }
 
         [Fact]

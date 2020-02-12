@@ -60,7 +60,7 @@ namespace SystemEx.Test.Util.Results
         }
         
         [Fact]
-        public void SuccessfulQueryResultHasEmptyReason()
+        public void SuccessfulQueryResultHasEmptyMessageIfNoneProvided()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -69,7 +69,7 @@ namespace SystemEx.Test.Util.Results
             QueryResult<Guid> uid = QueryResult.Ok(value);
 
             // Assert
-            Assert.Empty(uid.Reason);
+            Assert.Empty(uid.Message);
         }
 
         [Fact]
@@ -185,7 +185,7 @@ namespace SystemEx.Test.Util.Results
 
             // Assert
             Assert.Equal(exception, result.Cause);
-            Assert.Equal(message, result.Reason);
+            Assert.Equal(message, result.Message);
         }
 
         [Fact]
