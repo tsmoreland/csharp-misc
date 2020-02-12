@@ -12,7 +12,7 @@
 // 
 
 using System;
-using Resources = Util.Properties.Resources;
+using Resources = SystemEx.Util.Properties.Resources;
 
 namespace SystemEx.Util
 {

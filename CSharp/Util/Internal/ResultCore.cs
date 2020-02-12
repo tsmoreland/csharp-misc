@@ -16,21 +16,21 @@ using System.Diagnostics;
 
 namespace SystemEx.Util.Internal
 {
-    [DebuggerDisplay("{Success} {Reason} {Reason}")]
+    [DebuggerDisplay("{Success} {Message,nq}")]
     internal struct ResultCore : IEquatable<ResultCore>
     {
-        public ResultCore(bool success, string reason, Exception? cause)
+        public ResultCore(bool success, string message, Exception? cause)
         {
             Success = success;
-            Reason = reason;
+            Message = message;
             Cause = cause;
         }
 
         /// <summary>success or failure of which ever operation this represents the result for</summary>
         public bool Success { get; }
 
-        /// <summary>The reason for failure, this should not have a value if <see cref="Success"/> is <c>true</c></summary> 
-        public string Reason { get; }
+        /// <summary>Optional Message, should be non-empty on failure but may have a value on success as well</summary> 
+        public string Message { get; }
 
         /// <summary>Optional additional exception detail</summary>
         public Exception? Cause { get; }
@@ -45,9 +45,9 @@ namespace SystemEx.Util.Internal
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
         public override int GetHashCode() => 
             #if NETCOREAPP3_1 || NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
-            HashCode.Combine(Success, Reason, Cause);
+            HashCode.Combine(Success, Message, Cause);
             #else
-            HashCodeBuilder.Create(Success, Reason, Cause).ToHashCode();
+            HashCodeBuilder.Create(Success, Message, Cause).ToHashCode();
             #endif
 
         #endregion
@@ -55,7 +55,7 @@ namespace SystemEx.Util.Internal
         public bool Equals(ResultCore other) =>
             other != null  &&
             Success == other.Success &&
-            Reason == other.Reason &&
+            Message == other.Message &&
             (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
 
