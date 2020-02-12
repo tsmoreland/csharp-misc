@@ -2,12 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;netstandard2.0;netstandard2.1;net40;net45;net46;net472;net48</TargetFrameworks>
-    <RootNamespace>Util</RootNamespace>
-    <AssemblyName>Util</AssemblyName>
+    <RootNamespace>SystemEx.Util</RootNamespace>
+    <AssemblyName>SystemEx.Util</AssemblyName>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.0.1</Version>
+    <Company />
+    <Product>CSharp Extension Library Utilities</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

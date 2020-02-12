@@ -17,23 +17,24 @@ using System.Diagnostics;
 
 namespace SystemEx.Util.Results
 {
-    /// <summary>Wrapper around the result of a command provided boolean result with additional reason or cause on failure</summary>
-    [DebuggerDisplay("{Success} {Reason}")]
+    /// <summary>Wrapper around the result of a command provided boolean result with additional message or cause on failure</summary>
+    [DebuggerDisplay("{GetType().Name,nq}: {Success} {Message,nq}")]
     public struct CommandResult : IEquatable<CommandResult>
     {
-        private CommandResult(bool success, string reason, Exception? cause)
+        private CommandResult(bool success, string message, Exception? cause)
         {
-            Result = new ResultCore(success, reason, cause);
+            Result = new ResultCore(success, message, cause);
         }
 
-        public static CommandResult Ok { get; } = new CommandResult(true, string.Empty, null);
-        public static CommandResult Failed(string reason, Exception? cause = null) => new CommandResult(false, reason ?? throw new ArgumentNullException(nameof(reason)), cause);
+        public static CommandResult Ok() => _ok;
+        public static CommandResult Ok(string message) => new CommandResult(true, message ?? string.Empty, null);
+        public static CommandResult Failed(string message, Exception? cause = null) => new CommandResult(false, message ?? throw new ArgumentNullException(nameof(message)), cause);
         public static CommandResult UnknownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 
         /// <summary>The result of the operation</summary>
         public bool Success => Result.Success;
-        /// <summary>The reason for failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
-        public string Reason => Result.Reason;
+        /// <summary>Optional message; should be non-null on failure but may contain a value on success</summary>
+        public string Message => Result.Message;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => Result.Cause;
         public bool ToBoolean() => Success;
@@ -43,6 +44,7 @@ namespace SystemEx.Util.Results
         public static implicit operator bool(CommandResult result) => result.ToBoolean();
 
         private ResultCore Result { get; }
+        private static readonly CommandResult _ok = new CommandResult(true, string.Empty, null);
 
         #region ValueType
 

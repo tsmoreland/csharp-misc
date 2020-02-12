@@ -16,18 +16,18 @@ using System.Diagnostics;
 
 namespace SystemEx.Util.Internal
 {
-    [DebuggerDisplay("{Value} {Success} {Reason}")]
+    [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
     public struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>
     {
-        public ValueResultCore(TValue value, bool success, string reason, Exception? cause)
+        public ValueResultCore(TValue value, bool success, string message, Exception? cause)
         {
             Value = value;
-            Result = new ResultCore(success, reason, cause);
+            Result = new ResultCore(success, message, cause);
         }
 
         public TValue Value { get; }
         public bool Success => Result.Success;
-        public string Reason => Result.Reason;
+        public string Message => Result.Message;
         public Exception? Cause => Result.Cause;
         public static bool operator==(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator!=(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
