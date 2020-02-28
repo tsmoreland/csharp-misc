@@ -29,7 +29,7 @@ namespace SystemEx.Test.Util.Extensions
             var maybe = uids.MaybeFirst();
 
             // Assert
-            Assert.True(maybe.IsPresent);
+            Assert.True(maybe.HasValue);
         }
         [Fact]
         public void MaybeWithCorrectValueWhenEnumerableNotEmpty()
@@ -54,7 +54,7 @@ namespace SystemEx.Test.Util.Extensions
             var maybe = uids.MaybeFirst();
 
             // Assert
-            Assert.False(maybe.IsPresent);
+            Assert.False(maybe.HasValue);
         }
     }
 }

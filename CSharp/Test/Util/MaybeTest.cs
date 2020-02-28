@@ -27,33 +27,33 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Of<Guid>(Guid.NewGuid());
 
             // Act
-            bool isPresent = maybe.IsPresent;
+            bool isPresent = maybe.HasValue;
 
             // Assert
             Assert.True(isPresent);
         }
 
         [Fact]
-        public void IsPresentTrueFilterPredicateInvoked()
+        public void IsPresentTrueWherePredicateInvoked()
         {
             // Arrange
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
-            var _ = TryApplyFilter(maybe, true); 
+            var _ = TryApplyWhere(maybe, true); 
         }
 
         [Fact]
-        public void IsPresentTrueFilterApplied()
+        public void IsPresentTrueWhereApplied()
         {
             // Arrange
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
 
             // Act
-            var result = TryApplyFilter(maybe, true);
+            var result = TryApplyWhere(maybe, true);
 
             // Assert
-            Assert.True(result.IsPresent);
+            Assert.True(result.HasValue);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act / Assert
-            _ = TryApplyFlatMap(maybe, mappedValue);
+            _ = TryApplyValueOrEmpty(maybe, mappedValue);
         }
 
         [Fact]
@@ -77,10 +77,10 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            var result = TryApplyValueOrEmpty(maybe, mappedValue);
 
             // Assert
-            Assert.True(result.IsPresent);
+            Assert.True(result.HasValue);
         }
         [Fact]
         public void IsPresentTrueFlatMapAppliedResultValueMatchesExcpected()
@@ -91,7 +91,7 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            var result = TryApplyValueOrEmpty(maybe, mappedValue);
 
             // Assert
             Assert.Equal(mappedValue, result.Value);
@@ -162,7 +162,7 @@ namespace SystemEx.Test.Util
             var (result, _) = OrElseThrow(maybe, ex);
 
             // Assert
-            Assert.True(result.IsPresent);
+            Assert.True(result.HasValue);
         }
         [Fact]
         public void IsPresentTrueOrElseThrowDoesValueMatches()
@@ -176,7 +176,7 @@ namespace SystemEx.Test.Util
             var (result, _) = OrElseThrow(maybe, ex);
 
             // Assert
-            Assert.True(result.IsPresent);
+            Assert.True(result.HasValue);
             Assert.Equal(value, result.Value);
         }
         [Fact]
@@ -187,7 +187,7 @@ namespace SystemEx.Test.Util
 
             // Act / Assert
             IsPresentImplicitBoolEqualsIsPresent(maybe);
-            Assert.True(maybe.IsPresent);
+            Assert.True(maybe.HasValue);
         }
 
         [Fact]
@@ -307,7 +307,7 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            bool isPresent = maybe.IsPresent;
+            bool isPresent = maybe.HasValue;
 
             // Assert
             Assert.False(isPresent);
@@ -320,10 +320,10 @@ namespace SystemEx.Test.Util
             Maybe<Guid> maybe = Maybe.Empty<Guid>();
 
             // Act
-            var result = TryApplyFilter(maybe, false);
+            var result = TryApplyWhere(maybe, false);
 
             // Assert
-            Assert.False(result.IsPresent);
+            Assert.False(result.HasValue);
         }
 
         [Fact]
@@ -335,10 +335,10 @@ namespace SystemEx.Test.Util
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            var result = TryApplyValueOrEmpty(maybe, mappedValue);
 
             // Assert
-            Assert.False(result.IsPresent);
+            Assert.False(result.HasValue);
         }
 
         [Fact]
@@ -388,7 +388,7 @@ namespace SystemEx.Test.Util
 
             // Act / Assert
             var (result, _) = OrElseThrow(maybe, ex);
-            Assert.False(result.IsPresent);
+            Assert.False(result.HasValue);
         }
         [Fact]
         public void IsPresentFalseOrElseThrowExceptionThrownProvidedBySupplier()
@@ -434,20 +434,20 @@ namespace SystemEx.Test.Util
             // Act
             bool @implicit = maybe;
             bool @explicit = maybe.ToBoolean();
-            bool isPresent = maybe.IsPresent;
+            bool isPresent = maybe.HasValue;
 
             // Assert
             Assert.Equal(@implicit, isPresent);
             Assert.Equal(@explicit, isPresent);
         }
-        private Maybe<T> TryApplyFilter<T>(Maybe<T> maybe, bool @return)
+        private Maybe<T> TryApplyWhere<T>(Maybe<T> maybe, bool @return)
         {
             // Arrange
             Mock<Predicate<T>> predicate = new Mock<Predicate<T>>();
             predicate.Setup(p => p.Invoke(It.IsAny<T>())).Returns(@return);
 
             // Act
-            Maybe<T> maybeResult = maybe.Filter(predicate.Object);
+            Maybe<T> maybeResult = maybe.Where(predicate.Object);
 
             // Assert 
             if (@return)
@@ -456,7 +456,7 @@ namespace SystemEx.Test.Util
                 predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Never);
             return maybeResult;
         }
-        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
+        private Maybe<U> TryApplyValueOrEmpty<T, U>(Maybe<T> maybe, U mappedValue)
         {
             // Arrange
             var flatMap = new Mock<Func<T, U>>();
@@ -465,8 +465,8 @@ namespace SystemEx.Test.Util
                 .Returns(mappedValue);
 
             // Act
-            var mapped = maybe.FlatMap(flatMap.Object);
-            if (maybe.IsPresent)
+            var mapped = maybe.ValueOrEmpty(flatMap.Object);
+            if (maybe.HasValue)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
             else
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
@@ -484,7 +484,7 @@ namespace SystemEx.Test.Util
             T result = maybe.OrElseGet(other.Object);
 
             // Assert
-            if (!maybe.IsPresent)
+            if (!maybe.HasValue)
                 other.Verify(o => o.Invoke(), Times.Once);
             else
                 other.Verify(o => o.Invoke(), Times.Never);
@@ -503,7 +503,7 @@ namespace SystemEx.Test.Util
             Exception? thrown = null;
 
             // Act
-            if (!maybe.IsPresent)
+            if (!maybe.HasValue)
             {
                 thrown = Assert.Throws<TException>(() => maybe.OrElseThrow(supplier.Object));
                 supplier.Verify(s => s.Invoke(), Times.Once);
