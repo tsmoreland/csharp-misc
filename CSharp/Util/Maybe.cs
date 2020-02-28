@@ -33,25 +33,25 @@ namespace SystemEx.Util
     {
         #region Public
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
-        /// <exception cref="InvalidOperationException">when <see cref="IsPresent"/> is false</exception>
-        public TValue Value => IsPresent ? _value : throw new InvalidOperationException(Resources.NoSuchValue);
-        public bool IsPresent { get; }
+        /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
+        public TValue Value => HasValue ? _value : throw new InvalidOperationException(Resources.NoSuchValue);
+        public bool HasValue { get; }
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
-        public Maybe<TValue> Filter(Predicate<TValue> predicate) =>
-            IsPresent && predicate?.Invoke(Value) == true ? this : Maybe.Empty<TValue>();
+        public Maybe<TValue> Where(Predicate<TValue> predicate) =>
+            HasValue && predicate?.Invoke(Value) == true ? this : Maybe.Empty<TValue>();
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public Maybe<TMappedValue> ValueOrEmpty<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
-            if (!IsPresent)
+            if (!HasValue)
                 return Maybe.Empty<TMappedValue>();
             return Maybe.Of(mapper.Invoke(Value));
         }
 
-        public TValue OrElse(TValue other) => IsPresent ? Value : other;
+        public TValue OrElse(TValue other) => HasValue ? Value : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
@@ -59,22 +59,22 @@ namespace SystemEx.Util
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
-            return IsPresent ? _value : other.Invoke();
+            return HasValue ? _value : other.Invoke();
         }
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="IsPresent"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         public TValue OrElseThrow(Func<Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
-            if (IsPresent)
+            if (HasValue)
                 return _value;
             throw exceptionSupplier.Invoke();
         }
 
-        public bool ToBoolean() => IsPresent;
+        public bool ToBoolean() => HasValue;
 
         public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
         public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
@@ -82,7 +82,7 @@ namespace SystemEx.Util
 
         /// <summary>Returns the Value</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
-        /// <exception cref="InvalidOperationException">if <see cref="IsPresent"/> is <c>false</c></exception>
+        /// <exception cref="InvalidOperationException">if <see cref="HasValue"/> is <c>false</c></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
             ? maybe.Value 
@@ -92,13 +92,13 @@ namespace SystemEx.Util
         #region Internal
         internal Maybe()
         {
-            IsPresent = false;
+            HasValue = false;
             _value = default!;
         }
         internal Maybe(TValue value)
         {
             _value = value;
-            IsPresent = true;
+            HasValue = true;
         }
         #endregion
         #region Private
@@ -110,7 +110,7 @@ namespace SystemEx.Util
         public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
         public override string ToString() =>
-            IsPresent ? _value?.ToString() ?? Resources.NullValue : Resources.NoSuchValue;
+            HasValue ? _value?.ToString() ?? Resources.NullValue : Resources.NoSuchValue;
         #endregion
         #region IEquatable{Maybe{TValue}}
         public bool Equals(Maybe<TValue>? other) =>
