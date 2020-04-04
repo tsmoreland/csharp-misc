@@ -13,10 +13,10 @@
 
 using System;
 using Xunit;
-using SystemEx.Util.Results;
+using System.Util.Results;
 using System.Security.Cryptography;
 
-namespace SystemEx.Test.Util.Results
+namespace System.Test.Util.Results
 {
     public class QueryResultTest
     {

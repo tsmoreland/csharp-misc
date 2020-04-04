@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics;
 #endif
 
-namespace SystemEx.Util.Internal
+namespace System.Util.Internal
 {
 #if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
     [DebuggerDisplay("{_piewiseCode}")]

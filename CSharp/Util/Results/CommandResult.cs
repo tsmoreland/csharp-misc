@@ -11,11 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using SystemEx.Util.Internal;
+using System.Util.Internal;
 using System;
 using System.Diagnostics;
 
-namespace SystemEx.Util.Results
+namespace System.Util.Results
 {
     /// <summary>Wrapper around the result of a command provided boolean result with additional message or cause on failure</summary>
     [DebuggerDisplay("{GetType().Name,nq}: {Success} {Message,nq}")]

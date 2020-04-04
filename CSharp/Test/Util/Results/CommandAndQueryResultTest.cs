@@ -11,12 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using SystemEx.Util.Results;
+using System.Util.Results;
 using System;
 using Xunit;
 using System.Security.Cryptography;
 
-namespace SystemEx.Test.Util.Results
+namespace System.Test.Util.Results
 {
     public class CommandAndQueryResultTest
     {

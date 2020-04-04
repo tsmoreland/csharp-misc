@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics;
 
-namespace SystemEx.Util.Internal
+namespace System.Util.Internal
 {
     [DebuggerDisplay("{Success} {Message,nq}")]
     internal struct ResultCore : IEquatable<ResultCore>

@@ -11,12 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using SystemEx.Util.Internal;
-using System;
+using System.Util.Internal;
 using System.Diagnostics;
-using Resources = SystemEx.Util.Properties.Resources; 
+using ProjectResources = System.Util.Properties.Resources; 
 
-namespace SystemEx.Util.Results
+namespace System.Util.Results
 {
     /// <summary>
     /// The result of executing a Command which also returns a result (other than simple success/failure)
@@ -41,7 +40,7 @@ namespace SystemEx.Util.Results
 
         /// <summary>Resulting Value of the Query</summary>
         /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(Resources.InvalidQueryResultValueAccess);
+        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(ProjectResources.InvalidQueryResultValueAccess);
         /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
         /// <summary>Optional message; should be non-empty of failure but may have a value on success</summary>
