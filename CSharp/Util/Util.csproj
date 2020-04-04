@@ -9,8 +9,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile></PackageLicenseFile>
     <PackageId>System.Util</PackageId>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <Version>1.0.3</Version>
     <Authors>Terry Moreland</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Company />
