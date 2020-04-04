@@ -12,9 +12,9 @@
 // 
 
 using System;
-using Resources = SystemEx.Util.Properties.Resources;
+using ProjectResources = System.Util.Properties.Resources;
 
-namespace SystemEx.Util
+namespace System.Util
 {
     public static class Maybe
     {
@@ -34,7 +34,7 @@ namespace SystemEx.Util
         #region Public
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
-        public TValue Value => HasValue ? _value : throw new InvalidOperationException(Resources.NoSuchValue);
+        public TValue Value => HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
         public bool HasValue { get; }
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
@@ -110,7 +110,7 @@ namespace SystemEx.Util
         public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
         public override string ToString() =>
-            HasValue ? _value?.ToString() ?? Resources.NullValue : Resources.NoSuchValue;
+            HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
         #endregion
         #region IEquatable{Maybe{TValue}}
         public bool Equals(Maybe<TValue>? other) =>

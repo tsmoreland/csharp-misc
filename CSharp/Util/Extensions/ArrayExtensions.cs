@@ -13,7 +13,7 @@
 
 using System;
 
-namespace SystemEx.Util.Extensions
+namespace System.Util.Extensions
 {
     public static class ArrayExtensions
     {

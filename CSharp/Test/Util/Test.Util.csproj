@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>SystemEx.Test.Util</RootNamespace>
-    <AssemblyName>SystemEx.Test.Util</AssemblyName>
+    <RootNamespace>System.Test.Util</RootNamespace>
+    <AssemblyName>System.Test.Util</AssemblyName>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>

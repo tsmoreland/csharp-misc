@@ -12,8 +12,8 @@
 // 
 
 using System.Collections.Generic;
-using SystemEx.Util;
-using SystemEx.Util.Extensions;
+using System.Util;
+using System.Util.Extensions;
 
 namespace System.Linq
 {

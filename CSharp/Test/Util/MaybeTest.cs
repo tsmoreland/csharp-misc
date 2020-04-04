@@ -12,11 +12,11 @@
 // 
 
 using Moq;
-using SystemEx.Util;
+using System.Util;
 using System;
 using Xunit;
 
-namespace SystemEx.Test.Util
+namespace System.Test.Util
 {
     public class MaybeTest
     {
