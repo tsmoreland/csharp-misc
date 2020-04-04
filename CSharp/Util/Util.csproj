@@ -9,8 +9,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>System.Util</PackageId>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <Version>1.0.2</Version>
     <Authors>Terry Moreland</Authors>
     <Company />
     <Product>CSharp Extension Library Utilities</Product>
