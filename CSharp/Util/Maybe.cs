@@ -98,7 +98,7 @@ namespace System.Util
         internal Maybe(TValue value)
         {
             _value = value;
-            HasValue = true;
+            HasValue = value != null;
         }
         #endregion
         #region Private
