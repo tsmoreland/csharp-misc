@@ -65,46 +65,6 @@ namespace System.Util.Extensions
         }
 
         /// <summary>
-        /// returns <paramref name="value"/> if non-null or throws exception of type <typeparamref name="TException"/>
-        /// using provided arguments
-        /// </summary>
-        /// <typeparam name="TValue">nullable type of value</typeparam>
-        /// <typeparam name="TException">type of exception to throw if <paramref name="value"/> is null</typeparam>
-        /// <param name="value">value to return if non-null</param>
-        /// <param name="exceptionArguments">passed to constructor of <typeparamref name="TException"/></param>
-        /// <returns>value if non-null</returns>
-        /// <exception><typeparamref name="TException"/> if <paramref name="value"/> is null</exception>
-        public static TValue OrElseThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
-            where TValue : class
-            where TException : Exception
-        {
-            if (value != null)
-                return value;
-
-            return ThrowException<TValue, TException>(exceptionArguments);
-        }
-
-        /// <summary>
-        /// returns <paramref name="value"/> if non-null or throws exception of type <typeparamref name="TException"/>
-        /// using provided arguments
-        /// </summary>
-        /// <typeparam name="TValue">nullable type of value</typeparam>
-        /// <typeparam name="TException">type of exception to throw if <paramref name="value"/> is null</typeparam>
-        /// <param name="value">value to return if non-null</param>
-        /// <param name="exceptionArguments">passed to constructor of <typeparamref name="TException"/></param>
-        /// <returns>value if non-null</returns>
-        /// <exception><typeparamref name="TException"/> if <paramref name="value"/> is null</exception>
-        public static TValue OrElseThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
-            where TValue : struct
-            where TException : Exception
-        {
-            if (value != null)
-                return (TValue)value;
-
-            return ThrowException<TValue, TException>(exceptionArguments);
-        }
-
-        /// <summary>
         /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
         /// </summary>
         public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
@@ -122,13 +82,6 @@ namespace System.Util.Extensions
             if (value != null)
                 return (TValue)value;
             throw exceptionSuppliier?.Invoke() ?? throw new ArgumentNullException(nameof(exceptionSuppliier));
-        }
-
-        private static TValue ThrowException<TValue, TException>(params object[] arguments)
-            where TException : Exception
-        {
-            var exception = (Exception?)Activator.CreateInstance(typeof(TException), arguments);
-            throw exception.OrElse<Exception>(new NullReferenceException());
         }
     }
 }
