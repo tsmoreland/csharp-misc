@@ -19,32 +19,87 @@ namespace System.Test.Util.Extensions
     public sealed class NullableTests
     {
         [Fact]
-        public void ValueOrReturnsOrWhenValueIsNull()
+        public void ClassHasValueIsTrueWhenNonNull()
+        {
+            object value = new object();
+            Assert.True(value.HasValue());
+        }
+
+        [Fact]
+        public void ClassHasValueIsFalseWhenNull()
+        {
+            object value = null!;
+            Assert.False(value.HasValue());
+        }
+
+        [Fact]
+        public void ClassValueOrReturnsOrWhenValueIsNull()
         {
             // Arrange
             object value = null!;
             object or = new object();
 
             // Act
-            var result = value.ValueOr(or);
+            var result = value.OrElse(or);
 
             // Assert
             Assert.Same(or, result);
         }
 
         [Fact]
-        public void ValueOrReturnsValueWhenNonNull()
+        public void ClassValueOrReturnsValueWhenNonNull()
         {
             // Arrange
             object value = new object();
             object or = new object();
 
             // Act
-            var result = value.ValueOr(or);
+            var result = value.OrElse(or);
 
             // Assert
             Assert.Same(value, result);
         }
 
+        [Fact]
+        public void ValueTypeHasValueIsTrueWhenNonNull()
+        {
+            Guid? value = Guid.NewGuid();
+            Assert.True(value.HasValue());
+        }
+
+        [Fact]
+        public void ValueTypeHasValueIsFalseWhenNull()
+        {
+            Guid? value = null;
+            Assert.False(value.HasValue());
+        }
+
+        [Fact]
+        public void ValueTypeValueOrReturnsOrWhenValueIsNull()
+        {
+            // Arrange
+            Guid? value = null;
+            Guid or = Guid.NewGuid();
+
+            // Act
+            var result = value.OrElse(or);
+
+            // Assert
+            Assert.Equal(or, result);
+        }
+
+        [Fact]
+        public void ValueTypeValueOrReturnsValueWhenNonNull()
+        {
+            // Arrange
+            Guid? value = Guid.NewGuid();
+            Guid or = Guid.NewGuid();
+
+            // Act
+            var result = value.OrElse(or);
+
+            // Assert
+            Assert.Equal(value, result);
+        }
     }
 }

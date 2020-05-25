@@ -17,13 +17,19 @@ namespace System.Util.Extensions
 {
     public static class NullableExtensions
     {
+        /// <summary>Returns true if <paramref name="value"/> is non-null</summary>
+        public static bool HasValue<TValue>(this TValue? value) where TValue : class => value != null;
+
+        /// <summary>Returns true if <paramref name="value"/> is non-null</summary>
+        public static bool HasValue<TValue>(this TValue? value) where TValue : struct => value != null;
+
         /// <summary>simple wrapper around null coallese operator for improved readability</summary>
         /// <typeparam name="TValue">nullable class type</typeparam>
         /// <param name="value">value to return if non-null</param>
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue ValueOr<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
+        public static TValue OrElse<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
 
         /// <summary>simple wrapper around null coallese operator for improved readability</summary>
         /// <typeparam name="TValue">nullable value type</typeparam>
@@ -31,7 +37,32 @@ namespace System.Util.Extensions
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue ValueOr<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
+        public static TValue OrElse<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
+
+        /// <summary>
+        /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
+        /// </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
+        public static TValue OrElseGet<TValue>(this TValue? value, Func<TValue> supplier) where TValue : class
+        {
+            if (value != null)
+                return value;
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return supplier.Invoke();
+        }
+        /// <summary>
+        /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
+        /// </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
+        public static TValue OrElseGet<TValue>(this TValue? value, Func<TValue> supplier) where TValue : struct
+        {
+            if (value != null)
+                return (TValue)value;
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return supplier.Invoke();
+        }
 
         /// <summary>
         /// returns <paramref name="value"/> if non-null or throws exception of type <typeparamref name="TException"/>
@@ -43,7 +74,7 @@ namespace System.Util.Extensions
         /// <param name="exceptionArguments">passed to constructor of <typeparamref name="TException"/></param>
         /// <returns>value if non-null</returns>
         /// <exception><typeparamref name="TException"/> if <paramref name="value"/> is null</exception>
-        public static TValue ValueOrThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
+        public static TValue OrElseThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
             where TValue : class
             where TException : Exception
         {
@@ -63,7 +94,7 @@ namespace System.Util.Extensions
         /// <param name="exceptionArguments">passed to constructor of <typeparamref name="TException"/></param>
         /// <returns>value if non-null</returns>
         /// <exception><typeparamref name="TException"/> if <paramref name="value"/> is null</exception>
-        public static TValue ValueOrThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
+        public static TValue OrElseThrow<TValue, TException>(this TValue? value, params object[] exceptionArguments) 
             where TValue : struct
             where TException : Exception
         {
@@ -73,11 +104,31 @@ namespace System.Util.Extensions
             return ThrowException<TValue, TException>(exceptionArguments);
         }
 
+        /// <summary>
+        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
+        /// </summary>
+        public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
+        {
+            if (value != null)
+                return value;
+            throw exceptionSuppliier?.Invoke() ?? throw new ArgumentNullException(nameof(exceptionSuppliier));
+        }
+
+        /// <summary>
+        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
+        /// </summary>
+        public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : struct
+        {
+            if (value != null)
+                return (TValue)value;
+            throw exceptionSuppliier?.Invoke() ?? throw new ArgumentNullException(nameof(exceptionSuppliier));
+        }
+
         private static TValue ThrowException<TValue, TException>(params object[] arguments)
             where TException : Exception
         {
             var exception = (Exception?)Activator.CreateInstance(typeof(TException), arguments);
-            throw exception.ValueOr<Exception>(new NullReferenceException());
+            throw exception.OrElse<Exception>(new NullReferenceException());
         }
     }
 }
