@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Security.Cryptography;
 using System.Util.Results;
 using Xunit;
 
@@ -119,6 +120,191 @@ namespace System.Test.Util.Results
         {
             // Arrange
             CommandResult result = CommandResult.Failed(Guid.NewGuid().ToString());
+
+            // Act
+            bool @implicit = result;
+            bool @explicit = result.ToBoolean();
+            bool success = result.Success;
+
+            // Assert
+            Assert.Equal(success, @implicit);
+            Assert.Equal(@explicit, @implicit);
+            Assert.False(success);
+        }
+
+        [Fact]
+        public void SuccessfulCommandAndQueryResultReportsSuccess()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+
+            // Act
+            var uid = CommandResult.Ok(value);
+
+            // Assert
+            Assert.True(uid.Success);
+        }
+
+        [Fact]
+        public void SucessfulQueryContainsCorrectValueForValueType()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+
+            // Act
+            var uid = CommandResult.Ok(value);
+
+            // Assert
+            Assert.Equal(value, uid.Value); 
+        }
+
+        [Fact]
+        public void SucessfulQueryContainsCorrectValueForReferenceType()
+        {
+            // Arrange
+            string value = Guid.NewGuid().ToString();
+
+            // Act
+            var @string = CommandResult.Ok<string>(value);
+
+            // Assert
+            Assert.Equal(value, @string.Value); 
+        }
+        
+        [Fact]
+        public void SuccessfulCommandAndQueryResultHasEmptyMessageIfNoneProvided()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+
+            // Act
+            CommandResult<Guid> uid = CommandResult.Ok(value);
+
+            // Assert
+            Assert.Empty(uid.Message);
+        }
+
+        [Fact]
+        public void SuccessfulCommandAndQueryResultHasNullCause()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+
+            // Act
+            CommandResult<Guid> uid = CommandResult.Ok(value);
+
+            // Assert
+            Assert.Null(uid.Cause);
+        }
+
+        [Fact]
+        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsWithValueType()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            CommandResult<Guid> leftHandSide = CommandResult.Ok(value);
+            CommandResult<Guid> rightHandSide = CommandResult.Ok(value);
+
+            // Act
+            bool equals = leftHandSide.Equals(rightHandSide);
+
+            // Assert
+            Assert.True(equals);
+        }
+
+        [Fact]
+        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsWithSameReference()
+        {
+            // Arrange
+            var generator = RNGCryptoServiceProvider.Create();
+            byte[] data = new byte[sizeof(int)];
+            generator.GetBytes(data);
+            int randomNumber = BitConverter.ToInt32(data);
+
+            CommandResult<EquatableReferenceType> leftHandSide = CommandResult.Ok(new EquatableReferenceType(randomNumber));
+            CommandResult<EquatableReferenceType> rightHandSide = CommandResult.Ok(new EquatableReferenceType(randomNumber));
+
+            // Act
+            bool equals = leftHandSide.Equals(rightHandSide);
+
+            // Assert
+            Assert.True(equals);
+        }
+        [Fact]
+        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsForEquatableReferenceType()
+        {
+            // Arrange
+            Exception value = new Exception("ERROR");
+            CommandResult<Exception> leftHandSide = CommandResult.Ok(value);
+            CommandResult<Exception> rightHandSide = CommandResult.Ok(value);
+
+            // Act
+            bool equals = leftHandSide.Equals(rightHandSide);
+
+            // Assert
+            Assert.True(equals);
+        }
+
+        [Fact]
+        public void SuccessfulCommandAndQueryResultImplicitBoolEqualsSuccessFailureState()
+        {
+            // Arrange
+            CommandResult<Guid> result = CommandResult.Ok<Guid>(Guid.NewGuid());
+
+            // Act
+            bool @implicit = result;
+            bool @explicit = result.ToBoolean();
+            bool success = result.Success;
+
+            // Assert
+            Assert.Equal(success, @implicit);
+            Assert.Equal(@explicit, @implicit);
+            Assert.True(success);
+        }
+
+        [Fact]
+        public void FailureCommandAndQueryResultByDefault()
+        {
+            // Arrange
+            CommandResult<Guid> result;
+
+            // Act
+            result = new CommandResult<Guid>();
+
+            // Assert
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void FailedCommandAndQueryResultThrowsOnValueAccess()
+        {
+            // Arrange
+            var failed = CommandResult.Failed<Guid>(Guid.NewGuid().ToString());
+
+            // Act / Assert
+            Assert.Throws<InvalidOperationException>(() => _ = failed.Value);
+        }
+
+        [Fact]
+        public void FailureQueryStoresExceptionCause()
+        {
+            // Arrange
+            var exception = new Exception(Guid.NewGuid().ToString(), new Exception($"Inner {Guid.NewGuid()}"));
+            var message = Guid.NewGuid().ToString();
+
+            // Act
+            var result = CommandResult.Failed<Guid>(message, exception);
+
+            // Assert
+            Assert.Equal(exception, result.Cause);
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public void FailureCommandAndQueryResultImplicitBoolEqualsSuccessFailureState()
+        {
+            // Arrange
+            CommandResult<Guid> result = CommandResult.Failed<Guid>(Guid.NewGuid().ToString());
 
             // Act
             bool @implicit = result;

@@ -52,6 +52,27 @@ namespace System.Util.Results
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
+        /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
+        public void Deconstruct(out bool success, out TValue value)
+        {
+            success = Success;
+            value = Value;
+        }
+        /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
+        public void Deconstruct(out bool success, out TValue value, out string message)
+        {
+            success = Success;
+            value = Value;
+            message = Message;
+        }
+        /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
+        public void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause)
+        {
+            success = Success;
+            value = Value;
+            message = Message;
+            cause = Cause;
+        }
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region ValueType
