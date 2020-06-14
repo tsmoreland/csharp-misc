@@ -38,11 +38,12 @@ namespace System.Util
         public bool HasValue { get; }
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
-        public Maybe<TValue> Where(Predicate<TValue> predicate) =>
-            HasValue && predicate?.Invoke(Value) == true ? this : Maybe.Empty<TValue>();
+        public Maybe<TValue> Where(Predicate<TValue> predicate) => HasValue && predicate?.Invoke(Value) == true 
+            ? this 
+            : Maybe.Empty<TValue>();
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> ValueOrEmpty<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
@@ -51,7 +52,11 @@ namespace System.Util
             return Maybe.Of(mapper.Invoke(Value));
         }
 
-        public TValue OrElse(TValue other) => HasValue ? Value : other;
+        /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
+        /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
+        public TValue OrElseOther(TValue other) => HasValue 
+            ? Value 
+            : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
@@ -76,14 +81,16 @@ namespace System.Util
 
         public bool ToBoolean() => HasValue;
 
-        public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => leftHandSide?.Equals(rightHandSide) == true;
-        public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
+            leftHandSide?.Equals(rightHandSide) == true;
+        public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
+            !(leftHandSide == rightHandSide);
         public static implicit operator bool(Maybe<TValue> maybe) => maybe?.ToBoolean() == true;
 
         /// <summary>Returns the Value</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
         /// <exception cref="InvalidOperationException">if <see cref="HasValue"/> is <c>false</c></exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
             ? maybe.Value 
             : throw new ArgumentNullException(nameof(maybe));

@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Results\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Util\Util.csproj" />
   </ItemGroup>
 
