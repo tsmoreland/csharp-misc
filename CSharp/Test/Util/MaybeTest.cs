@@ -465,7 +465,7 @@ namespace System.Test.Util
                 .Returns(mappedValue);
 
             // Act
-            var mapped = maybe.ValueOrEmpty(flatMap.Object);
+            var mapped = maybe.FlatMap(flatMap.Object);
             if (maybe.HasValue)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
             else

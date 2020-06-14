@@ -73,6 +73,40 @@ namespace System.Util.Results
             message = Message;
             cause = Cause;
         }
+
+        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!Success)
+                return QueryResult.Failed<TMappedValue>(Message, Cause);
+            return QueryResult.Ok(mapper.Invoke(Value));
+        }
+
+        public TValue OrElse(TValue other) => Success ? Value : other;
+
+        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
+        public TValue OrElseGet(Func<TValue> other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+            return Success ? Value : other.Invoke();
+        }
+	
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        public TValue OrElseThrow(Func<Exception> exceptionSupplier)
+        {
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            if (Success)
+                return Value;
+            throw exceptionSupplier.Invoke();
+        }
+
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region ValueType

@@ -42,7 +42,7 @@ namespace System.Util
             HasValue && predicate?.Invoke(Value) == true ? this : Maybe.Empty<TValue>();
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> ValueOrEmpty<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
