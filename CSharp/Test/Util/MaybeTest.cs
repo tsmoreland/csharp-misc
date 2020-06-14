@@ -65,7 +65,7 @@ namespace System.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act / Assert
-            _ = TryApplyValueOrEmpty(maybe, mappedValue);
+            _ = TryApplyFlatMap(maybe, mappedValue);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace System.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act
-            var result = TryApplyValueOrEmpty(maybe, mappedValue);
+            var result = TryApplyFlatMap(maybe, mappedValue);
 
             // Assert
             Assert.True(result.HasValue);
@@ -91,7 +91,7 @@ namespace System.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act
-            var result = TryApplyValueOrEmpty(maybe, mappedValue);
+            var result = TryApplyFlatMap(maybe, mappedValue);
 
             // Assert
             Assert.Equal(mappedValue, result.Value);
@@ -105,7 +105,7 @@ namespace System.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act
-            Guid result = maybe.OrElse(@else);
+            Guid result = maybe.OrElseOther(@else);
 
             // Assert
             Assert.NotEqual(value, @else); // sanity check
@@ -335,7 +335,7 @@ namespace System.Test.Util
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            var result = TryApplyValueOrEmpty(maybe, mappedValue);
+            var result = TryApplyFlatMap(maybe, mappedValue);
 
             // Assert
             Assert.False(result.HasValue);
@@ -349,7 +349,7 @@ namespace System.Test.Util
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            Guid result = maybe.OrElse(@else);
+            Guid result = maybe.OrElseOther(@else);
 
             // Assert
             Assert.Equal(@else, result);
@@ -456,7 +456,7 @@ namespace System.Test.Util
                 predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Never);
             return maybeResult;
         }
-        private Maybe<U> TryApplyValueOrEmpty<T, U>(Maybe<T> maybe, U mappedValue)
+        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
         {
             // Arrange
             var flatMap = new Mock<Func<T, U>>();
@@ -465,7 +465,7 @@ namespace System.Test.Util
                 .Returns(mappedValue);
 
             // Act
-            var mapped = maybe.ValueOrEmpty(flatMap.Object);
+            var mapped = maybe.FlatMap(flatMap.Object);
             if (maybe.HasValue)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
             else
