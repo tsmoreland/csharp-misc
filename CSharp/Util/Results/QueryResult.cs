@@ -28,7 +28,7 @@ namespace System.Util.Results
     /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>
     /// <typeparam name="TValue"></typeparam>
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
-    public struct QueryResult<TValue> : IEquatable<QueryResult<TValue>>
+    public struct QueryResult<TValue> : IValueResult<TValue>, IEquatable<QueryResult<TValue>>
     {
         internal QueryResult(TValue value, bool success, string message, Exception? cause = null)
         {
@@ -46,10 +46,10 @@ namespace System.Util.Results
         public Exception? Cause => ValueResult.Cause;
         public bool ToBoolean() => Success;
 
-        public static bool operator==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
-        public static bool operator!=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
         public static implicit operator bool(QueryResult<TValue> result) => result.ToBoolean();
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
@@ -74,7 +74,10 @@ namespace System.Util.Results
             cause = Cause;
         }
 
-        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        /// <summary>
+        /// If result is a success, it applies the provided Result-bearing mapping function to it, 
+        /// returns that result, otherwise returns an empty Maybe. 
+        /// </summary>
         public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
@@ -84,7 +87,9 @@ namespace System.Util.Results
             return QueryResult.Ok(mapper.Invoke(Value));
         }
 
-        public TValue OrElse(TValue other) => Success ? Value : other;
+        /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
+        /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
+        public TValue OrElseOther(TValue other) => Success ? Value : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
@@ -94,7 +99,7 @@ namespace System.Util.Results
                 throw new ArgumentNullException(nameof(other));
             return Success ? Value : other.Invoke();
         }
-	
+
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>

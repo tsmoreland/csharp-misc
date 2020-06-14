@@ -77,7 +77,7 @@ namespace System.Util.Results
     }
 
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
-    public struct CommandResult<TValue> : IEquatable<CommandResult<TValue>>
+    public struct CommandResult<TValue> : IValueResult<TValue>, IEquatable<CommandResult<TValue>>
     {
         internal CommandResult(TValue value, bool success, string message, Exception? cause)
         {
@@ -134,7 +134,9 @@ namespace System.Util.Results
             return CommandResult.Ok<TMappedValue>(mapper.Invoke(Value));
         }
 
-        public TValue OrElse(TValue other) => Success ? Value : other;
+        /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
+        /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
+        public TValue OrElseOther(TValue other) => Success ? Value : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
@@ -168,6 +170,7 @@ namespace System.Util.Results
         #region IEquatable{QueryResult{TValue}}
         public bool Equals(CommandResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
+
         #endregion
     }
 }

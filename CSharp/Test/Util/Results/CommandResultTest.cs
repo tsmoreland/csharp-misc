@@ -133,7 +133,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandAndQueryResultReportsSuccess()
+        public void SuccessfulCommandResultOfTReportsSuccess()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -172,7 +172,7 @@ namespace System.Test.Util.Results
         }
         
         [Fact]
-        public void SuccessfulCommandAndQueryResultHasEmptyMessageIfNoneProvided()
+        public void SuccessfulCommandResultOfTHasEmptyMessageIfNoneProvided()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -185,7 +185,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandAndQueryResultHasNullCause()
+        public void SuccessfulCommandResultOfTHasNullCause()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -198,7 +198,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsWithValueType()
+        public void SuccessfulCommandResultOfTEqualsReturnsTrueForEqualResultsWithValueType()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -213,7 +213,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsWithSameReference()
+        public void SuccessfulCommandResultOfTEqualsReturnsTrueForEqualResultsWithSameReference()
         {
             // Arrange
             var generator = RNGCryptoServiceProvider.Create();
@@ -231,7 +231,7 @@ namespace System.Test.Util.Results
             Assert.True(equals);
         }
         [Fact]
-        public void SuccessfulCommandAndQueryResultEqualsReturnsTrueForEqualResultsForEquatableReferenceType()
+        public void SuccessfulCommandResultOfTEqualsReturnsTrueForEqualResultsForEquatableReferenceType()
         {
             // Arrange
             Exception value = new Exception("ERROR");
@@ -246,7 +246,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulCommandAndQueryResultImplicitBoolEqualsSuccessFailureState()
+        public void SuccessfulCommandResultOfTImplicitBoolEqualsSuccessFailureState()
         {
             // Arrange
             CommandResult<Guid> result = CommandResult.Ok<Guid>(Guid.NewGuid());
@@ -263,7 +263,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailureCommandAndQueryResultByDefault()
+        public void FailureCommandResultOfTByDefault()
         {
             // Arrange
             CommandResult<Guid> result;
@@ -276,7 +276,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailedCommandAndQueryResultThrowsOnValueAccess()
+        public void FailedCommandResultOfTThrowsOnValueAccess()
         {
             // Arrange
             var failed = CommandResult.Failed<Guid>(Guid.NewGuid().ToString());
@@ -301,7 +301,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailureCommandAndQueryResultImplicitBoolEqualsSuccessFailureState()
+        public void FailureCommandResultOfTImplicitBoolEqualsSuccessFailureState()
         {
             // Arrange
             CommandResult<Guid> result = CommandResult.Failed<Guid>(Guid.NewGuid().ToString());
@@ -316,5 +316,57 @@ namespace System.Test.Util.Results
             Assert.Equal(@explicit, @implicit);
             Assert.False(success);
         }
+
+        [Fact]
+        public void SucessfulResult_FlatMapInvoked() => 
+            TestContext.SucessfulResult_FlatMapInvoked(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_FlatMapAppliedResultSuccess() =>
+            TestContext.SucessfulResult_FlatMapAppliedResultSuccess(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseNotUsed() =>
+            TestContext.SucessfulResult_OrElseNotUsed(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseGetOtherNotInvoked() =>
+            TestContext.SucessfulResult_OrElseGetOtherNotInvoked(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseGetNotUsedValueMatches() =>
+            TestContext.SucessfulResult_OrElseGetNotUsedValueMatches(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseThrowDoesNotThrow() =>
+            TestContext.SucessfulResult_OrElseThrowDoesNotThrow(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseThrowDoesValueMatches() =>
+            TestContext.SucessfulResult_OrElseThrowDoesValueMatches(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_FlatMapNotApplied() =>
+            TestContext.FailedResult_FlatMapNotApplied(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseUsed() =>
+            TestContext.FailedResult_OrElseUsed(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseGetUsedOtherInvoked() =>
+            TestContext.FailedResult_OrElseGetUsedOtherInvoked(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseGetUsedValueMatches() =>
+            TestContext.FailedResult_OrElseGetUsedValueMatches(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowThrows() =>
+            TestContext.FailedResult_OrElseThrowThrows(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier() =>
+            TestContext.FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(() => TestContext.BuildCommandContext<Guid>());
     }
 }

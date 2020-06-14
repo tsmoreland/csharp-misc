@@ -11,17 +11,17 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
 using Xunit;
 using System.Util.Results;
 using System.Security.Cryptography;
+using Moq;
 
 namespace System.Test.Util.Results
 {
     public class QueryResultTest
     {
         [Fact]
-        public void SuccessfulQueryResultReportsSuccess()
+        public void SuccessfulResult_ReportsSuccess()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -60,7 +60,7 @@ namespace System.Test.Util.Results
         }
         
         [Fact]
-        public void SuccessfulQueryResultHasEmptyMessageIfNoneProvided()
+        public void SuccessfulResult_HasEmptyMessageIfNoneProvided()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -73,7 +73,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulQueryResultHasNullCause()
+        public void SuccessfulResult_HasNullCause()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -86,7 +86,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulQueryResultEqualsReturnsTrueForEqualResultsWithValueType()
+        public void SuccessfulResult_EqualsReturnsTrueForEqualResultsWithValueType()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -101,7 +101,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulQueryResultEqualsReturnsTrueForEqualResultsWithSameReference()
+        public void SuccessfulResult_EqualsReturnsTrueForEqualResultsWithSameReference()
         {
             // Arrange
             var generator = RNGCryptoServiceProvider.Create();
@@ -119,7 +119,7 @@ namespace System.Test.Util.Results
             Assert.True(equals);
         }
         [Fact]
-        public void SuccessfulQueryResultEqualsReturnsTrueForEqualResultsForEquatableReferenceType()
+        public void SuccessfulResult_EqualsReturnsTrueForEqualResultsForEquatableReferenceType()
         {
             // Arrange
             Exception value = new Exception("ERROR");
@@ -134,7 +134,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void SuccessfulQueryResultImplicitBoolEqualsSuccessFailureState()
+        public void SuccessfulResult_ImplicitBoolEqualsSuccessFailureState()
         {
             // Arrange
             QueryResult<Guid> result = QueryResult.Ok<Guid>(Guid.NewGuid());
@@ -151,7 +151,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailureQueryResultByDefault()
+        public void FailureResult_ByDefault()
         {
             // Arrange
             QueryResult<Guid> result;
@@ -164,7 +164,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailedQueryResultThrowsOnValueAccess()
+        public void FailedResultResultThrowsOnValueAccess()
         {
             // Arrange
             var failed = QueryResult.Failed<Guid>(Guid.NewGuid().ToString());
@@ -174,7 +174,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailureQueryStoresExceptionCause()
+        public void FailureQuery_StoresExceptionCause()
         {
             // Arrange
             var exception = new Exception(Guid.NewGuid().ToString(), new Exception($"Inner {Guid.NewGuid()}"));
@@ -189,7 +189,7 @@ namespace System.Test.Util.Results
         }
 
         [Fact]
-        public void FailureQueryResultImplicitBoolEqualsSuccessFailureState()
+        public void FailureResult_ImplicitBoolEqualsSuccessFailureState()
         {
             // Arrange
             QueryResult<Guid> result = QueryResult.Failed<Guid>(Guid.NewGuid().ToString());
@@ -204,5 +204,57 @@ namespace System.Test.Util.Results
             Assert.Equal(@explicit, @implicit);
             Assert.False(success);
         }
+
+        [Fact]
+        public void SucessfulResult_FlatMapInvoked() => 
+            TestContext.SucessfulResult_FlatMapInvoked(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_FlatMapAppliedResultSuccess() =>
+            TestContext.SucessfulResult_FlatMapAppliedResultSuccess(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseNotUsed() =>
+            TestContext.SucessfulResult_OrElseNotUsed(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseGetOtherNotInvoked() =>
+            TestContext.SucessfulResult_OrElseGetOtherNotInvoked(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseGetNotUsedValueMatches() =>
+            TestContext.SucessfulResult_OrElseGetNotUsedValueMatches(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseThrowDoesNotThrow() =>
+            TestContext.SucessfulResult_OrElseThrowDoesNotThrow(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseThrowDoesValueMatches() =>
+            TestContext.SucessfulResult_OrElseThrowDoesValueMatches(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_FlatMapNotApplied() =>
+            TestContext.FailedResult_FlatMapNotApplied(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseUsed() =>
+            TestContext.FailedResult_OrElseUsed(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseGetUsedOtherInvoked() =>
+            TestContext.FailedResult_OrElseGetUsedOtherInvoked(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseGetUsedValueMatches() =>
+            TestContext.FailedResult_OrElseGetUsedValueMatches(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowThrows() =>
+            TestContext.FailedResult_OrElseThrowThrows(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier() =>
+            TestContext.FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(() => TestContext.BuildQueryContext<Guid>());
     }
 }
