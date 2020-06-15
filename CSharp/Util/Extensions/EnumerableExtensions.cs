@@ -12,8 +12,8 @@
 // 
 
 using System.Collections.Generic;
-using System.Util;
-using System.Util.Extensions;
+using CSharp.Util;
+using CSharp.Util.Extensions;
 
 namespace System.Linq
 {
@@ -38,5 +38,20 @@ namespace System.Linq
         public static IList<TValue> AsOrToList<TValue>(this IEnumerable<TValue> enumerable) => enumerable is IList<TValue> list
             ? list
             : enumerable?.ToList() ?? new List<TValue>();
+
+        /// <summary>
+        /// Performs the specified action on each item of the <see cref="IEnumerable{T}"/>
+        /// </summary>
+        /// <exception cref="ArgumentNullException">if either <paramref name="consumer"/> or <paramref name="items"/> are <c>null</c></exception>
+        public static void Foreach<T>(this IEnumerable<T> items, Action<T> consumer)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+            if (consumer == null)
+                throw new ArgumentNullException(nameof(consumer));
+
+            foreach (var item in items)
+                consumer(item);
+        }
     }
 }

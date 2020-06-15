@@ -11,11 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Util.Internal;
+using CSharp.Util.Internal;
+using System;
 using System.Diagnostics;
-using ProjectResources = System.Util.Properties.Resources;
+using ProjectResources = CSharp.Util.Properties.Resources;
 
-namespace System.Util.Results
+namespace CSharp.Util.Results
 {
     public static class QueryResult
     {
@@ -49,7 +50,7 @@ namespace System.Util.Results
         public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
         public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
         public static implicit operator bool(QueryResult<TValue> result) => result.ToBoolean();
-        [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>

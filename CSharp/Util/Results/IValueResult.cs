@@ -12,7 +12,9 @@
 // 
 
 
-namespace System.Util.Results
+using System;
+
+namespace CSharp.Util.Results
 {
     public interface IValueResult<TValue>
     {

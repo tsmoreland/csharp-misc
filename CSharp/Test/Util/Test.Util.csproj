@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>System.Test.Util</RootNamespace>
-    <AssemblyName>System.Test.Util</AssemblyName>
+    <RootNamespace>CSharp.Test.Util</RootNamespace>
+    <AssemblyName>CSharp.Test.Util</AssemblyName>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>

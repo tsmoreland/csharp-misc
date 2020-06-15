@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace System.Test.Util.Extensions
+namespace CSharp.Test.Util.Extensions
 {
     public sealed class EnumerableTests
     {

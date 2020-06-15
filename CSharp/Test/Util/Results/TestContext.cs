@@ -12,11 +12,12 @@
 // 
 
 using Moq;
-using System.Util;
-using System.Util.Results;
+using System;
+using CSharp.Util;
+using CSharp.Util.Results;
 using Xunit;
 
-namespace System.Test.Util.Results
+namespace CSharp.Test.Util.Results
 {
     public delegate IValueResult<T> SuccessResultFactory<T>(T value);
     public delegate IValueResult<T> FailureResultFactory<T>(string message);

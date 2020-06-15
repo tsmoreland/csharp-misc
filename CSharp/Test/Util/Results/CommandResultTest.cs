@@ -13,10 +13,10 @@
 
 using System;
 using System.Security.Cryptography;
-using System.Util.Results;
+using CSharp.Util.Results;
 using Xunit;
 
-namespace System.Test.Util.Results
+namespace CSharp.Test.Util.Results
 {
     public class CommandResultTest
     {

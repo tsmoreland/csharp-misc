@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics;
 
-namespace System.Util.Internal
+namespace CSharp.Util.Internal
 {
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
     public struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>

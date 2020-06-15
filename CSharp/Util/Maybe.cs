@@ -12,9 +12,9 @@
 // 
 
 using System;
-using ProjectResources = System.Util.Properties.Resources;
+using ProjectResources = CSharp.Util.Properties.Resources;
 
-namespace System.Util
+namespace CSharp.Util
 {
     public static class Maybe
     {
@@ -90,7 +90,7 @@ namespace System.Util
         /// <summary>Returns the Value</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
         /// <exception cref="InvalidOperationException">if <see cref="HasValue"/> is <c>false</c></exception>
-        [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
             ? maybe.Value 
             : throw new ArgumentNullException(nameof(maybe));
@@ -123,7 +123,7 @@ namespace System.Util
         public bool Equals(Maybe<TValue>? other) =>
             object.ReferenceEquals(this, other) || 
             other is Maybe<TValue> nonNullOther &&
-            Value?.Equals(nonNullOther.Value) == true;
+            (HasValue == false && nonNullOther.HasValue == false || Value?.Equals(nonNullOther.Value) == true);
 
         #endregion
     }

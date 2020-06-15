@@ -11,50 +11,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
-using System.Linq;
-using Xunit;
+using System.Collections.Generic;
 
-namespace CSharp.Test.Util.Extensions
+namespace System.Linq
 {
-    public sealed class MaybeFirstTest
+    public static class List
     {
-        [Fact]
-        public void MaybeWithValuePresentWhenEnumerableNotEmpty()
-        {
-            // Arrange
-            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+        public static IList<T> Of<T>(params T[] items) => new List<T>(items);
+        public static IList<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
+        public static IList<T> Empty<T>() => new List<T>();
+    }
 
-            // Act
-            var maybe = uids.MaybeFirst();
-
-            // Assert
-            Assert.True(maybe.HasValue);
-        }
-        [Fact]
-        public void MaybeWithCorrectValueWhenEnumerableNotEmpty()
-        {
-            // Arrange
-            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
-
-            // Act
-            var maybe = uids.MaybeFirst();
-
-            // Assert
-            Assert.Equal(uids[0], maybe.Value);
-        }
-
-        [Fact]
-        public void MaybeEmptyWhenEnumerableEmpty()
-        {
-            // Arrange
-            var uids = Array.Empty<Guid>();
-
-            // Act
-            var maybe = uids.MaybeFirst();
-
-            // Assert
-            Assert.False(maybe.HasValue);
-        }
+    public static class ListExtensions
+    {
     }
 }

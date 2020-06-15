@@ -12,11 +12,12 @@
 // 
 
 using Xunit;
-using System.Util.Results;
+using CSharp.Util.Results;
+using System;
 using System.Security.Cryptography;
 using Moq;
 
-namespace System.Test.Util.Results
+namespace CSharp.Test.Util.Results
 {
     public class QueryResultTest
     {
