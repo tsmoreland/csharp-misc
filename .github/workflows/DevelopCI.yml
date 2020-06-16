@@ -12,8 +12,7 @@ jobs:
 
     steps:
     - run: |
-        git clone https://github.com/tsmoreland/Util.git 
-        git checkout -t develop
+        git clone https://github.com/tsmoreland/Util.git --branch develop
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
