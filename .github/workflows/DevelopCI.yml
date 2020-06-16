@@ -11,8 +11,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - run: |
-        git clone https://github.com/tsmoreland/Util.git --branch develop
+    - uses: actions/checkout@v2
+      with:
+         ref: develop
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
