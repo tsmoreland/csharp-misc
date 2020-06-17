@@ -44,6 +44,11 @@ namespace CSharp.Util.Results
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         TValue OrElseThrow(Func<Exception> exceptionSupplier);
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier);
         bool ToBoolean();
     }
 }

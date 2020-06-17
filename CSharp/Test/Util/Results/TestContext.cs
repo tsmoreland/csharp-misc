@@ -83,12 +83,26 @@ namespace CSharp.Test.Util.Results
                 .ConfigureOrElseThrow(new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>();
         }
+        public static void SucessfulResult_OrElseThrowOverloadDoesNotThrow(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithSuccess(Guid.NewGuid())
+                .ConfigureOrElseThrow("not implemented", new NotImplementedException())
+                .ActAndAssertWithOrElseThrow<NotImplementedException>("not implemented");
+        }
         public static void SucessfulResult_OrElseThrowDoesValueMatches(TestContextFactory<Guid> factory)
         {
             factory()
                 .ArrangeWithSuccess(Guid.NewGuid())
                 .ConfigureOrElseThrow(new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>();
+        }
+        public static void SucessfulResult_OrElseThrowOverloadDoesValueMatches(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithSuccess(Guid.NewGuid())
+                .ConfigureOrElseThrow("message", new NotImplementedException())
+                .ActAndAssertWithOrElseThrow<NotImplementedException>("not implemented");
         }
         public static void FailedResult_FlatMapNotApplied(TestContextFactory<Guid> factory)
         {
@@ -129,12 +143,13 @@ namespace CSharp.Test.Util.Results
                 .ConfigureOrElseThrow(new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>();
         }
-        public static void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(TestContextFactory<Guid> factory)
+        public static void FailedResult_OrElseThrowOverloadThrows(TestContextFactory<Guid> factory)
         {
+            var message = Guid.NewGuid().ToString();
             factory()
-                .ArrangeWithFailure("error")
-                .ConfigureOrElseThrow(new NotImplementedException())
-                .ActAndAssertWithOrElseThrow<NotImplementedException>();
+                .ArrangeWithFailure(message)
+                .ConfigureOrElseThrow(message, new NotImplementedException())
+                .ActAndAssertWithOrElseThrow<NotImplementedException>(message);
         }
     }
 
@@ -174,6 +189,14 @@ namespace CSharp.Test.Util.Results
             OrElseThrowFunc = new Mock<Func<Exception>>();
             OrElseThrowFunc
                 .Setup(o => o.Invoke())
+                .Returns(exceptionToThrow);
+            return this;
+        }
+        public TestContext<T> ConfigureOrElseThrow<TException>(string message, TException exceptionToThrow) where TException : Exception
+        {
+            OrElseThrowFuncOverload = new Mock<Func<string, Exception?, Exception>>();
+            OrElseThrowFuncOverload
+                .Setup(o => o.Invoke(message, It.IsAny<Exception?>()))
                 .Returns(exceptionToThrow);
             return this;
         }
@@ -259,6 +282,27 @@ namespace CSharp.Test.Util.Results
                 OrElseThrowFunc.Verify(f => f.Invoke(), Times.Once);
                 return this;
             }
+        }
+        public TestContext<T> ActAndAssertWithOrElseThrow<TException>(string message) where TException : Exception
+        {
+            if (OrElseThrowFuncOverload == null)
+            {
+                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
+                return this;
+            }
+
+            if (Result.Success)
+            {
+                _actualOrElseValue = Maybe.Of(Result.OrElseThrow(OrElseThrowFuncOverload.Object));
+                OrElseThrowFuncOverload.Verify(f => f.Invoke(It.IsAny<string>(), It.IsAny<Exception?>()), Times.Never);
+                return AssertExpectedResult();
+            }
+            else
+            {
+                Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFuncOverload.Object));
+                OrElseThrowFuncOverload.Verify(f => f.Invoke(message, It.IsAny<Exception?>()), Times.Once);
+                return this;
+            }
 
         }
         public TestContext<T> ActWithOrElseOther()
@@ -305,6 +349,7 @@ namespace CSharp.Test.Util.Results
         private Maybe<T> _expectedOrElseValue = Maybe.Empty<T>();
         private Mock<Func<T>>? OrElseGetFunc { get; set; }  
         private Mock<Func<Exception>>? OrElseThrowFunc { get; set; }  
+        private Mock<Func<string, Exception?, Exception>>? OrElseThrowFuncOverload { get; set; }  
         private SuccessResultFactory<T> SuccessFactory { get; }
         private FailureResultFactory<T> FailureFactory { get; }
     }

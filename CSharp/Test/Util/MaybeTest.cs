@@ -40,7 +40,9 @@ namespace CSharp.Test.Util
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
-            var _ = TryApplyWhere(maybe, true); 
+            var result = TryApplyWhere(maybe, true);
+
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -65,7 +67,9 @@ namespace CSharp.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act / Assert
-            _ = TryApplyFlatMap(maybe, mappedValue);
+            var result = TryApplyFlatMap(maybe, mappedValue);
+
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -122,6 +126,8 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             _ = OrElseGet(maybe, @else);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
 
         [Fact]
@@ -149,6 +155,8 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             _ = OrElseThrow(maybe, ex);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueOrElseThrowDoesIsPresent()
@@ -201,6 +209,7 @@ namespace CSharp.Test.Util
             // Act / Assert
             IsPresentEqualsReturnsTrueForEqualValue(left, right);
 
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueEqualsOpertorReturnsTrueForEqualValueTypeValues()
@@ -212,6 +221,8 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualValueTypeValues()
@@ -238,6 +249,7 @@ namespace CSharp.Test.Util
             // Act / Assert
             IsPresentEqualsReturnsTrueForEqualValue(left, right);
 
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueEqualsOpertorReturnsTrueForEqualEquatableReferenceTypeValues()
@@ -249,6 +261,8 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualEquatableReferenceTypeValues()
@@ -274,6 +288,7 @@ namespace CSharp.Test.Util
             // Act / Assert
             IsPresentEqualsReturnsTrueForEqualValue(left, right);
 
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueEqualsOpertorReturnsTrueForEqualNonEquatableReferenceTypeValues()
@@ -285,6 +300,8 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualNonEquatableReferenceTypeValues()
@@ -363,7 +380,9 @@ namespace CSharp.Test.Util
             var maybe = Maybe.Empty<Guid>();
 
             // Act / Assert
-            var _ = OrElseGet(maybe, @else);
+            _ = OrElseGet(maybe, @else);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void IsPresentFalseOrElseGetUsedValueMatches()
@@ -423,6 +442,20 @@ namespace CSharp.Test.Util
 
             // Act / Assert
             Assert.Throws<InvalidOperationException>(() => _ = maybe.Value);
+        }
+
+        [Fact]
+        public void EmptyMaybeObjectsEqual()
+        {
+            // Arrange
+            var empty_one = Maybe.Empty<Guid>();
+            var empty_two = Maybe.Empty<Guid>();
+
+            // Act
+            bool equal = empty_one == empty_two;
+
+            // Assert
+            Assert.True(equal);
         }
 
         #region Private

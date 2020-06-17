@@ -20,21 +20,22 @@ namespace CSharp.Util.Results
 {
     /// <summary>Wrapper around the result of a command provided boolean result with additional message or cause on failure</summary>
     [DebuggerDisplay("{GetType().Name,nq}: {Success} {Message,nq}")]
-    public struct CommandResult : IEquatable<CommandResult>
+    public readonly struct CommandResult : IEquatable<CommandResult>
     {
-        public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
-        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
-        public static CommandResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
-            new CommandResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
-
         private CommandResult(bool success, string message, Exception? cause)
         {
             Result = new ResultCore(success, message, cause);
         }
 
+        public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
+        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
         public static CommandResult Ok() => _ok;
         public static CommandResult Ok(string message) => new CommandResult(true, message ?? string.Empty, null);
+
         public static CommandResult Failed(string message, Exception? cause = null) => new CommandResult(false, message ?? throw new ArgumentNullException(nameof(message)), cause);
+        public static CommandResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
+            new CommandResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+
         public static CommandResult UnknownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 
         /// <summary>The result of the operation</summary>
@@ -66,14 +67,14 @@ namespace CSharp.Util.Results
         private ResultCore Result { get; }
         private static readonly CommandResult _ok = new CommandResult(true, string.Empty, null);
 
-        #region ValueType
-
-        public override bool Equals(object? obj) => obj is CommandResult rightHandSide ? Equals(rightHandSide) : false;
-        public override int GetHashCode() => Result.GetHashCode();
-        #endregion
         #region IEquatable{CommandResult}
         public bool Equals(CommandResult other) =>
             Result.Equals(other.Result);
+        #endregion
+        #region ValueType
+
+        public override bool Equals(object? obj) => obj is CommandResult rightHandSide && Equals(rightHandSide);
+        public override int GetHashCode() => Result.GetHashCode();
         #endregion
     }
 
@@ -159,18 +160,30 @@ namespace CSharp.Util.Results
                 return Value;
             throw exceptionSupplier.Invoke();
         }
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
+        {
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            if (Success)
+                return Value;
+            throw exceptionSupplier.Invoke(Message, Cause);
+        }
 
         private ValueResultCore<TValue> ValueResult { get; }
 
-        #region ValueType
-
-        public override bool Equals(object? obj) => obj is CommandResult<TValue> rightHandSide ? Equals(rightHandSide) : false;
-        public override int GetHashCode() => ValueResult.GetHashCode();
-
-        #endregion
         #region IEquatable{QueryResult{TValue}}
         public bool Equals(CommandResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
+
+        #endregion
+        #region ValueType
+
+        public override bool Equals(object? obj) => obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override int GetHashCode() => ValueResult.GetHashCode();
 
         #endregion
     }

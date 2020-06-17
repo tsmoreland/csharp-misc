@@ -34,21 +34,21 @@ namespace CSharp.Util.Internal
 
         private ResultCore Result { get; } 
 
-        #region ValueType
-
-        public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide ? Equals(rightHandSide) : false;
-        public override int GetHashCode() =>
-            #if NETCOREAPP3_1 || NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
-            HashCode.Combine(Value, Result);
-            #else
-            HashCodeBuilder.Create(Value, Result).ToHashCode();
-            #endif
-
-        #endregion
         #region IEquatable{QueryResult{TValue}}
         public bool Equals(ValueResultCore<TValue> other) =>
             Value?.Equals(other.Value) == true &&
             Result.Equals(other.Result);
+        #endregion
+        #region ValueType
+
+        public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide && Equals(rightHandSide);
+        public override int GetHashCode() =>
+#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
+            HashCodeBuilder.Create(Value, Result).ToHashCode();
+            #else
+            HashCode.Combine(Value, Result);
+            #endif
+
         #endregion
     }
 }
