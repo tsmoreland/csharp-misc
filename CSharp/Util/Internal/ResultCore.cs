@@ -35,29 +35,27 @@ namespace CSharp.Util.Internal
         /// <summary>Optional additional exception detail</summary>
         public Exception? Cause { get; }
 
-        public static bool operator==(ResultCore leftHandSide, ResultCore rightHandSide) =>
-            leftHandSide.Equals(rightHandSide) == true;
+        public static bool operator ==(ResultCore leftHandSide, ResultCore rightHandSide) =>
+            leftHandSide.Equals(rightHandSide);
         public static bool operator!=(ResultCore leftHandSide, ResultCore rightHandSide) =>
             !(leftHandSide == rightHandSide);
 
-        #region ValueType
-
-        public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
-        public override int GetHashCode() => 
-            #if NETCOREAPP3_1 || NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
-            HashCode.Combine(Success, Message, Cause);
-            #else
-            HashCodeBuilder.Create(Success, Message, Cause).ToHashCode();
-            #endif
-
-        #endregion
         #region IEquatable{ResultCore}
         public bool Equals(ResultCore other) =>
-            other != null  &&
             Success == other.Success &&
             Message == other.Message &&
             (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
+        #region ValueType
 
+        public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
+        public override int GetHashCode() =>
+#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
+            HashCodeBuilder.Create(Success, Message, Cause).ToHashCode();
+#           else
+            HashCode.Combine(Success, Message, Cause);
+#           endif
+
+        #endregion
     }
 }

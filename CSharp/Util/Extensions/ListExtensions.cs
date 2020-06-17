@@ -21,8 +21,4 @@ namespace System.Linq
         public static IList<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
         public static IList<T> Empty<T>() => new List<T>();
     }
-
-    public static class ListExtensions
-    {
-    }
 }

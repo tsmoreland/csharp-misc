@@ -113,18 +113,18 @@ namespace CSharp.Util
 
         #endregion
 
+        #region IEquatable{Maybe{TValue}}
+        public bool Equals(Maybe<TValue>? other) =>
+            object.ReferenceEquals(this, other) || 
+            other is Maybe<TValue> nonNullOther &&
+            (!HasValue && !nonNullOther.HasValue || Value?.Equals(nonNullOther.Value) == true);
+
+        #endregion
         #region Object
         public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
         public override string ToString() =>
             HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
-        #endregion
-        #region IEquatable{Maybe{TValue}}
-        public bool Equals(Maybe<TValue>? other) =>
-            object.ReferenceEquals(this, other) || 
-            other is Maybe<TValue> nonNullOther &&
-            (HasValue == false && nonNullOther.HasValue == false || Value?.Equals(nonNullOther.Value) == true);
-
         #endregion
     }
 }

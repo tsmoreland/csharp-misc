@@ -15,7 +15,6 @@ using Xunit;
 using CSharp.Util.Results;
 using System;
 using System.Security.Cryptography;
-using Moq;
 
 namespace CSharp.Test.Util.Results
 {
@@ -254,8 +253,5 @@ namespace CSharp.Test.Util.Results
         public void FailedResult_OrElseThrowThrows() =>
             TestContext.FailedResult_OrElseThrowThrows(() => TestContext.BuildQueryContext<Guid>());
 
-        [Fact]
-        public void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier() =>
-            TestContext.FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(() => TestContext.BuildQueryContext<Guid>());
     }
 }
