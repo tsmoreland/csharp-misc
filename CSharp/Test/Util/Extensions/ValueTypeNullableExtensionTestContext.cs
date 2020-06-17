@@ -29,7 +29,7 @@ namespace CSharp.Test.Util.Extensions
             new ValueTypeNullableExtensionTestContext(value, or);
 
         public Guid? Value { get; }
-        public Guid Or { get; } = Guid.Empty;
+        public Guid Or { get; }
 
         public Guid Result { get; private set; } = Guid.Empty;
 

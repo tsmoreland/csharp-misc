@@ -151,21 +151,6 @@ namespace CSharp.Test.Util.Results
                 .ConfigureOrElseThrow(message, new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>(message);
         }
-        public static void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(TestContextFactory<Guid> factory)
-        {
-            factory()
-                .ArrangeWithFailure("error")
-                .ConfigureOrElseThrow(new NotImplementedException())
-                .ActAndAssertWithOrElseThrow<NotImplementedException>();
-        }
-        public static void FailedResult_OrElseThrowOverloadExceptionThrownProvidedBySupplier(TestContextFactory<Guid> factory)
-        {
-            var message = Guid.NewGuid().ToString();
-            factory()
-                .ArrangeWithFailure(message)
-                .ConfigureOrElseThrow(message, new NotImplementedException())
-                .ActAndAssertWithOrElseThrow<NotImplementedException>(message);
-        }
     }
 
     public class TestContext<T>

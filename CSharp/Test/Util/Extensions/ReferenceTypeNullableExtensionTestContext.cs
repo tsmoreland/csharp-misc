@@ -29,7 +29,7 @@ namespace CSharp.Test.Util.Extensions
             new ReferenceTypeNullableExtensionTestContext(value, or);
 
         public object? Value { get; }
-        public object Or { get; } = null!;
+        public object Or { get; }
 
         public object Result { get; private set; } = null!;
 

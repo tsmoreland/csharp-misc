@@ -370,15 +370,5 @@ namespace CSharp.Test.Util.Results
         [Fact]
         public void FailedResult_OrElseThrowThrows() =>
             TestContext.FailedResult_OrElseThrowThrows(() => TestContext.BuildCommandContext<Guid>());
-        [Fact]
-        public void FailedResult_OrElseThrowOverloadThrows() =>
-            TestContext.FailedResult_OrElseThrowOverloadThrows(() => TestContext.BuildCommandContext<Guid>());
-
-        [Fact]
-        public void FailedResult_OrElseThrowExceptionThrownProvidedBySupplier() =>
-            TestContext.FailedResult_OrElseThrowExceptionThrownProvidedBySupplier(() => TestContext.BuildCommandContext<Guid>());
-        [Fact]
-        public void FailedResult_OrElseThrowOverloadExceptionThrownProvidedBySupplier() =>
-            TestContext.FailedResult_OrElseThrowOverloadExceptionThrownProvidedBySupplier(() => TestContext.BuildCommandContext<Guid>());
     }
 }

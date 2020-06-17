@@ -73,6 +73,7 @@ namespace CSharp.Test.Util
         public void MaybeParseDecimal_ParsesValidDecimal()
         {
             Context.MaybeParse_ParsesValidNumber(input => NumericParser.MaybeParseDecimal(input), "42.42", 42.42M);
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
         public void MaybeParseDecimal_DoesNotParseInvalidDecimaleger() =>
@@ -83,6 +84,10 @@ namespace CSharp.Test.Util
 
         private sealed class Context
         {
+            private Context()
+            {
+
+            }
             public static Context<T> Arrange<T>(string input, Maybe<T> expectedValue) =>
                 new Context<T>(input, expectedValue);
 
@@ -110,10 +115,6 @@ namespace CSharp.Test.Util
                 _expectedValue = expectedValue;
             }
 
-            public void ActAndAssertThrows<TException>(Func<string, Maybe<T>> act) where TException : Exception
-            {
-                Assert.Throws<TException>(() => _actualValue = act(_input));
-            }
             public Context<T> Act(Func<string, Maybe<T>> act)
             {
                 _actualValue = act(_input);
@@ -125,9 +126,9 @@ namespace CSharp.Test.Util
                 Assert.Equal(_expectedValue, _actualValue);
             }
 
-            private string _input;
+            private readonly string _input;
             private Maybe<T> _actualValue;
-            private Maybe<T> _expectedValue;
+            private readonly Maybe<T> _expectedValue;
 
         }
     }

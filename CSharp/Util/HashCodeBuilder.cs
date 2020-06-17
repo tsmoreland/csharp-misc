@@ -22,7 +22,7 @@ namespace CSharp.Util
     /// if available
     /// </summary>
     [DebuggerDisplay("{_piewiseCode}")]
-    public class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
+    public sealed class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
         #region Public
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);

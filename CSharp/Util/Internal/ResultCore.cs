@@ -35,11 +35,17 @@ namespace CSharp.Util.Internal
         /// <summary>Optional additional exception detail</summary>
         public Exception? Cause { get; }
 
-        public static bool operator==(ResultCore leftHandSide, ResultCore rightHandSide) =>
-            leftHandSide.Equals(rightHandSide) == true;
+        public static bool operator ==(ResultCore leftHandSide, ResultCore rightHandSide) =>
+            leftHandSide.Equals(rightHandSide);
         public static bool operator!=(ResultCore leftHandSide, ResultCore rightHandSide) =>
             !(leftHandSide == rightHandSide);
 
+        #region IEquatable{ResultCore}
+        public bool Equals(ResultCore other) =>
+            Success == other.Success &&
+            Message == other.Message &&
+            (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
+        #endregion
         #region ValueType
 
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
@@ -50,13 +56,6 @@ namespace CSharp.Util.Internal
             HashCode.Combine(Success, Message, Cause);
 #           endif
 
-#endregion
-#region IEquatable{ResultCore}
-        public bool Equals(ResultCore other) =>
-            other != null  &&
-            Success == other.Success &&
-            Message == other.Message &&
-            (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
-#endregion
+        #endregion
     }
 }

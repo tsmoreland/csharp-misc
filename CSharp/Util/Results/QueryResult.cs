@@ -127,16 +127,15 @@ namespace CSharp.Util.Results
 
         private ValueResultCore<TValue> ValueResult { get; }
 
-        #region ValueType
-
-        public override bool Equals(object? obj) => obj is QueryResult<TValue> rightHandSide ? Equals(rightHandSide) : false;
-        public override int GetHashCode() => ValueResult.GetHashCode();
-
-        #endregion
         #region IEquatable{QueryResult{TValue}}
         public bool Equals(QueryResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
 
+        #endregion
+        #region ValueType
+
+        public override bool Equals(object? obj) => obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override int GetHashCode() => ValueResult.GetHashCode();
 
         #endregion
     }
