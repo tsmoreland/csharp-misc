@@ -20,7 +20,7 @@ namespace CSharp.Util.Results
 {
     /// <summary>Wrapper around the result of a command provided boolean result with additional message or cause on failure</summary>
     [DebuggerDisplay("{GetType().Name,nq}: {Success} {Message,nq}")]
-    public struct CommandResult : IEquatable<CommandResult>
+    public readonly struct CommandResult : IEquatable<CommandResult>
     {
         public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
         public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
@@ -158,6 +158,18 @@ namespace CSharp.Util.Results
             if (Success)
                 return Value;
             throw exceptionSupplier.Invoke();
+        }
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
+        {
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            if (Success)
+                return Value;
+            throw exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }

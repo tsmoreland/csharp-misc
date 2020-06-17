@@ -29,7 +29,7 @@ namespace CSharp.Util.Results
     /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>
     /// <typeparam name="TValue"></typeparam>
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
-    public struct QueryResult<TValue> : IValueResult<TValue>, IEquatable<QueryResult<TValue>>
+    public readonly struct QueryResult<TValue> : IValueResult<TValue>, IEquatable<QueryResult<TValue>>
     {
         internal QueryResult(TValue value, bool success, string message, Exception? cause = null)
         {
@@ -111,6 +111,18 @@ namespace CSharp.Util.Results
             if (Success)
                 return Value;
             throw exceptionSupplier.Invoke();
+        }
+        /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
+        /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
+        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
+        {
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            if (Success)
+                return Value;
+            throw exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }

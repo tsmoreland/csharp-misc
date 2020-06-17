@@ -38,10 +38,10 @@ namespace CSharp.Util.Internal
 
         public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide ? Equals(rightHandSide) : false;
         public override int GetHashCode() =>
-            #if NETCOREAPP3_1 || NETCOREAPP2_1 || NETCOREAPP3_0 || NETSTANDARD2_1
-            HashCode.Combine(Value, Result);
-            #else
+#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
             HashCodeBuilder.Create(Value, Result).ToHashCode();
+            #else
+            HashCode.Combine(Value, Result);
             #endif
 
         #endregion

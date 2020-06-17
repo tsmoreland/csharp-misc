@@ -11,36 +11,40 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
 using System;
 using System.Diagnostics;
-#endif
 
-namespace CSharp.Util.Internal
+namespace CSharp.Util
 {
-#if !NETCOREAPP3_1 && !NETCOREAPP2_1 && !NETCOREAPP3_0 && !NETSTANDARD2_1
+    /// <summary>
+    /// Intended for use in .NET Standard 2.0 or .NET Framework 4.8 and below, 
+    /// <see cref="HashCode.Combine{T1}(T1)"/> variations should be preferred
+    /// if available
+    /// </summary>
     [DebuggerDisplay("{_piewiseCode}")]
     public class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
-    #region Public
+        #region Public
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);
         public HashCodeBuilder AddValues(params object?[] objects) =>
             new HashCodeBuilder(CalculateHashCode(_piewiseCode, objects));
         public int ToHashCode() => 13 * _piewiseCode;
 
-        public static bool operator==(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => leftHandSide?._piewiseCode == rightHandSide?._piewiseCode;
-        public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator==(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => 
+            leftHandSide?._piewiseCode == rightHandSide?._piewiseCode;
+        public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => 
+            !(leftHandSide == rightHandSide);
         public static bool operator <(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+            left is null ? right is object : left.CompareTo(right) < 0;
         public static bool operator <=(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+            left is null || left.CompareTo(right) <= 0;
         public static bool operator >(HashCodeBuilder left, HashCodeBuilder right) =>
-            !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+            left is object && left.CompareTo(right) > 0;
         public static bool operator >=(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+            left is null ? right is null : left.CompareTo(right) >= 0;
 
-    #endregion
-    #region Private
+        #endregion
+        #region Private
         private readonly int _piewiseCode;
 
         private HashCodeBuilder() : this(0)
@@ -60,26 +64,25 @@ namespace CSharp.Util.Internal
                 result = (result * 397) ^ (@object?.GetHashCode() ?? 0);
             return result;
         }
-    #endregion
+        #endregion
 
-    #region Object
-
-        public override bool Equals(object? obj) => Equals(obj as HashCodeBuilder);
-        public override int GetHashCode() => _piewiseCode.GetHashCode();
-
-    #endregion
-    #region IEquatable{HashCodeBuilder}
-        public bool Equals(HashCodeBuilder? other) =>
-            other != null && other._piewiseCode == _piewiseCode;
-
-    #endregion
-    #region IComparable{HashCodeBuilder}
+        #region IComparable{HashCodeBuilder}
         public int CompareTo(HashCodeBuilder? other) =>
             other is HashCodeBuilder hashCode 
             ? _piewiseCode.CompareTo(hashCode._piewiseCode) 
             : 1; // 1 is based on the decompiled version of System.String's response to the equivalent criteria
 
-    #endregion
+        #endregion
+        #region IEquatable{HashCodeBuilder}
+        public bool Equals(HashCodeBuilder? other) =>
+            other != null && other._piewiseCode == _piewiseCode;
+
+        #endregion
+        #region Object
+
+        public override bool Equals(object? obj) => Equals(obj as HashCodeBuilder);
+        public override int GetHashCode() => _piewiseCode.GetHashCode();
+
+        #endregion
     }
-#endif
 }

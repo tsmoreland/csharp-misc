@@ -425,6 +425,20 @@ namespace CSharp.Test.Util
             Assert.Throws<InvalidOperationException>(() => _ = maybe.Value);
         }
 
+        [Fact]
+        public void EmptyMaybeObjectsEqual()
+        {
+            // Arrange
+            var empty_one = Maybe.Empty<Guid>();
+            var empty_two = Maybe.Empty<Guid>();
+
+            // Act
+            bool equal = empty_one == empty_two;
+
+            // Assert
+            Assert.True(equal);
+        }
+
         #region Private
         private void IsPresentImplicitBoolEqualsIsPresent<T>(Maybe<T> maybe)
         {
