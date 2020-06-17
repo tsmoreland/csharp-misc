@@ -30,7 +30,7 @@ namespace CSharp.Util.Extensions
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue OrElse<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
+        public static TValue OrElseOther<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
 
         /// <summary>simple wrapper around null coallese operator for improved readability</summary>
         /// <typeparam name="TValue">nullable value type</typeparam>
@@ -38,7 +38,7 @@ namespace CSharp.Util.Extensions
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue OrElse<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
+        public static TValue OrElseOther<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
 
         /// <summary>
         /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
