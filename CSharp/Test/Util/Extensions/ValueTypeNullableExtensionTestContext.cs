@@ -39,7 +39,7 @@ namespace CSharp.Test.Util.Extensions
 
         public INullableExtentensionTestContext ActUsingOrElse()
         {
-            Result = Value.OrElse(Or);
+            Result = Value.OrElseOther(Or);
             return this;
         }
         public INullableExtentensionTestContext ActUsingOrElseGet()
