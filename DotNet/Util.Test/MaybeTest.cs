@@ -12,7 +12,6 @@
 // 
 
 using Moq;
-using DotNet.Util;
 using System;
 using Xunit;
 

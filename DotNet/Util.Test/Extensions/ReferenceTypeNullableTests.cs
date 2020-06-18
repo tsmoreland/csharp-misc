@@ -14,60 +14,61 @@
 using System;
 using Xunit;
 
-namespace DotNet.Util.Test.Util.Extensions
+namespace DotNet.Util.Test.Extensions
 {
-    public sealed class ValueTypeNullableTests
+
+    public sealed class ReferenceTypeNullableTests
     {
         [Fact]
         public void HasValueIsTrueWhenNonNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(Guid.NewGuid(), Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(new object(), new object())
                 .AssertHasValue(true);
 
         [Fact]
         public void HasValueIsFalseWhenNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(null, Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(null, new object())
                 .AssertHasValue(false);
 
         [Fact]
         public void OrElseReturnsOrWhenValueIsNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(null, Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(null, new object())
                 .ActUsingOrElse()
                 .AssertCorrectResult();
 
         [Fact]
         public void OrElseReturnsValueWhenNonNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(Guid.NewGuid(), Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(new object(), new object())
                 .ActUsingOrElse()
                 .AssertCorrectResult();
 
         [Fact]
         public void OrElseGetReturnsOrWhenValueIsNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(null, Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(null, new object())
                 .ActUsingOrElseGet()
                 .AssertCorrectResult();
 
         [Fact]
         public void OrElseGetReturnsValueWhenNonNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(Guid.NewGuid(), Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(new object(), new object())
                 .ActUsingOrElseGet()
                 .AssertCorrectResult();
 
         [Fact]
         public void OrElseThrowsExceptionWhenValueIsNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(null, Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(null, new object())
                 .ActAndAssertThrowUsingOrElseThrow<InvalidOperationException>(() => new InvalidOperationException());
 
         [Fact]
         public void OrElseThrowsNoExceptionWhenValueIsNonNull() =>
-            ValueTypeNullableExtensionTestContext
-                .Arrange(Guid.NewGuid(), Guid.NewGuid())
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(new object(), new object())
                 .ActUsingOrElseThrow<InvalidOperationException>(() => new InvalidOperationException())
                 .AssertCorrectResult();
     }

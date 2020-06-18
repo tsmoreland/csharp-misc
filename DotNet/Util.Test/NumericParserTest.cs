@@ -14,7 +14,7 @@
 using System;
 using Xunit;
 
-namespace DotNet.Util.Test.Util
+namespace DotNet.Util.Test
 {
     public sealed class NumericParserTest
     {
