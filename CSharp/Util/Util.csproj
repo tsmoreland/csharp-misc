@@ -7,17 +7,26 @@
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseFile></PackageLicenseFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Moreland.CSharp.Util</PackageId>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Version>1.1.0</Version>
     <Authors>Terry Moreland</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression></PackageLicenseExpression>
     <Company />
-    <Product>.NET Extension Library Utilities</Product>
+    <Product>Moreland.CSharp.Util</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageDescription>Common Infrastructure classes</PackageDescription>
     <RepositoryUrl>https://github.com/tsmoreland/Util</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Description>Utilty object library provided generic support types such as results, optionals, etc.. for use in other software packages</Description>
+    <Copyright>Copyright © 2020 Terry Moreland</Copyright>
+    <PackageProjectUrl>https://github.com/tsmoreland/Util</PackageProjectUrl>
+    <PackageTags>CQS, CQRS, Utility, Optional, Extension</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +35,10 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
@@ -47,6 +60,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
 </Project>
