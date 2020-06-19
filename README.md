@@ -1,4 +1,4 @@
-# CSharp.Util
+# Moreland.CSharp.Util
 
 Utilty object library provided generic support types such as results, optionals, etc.. for use in other software packages
 
