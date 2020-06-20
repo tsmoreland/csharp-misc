@@ -1,3 +1,5 @@
+![Trunk CI Build](https://github.com/tsmoreland/Util/workflows/Trunk%20CI%20Build/badge.svg)
+
 # Moreland.CSharp.Util
 
 Utilty object library provided generic support types such as results, optionals, etc.. for use in other software packages
