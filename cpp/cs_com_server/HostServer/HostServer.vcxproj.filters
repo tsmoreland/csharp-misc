@@ -76,9 +76,4 @@
       <Filter>Source Files</Filter>
     </Midl>
   </ItemGroup>
-  <ItemGroup>
-    <Xml Include="manifest.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-  </ItemGroup>
 </Project>
