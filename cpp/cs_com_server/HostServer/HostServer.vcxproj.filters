@@ -40,6 +40,12 @@
     <ClInclude Include="CSharpServiceWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="com_imports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HostServer.cpp">
@@ -57,6 +63,9 @@
     <ClCompile Include="CSharpServiceWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ServiceProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HostServer.rc">
@@ -70,10 +79,18 @@
     <None Include="CSharpServiceWrapper.rgs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ServiceProxy.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="HostServer.idl">
       <Filter>Source Files</Filter>
     </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="manifest.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

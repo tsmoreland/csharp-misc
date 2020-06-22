@@ -169,6 +169,12 @@
     <ClInclude Include="com_imports.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientService\ClientService.vcxproj">
+      <Project>{0019f39b-5413-492b-9536-0a75e646a3e7}</Project>
+      <Private>false</Private>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="..\HostServer\HostServer.vcxproj">
       <Project>{3336c00c-e001-43d1-95f8-1b2652480ba9}</Project>
     </ProjectReference>

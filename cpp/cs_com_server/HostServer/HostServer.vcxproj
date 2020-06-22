@@ -130,8 +130,7 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>
-      </AdditionalManifestFiles>
+      <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -175,8 +174,7 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>
-      </AdditionalManifestFiles>
+      <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -223,8 +221,7 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>
-      </AdditionalManifestFiles>
+      <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -270,8 +267,7 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <Manifest>
-      <AdditionalManifestFiles>
-      </AdditionalManifestFiles>
+      <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
       <Command>
@@ -285,11 +281,13 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="com_imports.h" />
     <ClInclude Include="CSharpServiceWrapper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HostServer_i.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ServiceProxy.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="xdlldata.h" />
   </ItemGroup>
@@ -316,6 +314,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ServiceProxy.cpp" />
     <ClCompile Include="xdlldata.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -333,9 +332,21 @@
   <ItemGroup>
     <None Include="CSharpServiceWrapper.rgs" />
     <None Include="HostServer.rgs" />
+    <None Include="ServiceProxy.rgs" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="HostServer.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="manifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClientService\ClientService.vcxproj">
+      <Project>{0019f39b-5413-492b-9536-0a75e646a3e7}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

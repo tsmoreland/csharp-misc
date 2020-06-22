@@ -31,6 +31,20 @@ library HostServerLib
         HRESULT StringLength([in] BSTR value, [out, retval] INT* length);
     };
 
+    [
+        object,
+        uuid(97ddae97-0a5f-461d-8661-beee2b7f16bf),
+        dual,
+        nonextensible,
+        pointer_default(unique),
+        custom(GUID_ManagedName, "Moreland.ServiceProxy")
+    ]
+    interface IServiceProxy : IDispatch
+    {
+        [id(1)]
+        HRESULT ToUpper([in] BSTR input, [out, retval] BSTR* output);
+    };
+
 	importlib("stdole2.tlb");
 	[
 		uuid(24068c57-111c-4592-954b-1db1fcbeef2d),
@@ -41,6 +55,14 @@ library HostServerLib
 	{
 		[default] interface ICSharpServiceWrapper;
 	};
+	[
+		uuid(b92786a8-1992-44a5-9135-066858bdda7c)
+	]
+	coclass ServiceProxy
+	{
+		[default] interface IServiceProxy;
+	};
 };
 
+import "shobjidl.idl";
 import "shobjidl.idl";

@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <comdef.h>
+#include <atlbase.h>
 
 using namespace client;
 
@@ -23,32 +24,36 @@ int main()
 {
     com_environment env;
 
-    HostServerLib::ICSharpServiceWrapperPtr wrapper_ptr{};
+    std::wstring const lower = L"all lower case";
+    HostServerLib::IServiceProxyPtr service_proxy_ptr{};
 
-    if (!try_com_method([&wrapper_ptr]() { return wrapper_ptr.CreateInstance(__uuidof(HostServerLib::CSharpServiceWrapper)); }))
+    if (!try_com_method([&service_proxy_ptr]() { return service_proxy_ptr.CreateInstance(__uuidof(HostServerLib::ServiceProxy), nullptr, CLSCTX_LOCAL_SERVER); }))
         return 1;
 
-    if (!wrapper_ptr->Ping() == VARIANT_TRUE)
-        std::cout << "Ping returned true from out of process" << std::endl;
+    try {
+    _bstr_t input(lower.c_str());
+    auto upper_bstr = service_proxy_ptr->ToUpper(input);
+    std::wstring upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
+    std::wcout  << "(From Proxy): Lower case: " << lower << " upper case: " << upper << std::endl;
 
-    _bstr_t value_bstr = L"Hello World";
-    auto expected_length = static_cast<int>(value_bstr.length());
-    auto actual_length = wrapper_ptr->StringLength(value_bstr);
-
-    if (actual_length != expected_length)
-        std::cout << "Lengths do not match, got" << actual_length << " but expected " << expected_length << std::endl;
-
-    wrapper_ptr.Release();
+    service_proxy_ptr.Release();
 
     ClientServiceLib::IServicePtr service_ptr;
     if (!try_com_method([&service_ptr]() { return service_ptr.CreateInstance(__uuidof(ClientServiceLib::Service)); }))
         return 1;
 
-    std::wstring const lower = L"all lower case";
-    auto const upper_bstr = service_ptr->ToUpper(lower.c_str());
-    std::wstring const upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
+    upper_bstr = service_ptr->ToUpper(lower.c_str());
+    upper = static_cast<wchar_t const*>(upper_bstr), upper_bstr.length();
 
     std::wcout  << "Lower case: " << lower << " upper case: " << upper << std::endl;
+
+    } catch (ATL::CAtlException const&) {
+        service_proxy_ptr.Release();
+        return 2;
+    } catch (_com_error const&) {
+        service_proxy_ptr.Release();
+        return 3;
+    }
 
     return 0;
 }
