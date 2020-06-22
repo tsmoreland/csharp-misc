@@ -26,6 +26,9 @@ library HostServerLib
     {
         [id(1), helpstring("Ping")]
         HRESULT Ping([out, retval] VARIANT_BOOL* result);
+
+        [id(2)]
+        HRESULT StringLength([in] BSTR value, [out, retval] INT* length);
     };
 
 	importlib("stdole2.tlb");

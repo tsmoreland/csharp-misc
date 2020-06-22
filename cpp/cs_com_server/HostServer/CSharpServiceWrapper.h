@@ -28,6 +28,7 @@ public:
 	CCSharpServiceWrapper() = default;
 
     STDMETHODIMP Ping(VARIANT_BOOL* result) override;
+    STDMETHODIMP StringLength(BSTR value, INT* length) override;
 
     DECLARE_REGISTRY_RESOURCEID(106)
 

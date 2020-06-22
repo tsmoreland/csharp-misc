@@ -17,13 +17,17 @@
 #ifdef _WIN64
 #   ifdef _DEBUG
 #       import "../HostServer/x64/Debug/HostServer.tlb"
+#       import "../ClientService/x64/Debug/ClientService.tlb"
 #   else
 #       import "../HostServer/x64/Release/HostServer.tlb"
+#       import "../ClientService/x64/Release/ClientService.tlb"
 #   endif
 #else
 #   ifdef _DEBUG
 #       import "../HostServer/Win32/Debug/HostServer.tlb"
+#       import "../ClientService/Win32/Debug/ClientService.tlb"
 #   else
 #       import "../HostServer/Win32/Release/HostServer.tlb"
+#       import "../ClientService/Win32/Release/ClientService.tlb"
 #   endif
 #endif

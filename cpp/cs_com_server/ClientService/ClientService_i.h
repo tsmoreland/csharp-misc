@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 03:14:07 2038
  */
-/* Compiler settings for HostServer.idl:
+/* Compiler settings for ClientService.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -31,8 +31,8 @@
 #endif /* __RPCNDR_H_VERSION__ */
 
 
-#ifndef __HostServer_i_h__
-#define __HostServer_i_h__
+#ifndef __ClientService_i_h__
+#define __ClientService_i_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
@@ -40,23 +40,23 @@
 
 /* Forward Declarations */ 
 
-#ifndef __ICSharpServiceWrapper_FWD_DEFINED__
-#define __ICSharpServiceWrapper_FWD_DEFINED__
-typedef interface ICSharpServiceWrapper ICSharpServiceWrapper;
+#ifndef __IService_FWD_DEFINED__
+#define __IService_FWD_DEFINED__
+typedef interface IService IService;
 
-#endif 	/* __ICSharpServiceWrapper_FWD_DEFINED__ */
+#endif 	/* __IService_FWD_DEFINED__ */
 
 
-#ifndef __CSharpServiceWrapper_FWD_DEFINED__
-#define __CSharpServiceWrapper_FWD_DEFINED__
+#ifndef __Service_FWD_DEFINED__
+#define __Service_FWD_DEFINED__
 
 #ifdef __cplusplus
-typedef class CSharpServiceWrapper CSharpServiceWrapper;
+typedef class Service Service;
 #else
-typedef struct CSharpServiceWrapper CSharpServiceWrapper;
+typedef struct Service Service;
 #endif /* __cplusplus */
 
-#endif 	/* __CSharpServiceWrapper_FWD_DEFINED__ */
+#endif 	/* __Service_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -70,66 +70,67 @@ extern "C"{
 
 
 
-#ifndef __HostServerLib_LIBRARY_DEFINED__
-#define __HostServerLib_LIBRARY_DEFINED__
+#ifndef __ClientServiceLib_LIBRARY_DEFINED__
+#define __ClientServiceLib_LIBRARY_DEFINED__
 
-/* library HostServerLib */
-/* [version][uuid] */ 
-
-
-EXTERN_C const IID LIBID_HostServerLib;
-
-#ifndef __ICSharpServiceWrapper_INTERFACE_DEFINED__
-#define __ICSharpServiceWrapper_INTERFACE_DEFINED__
-
-/* interface ICSharpServiceWrapper */
-/* [unique][nonextensible][dual][uuid][object] */ 
+/* library ClientServiceLib */
+/* [custom][version][uuid] */ 
 
 
-EXTERN_C const IID IID_ICSharpServiceWrapper;
+EXTERN_C const IID LIBID_ClientServiceLib;
+
+#ifndef __IService_INTERFACE_DEFINED__
+#define __IService_INTERFACE_DEFINED__
+
+/* interface IService */
+/* [custom][unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IService;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("f69676eb-6ffd-4638-beab-16025a42b1af")
-    ICSharpServiceWrapper : public IDispatch
+    MIDL_INTERFACE("23ca7d29-7f18-4112-928f-5221f589b494")
+    IService : public IDispatch
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Ping( 
-            /* [retval][out] */ VARIANT_BOOL *result) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ToUpper( 
+            /* [in] */ BSTR input,
+            /* [retval][out] */ BSTR *output) = 0;
         
     };
     
     
 #else 	/* C style interface */
 
-    typedef struct ICSharpServiceWrapperVtbl
+    typedef struct IServiceVtbl
     {
         BEGIN_INTERFACE
         
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ICSharpServiceWrapper * This,
+            IService * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ICSharpServiceWrapper * This);
+            IService * This);
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            ICSharpServiceWrapper * This);
+            IService * This);
         
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            ICSharpServiceWrapper * This,
+            IService * This,
             /* [out] */ UINT *pctinfo);
         
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            ICSharpServiceWrapper * This,
+            IService * This,
             /* [in] */ UINT iTInfo,
             /* [in] */ LCID lcid,
             /* [out] */ ITypeInfo **ppTInfo);
         
         HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            ICSharpServiceWrapper * This,
+            IService * This,
             /* [in] */ REFIID riid,
             /* [size_is][in] */ LPOLESTR *rgszNames,
             /* [range][in] */ UINT cNames,
@@ -137,7 +138,7 @@ EXTERN_C const IID IID_ICSharpServiceWrapper;
             /* [size_is][out] */ DISPID *rgDispId);
         
         /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            ICSharpServiceWrapper * This,
+            IService * This,
             /* [annotation][in] */ 
             _In_  DISPID dispIdMember,
             /* [annotation][in] */ 
@@ -155,16 +156,17 @@ EXTERN_C const IID IID_ICSharpServiceWrapper;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Ping )( 
-            ICSharpServiceWrapper * This,
-            /* [retval][out] */ VARIANT_BOOL *result);
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ToUpper )( 
+            IService * This,
+            /* [in] */ BSTR input,
+            /* [retval][out] */ BSTR *output);
         
         END_INTERFACE
-    } ICSharpServiceWrapperVtbl;
+    } IServiceVtbl;
 
-    interface ICSharpServiceWrapper
+    interface IService
     {
-        CONST_VTBL struct ICSharpServiceWrapperVtbl *lpVtbl;
+        CONST_VTBL struct IServiceVtbl *lpVtbl;
     };
 
     
@@ -172,31 +174,31 @@ EXTERN_C const IID IID_ICSharpServiceWrapper;
 #ifdef COBJMACROS
 
 
-#define ICSharpServiceWrapper_QueryInterface(This,riid,ppvObject)	\
+#define IService_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define ICSharpServiceWrapper_AddRef(This)	\
+#define IService_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define ICSharpServiceWrapper_Release(This)	\
+#define IService_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ICSharpServiceWrapper_GetTypeInfoCount(This,pctinfo)	\
+#define IService_GetTypeInfoCount(This,pctinfo)	\
     ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
 
-#define ICSharpServiceWrapper_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+#define IService_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
 
-#define ICSharpServiceWrapper_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+#define IService_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
 
-#define ICSharpServiceWrapper_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+#define IService_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define ICSharpServiceWrapper_Ping(This,result)	\
-    ( (This)->lpVtbl -> Ping(This,result) ) 
+#define IService_ToUpper(This,input,output)	\
+    ( (This)->lpVtbl -> ToUpper(This,input,output) ) 
 
 #endif /* COBJMACROS */
 
@@ -206,17 +208,17 @@ EXTERN_C const IID IID_ICSharpServiceWrapper;
 
 
 
-#endif 	/* __ICSharpServiceWrapper_INTERFACE_DEFINED__ */
+#endif 	/* __IService_INTERFACE_DEFINED__ */
 
 
-EXTERN_C const CLSID CLSID_CSharpServiceWrapper;
+EXTERN_C const CLSID CLSID_Service;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("24068c57-111c-4592-954b-1db1fcbeef2d")
-CSharpServiceWrapper;
+class DECLSPEC_UUID("886ce33c-5e78-4690-8ebd-66ab81ce26da")
+Service;
 #endif
-#endif /* __HostServerLib_LIBRARY_DEFINED__ */
+#endif /* __ClientServiceLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
 

@@ -3,6 +3,8 @@
 #include "pch.h"
 #include "CSharpServiceWrapper.h"
 #include <algorithm>
+#include <string>
+#include <string_view>
 
 // CCSharpServiceWrapper
 using std::begin;
@@ -31,6 +33,21 @@ STDMETHODIMP CCSharpServiceWrapper::Ping(VARIANT_BOOL* result)
 		return E_INVALIDARG;
 
 	*result = VARIANT_TRUE;
+	return S_OK;
+}
+
+STDMETHODIMP_(HRESULT __stdcall) CCSharpServiceWrapper::StringLength(BSTR value, INT* length)
+{
+	if (length == nullptr)
+		return E_INVALIDARG;
+
+	*length = 0;
+	if (value == nullptr)
+		return E_INVALIDARG;
+
+	std::wstring_view value_view(value, SysStringLen(value));
+	*length = static_cast<int>(value_view.size());
+
 	return S_OK;
 }
 

@@ -5,7 +5,6 @@
 #endif
 
 #include "targetver.h"
-#define WIN32_LEAN_AND_MEAN 
 
 #define _ATL_APARTMENT_THREADED
 
@@ -20,4 +19,3 @@
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
-

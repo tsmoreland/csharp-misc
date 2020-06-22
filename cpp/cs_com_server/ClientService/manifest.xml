@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+    <assemblyIdentity type="win32" name="ClientService" version="1.0.0.0" />
+    <file name="ClientService.dll">
+        <comClass clsid="{886ce33c-5e78-4690-8ebd-66ab81ce26da}" progid="ClientService.Service" threadingModel="Both" />
+    </file>
+</assembly>
