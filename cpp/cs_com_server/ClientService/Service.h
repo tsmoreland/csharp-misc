@@ -25,9 +25,7 @@ class ATL_NO_VTABLE CService :
 	public IDispatchImpl<IService, &IID_IService, &LIBID_ClientServiceLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
 {
 public:
-	CService()
-	{
-	}
+	CService() = default;
 
 	STDMETHODIMP ToUpper(BSTR input, BSTR* output) override;
 
@@ -42,7 +40,7 @@ public:
     END_COM_MAP()
 
 // ISupportsErrorInfo
-	STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
+	STDMETHODIMP InterfaceSupportsErrorInfo(REFIID riid) noexcept override;
 
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()

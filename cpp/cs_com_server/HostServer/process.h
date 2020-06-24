@@ -1,3 +1,4 @@
+
 //
 // Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
@@ -10,17 +11,36 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-// pch.h: This is a precompiled header file.
-// Files listed below are compiled only once, improving build performance for future builds.
-// This also affects IntelliSense performance, including code completion and many code browsing features.
-// However, files listed here are ALL re-compiled if any one of them is updated between builds.
-// Do not add files here that you will be updating frequently as this negates the performance advantage.
 
-#ifndef PCH_H
-#define PCH_H
+#pragma once
 
-// add headers that you want to pre-compile here
-#include "framework.h"
-#include <algorithm>
+#include <Windows.h>
 
-#endif //PCH_H
+namespace host_server
+{
+    class process final 
+    {
+    public:
+        using native_handle_type = HANDLE;
+        static constexpr native_handle_type invalid_handle() { return nullptr; }
+
+        explicit process(DWORD const process_id); 
+        explicit process(native_handle_type process_handle = invalid_handle()) noexcept;
+        process(process const&) = delete;
+        process(process&& other) noexcept;
+        ~process();
+
+        [[nodiscard]] bool is_running() const;
+        [[nodiscard]] bool reset(native_handle_type process_handle = invalid_handle()) noexcept;
+        [[nodiscard]] native_handle_type release() noexcept;
+
+        [[nodiscard]] explicit operator bool() const noexcept;
+
+        process& operator=(process const&) = delete;
+        process& operator=(process&& other) noexcept;
+    private:
+        native_handle_type m_process_handle;
+
+        void close();
+    };
+}

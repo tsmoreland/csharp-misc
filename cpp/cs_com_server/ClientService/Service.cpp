@@ -36,17 +36,14 @@ STDMETHODIMP CService::ToUpper(BSTR input, BSTR* output)
 	return S_OK;
 }
 
-STDMETHODIMP CService::InterfaceSupportsErrorInfo(REFIID riid)
+STDMETHODIMP CService::InterfaceSupportsErrorInfo(REFIID riid) noexcept
 {
-	static const IID* const arr[] = 
-	{
-		&IID_IService
-	};
+	static const IID* const arr[] = { &IID_IService };
 
-	for (int i=0; i < sizeof(arr) / sizeof(arr[0]); i++)
-	{
-		if (InlineIsEqualGUID(*arr[i],riid))
-			return S_OK;
-	}
-	return S_FALSE;
+	return std::any_of(std::begin(arr), std::end(arr), 
+		[&riid](IID const* iid) {
+			return InlineIsEqualGUID(*iid, riid) != 0;
+		})
+		? S_OK
+		: S_FALSE;
 }

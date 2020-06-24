@@ -15,10 +15,12 @@
 
 #include "pch.h"
 #include "ServiceProxy.h"
+#include "process_monitor.h"
+#include "windows_exception.h"
 #include <comdef.h>
 // CServiceProxy
 
-STDMETHODIMP_(HRESULT __stdcall) CServiceProxy::ToUpper(BSTR input, BSTR* output)
+STDMETHODIMP CServiceProxy::ToUpper(BSTR input, BSTR* output) noexcept
 {
 	try {
 		*output = m_service_ptr->ToUpper(input);
@@ -32,19 +34,29 @@ STDMETHODIMP_(HRESULT __stdcall) CServiceProxy::ToUpper(BSTR input, BSTR* output
 	}
 }
 
-STDMETHODIMP CServiceProxy::InterfaceSupportsErrorInfo(REFIID riid)
+STDMETHODIMP CServiceProxy::RegisterOwningProcessId(INT processId) noexcept
 {
-	static const IID* const arr[] = 
-	{
-		&IID_IServiceProxy
-	};
-
-	for (int i=0; i < sizeof(arr) / sizeof(arr[0]); i++)
-	{
-		if (InlineIsEqualGUID(*arr[i],riid))
-			return S_OK;
+	using host_server::process_monitor;
+	using host_server::process;
+	try {
+		auto const pid = static_cast<DWORD>(processId);
+		process_monitor::get_instance().exit_when_process_exits(process(pid));
+        return S_OK;
+	} catch (modern_win32::windows_exception const&) {
+		return E_INVALIDARG;
 	}
-	return S_FALSE;
+}
+
+STDMETHODIMP CServiceProxy::InterfaceSupportsErrorInfo(REFIID riid) noexcept
+{
+	static const IID* const arr[] = { &IID_IServiceProxy };
+
+	return std::any_of(std::begin(arr), std::end(arr), 
+		[&riid](IID const* iid) {
+			return InlineIsEqualGUID(*iid, riid) != 0;
+		})
+		? S_OK
+		: S_FALSE;
 }
 
 HRESULT CServiceProxy::FinalConstruct()

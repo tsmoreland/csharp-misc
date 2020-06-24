@@ -55,6 +55,9 @@ library HostServerLib
     {
         [id(1)]
         HRESULT ToUpper([in] BSTR input, [out, retval] BSTR* output);
+
+        [id(2)]
+        HRESULT RegisterOwningProcessId([in] INT processId);
     };
 
 	importlib("stdole2.tlb");

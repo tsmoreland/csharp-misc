@@ -10,6 +10,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+
 // ServiceProxy.h : Declaration of the CServiceProxy
 
 #pragma once
@@ -38,7 +39,8 @@ class ATL_NO_VTABLE CServiceProxy :
 public:
 	CServiceProxy() = default;
 
-	STDMETHODIMP ToUpper(BSTR input, BSTR* output) override;
+	STDMETHODIMP ToUpper(BSTR input, BSTR* output) noexcept override;
+	STDMETHODIMP RegisterOwningProcessId(INT processId) noexcept override;
 
     DECLARE_REGISTRY_RESOURCEID(107)
 
@@ -50,7 +52,7 @@ public:
         COM_INTERFACE_ENTRY(ISupportErrorInfo)
     END_COM_MAP()
 
-	STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
+	STDMETHODIMP InterfaceSupportsErrorInfo(REFIID riid) noexcept override;
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 

@@ -44,21 +44,23 @@ int main()
         return 1;
 
     try {
-    _bstr_t input(lower.c_str());
-    auto upper_bstr = service_proxy_ptr->ToUpper(input);
-    std::wstring upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
-    std::wcout  << "(From Proxy): Lower case: " << lower << " upper case: " << upper << std::endl;
+        _bstr_t const input(lower.c_str());
+        auto upper_bstr = service_proxy_ptr->ToUpper(input);
+        std::wstring upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
+        std::wcout  << "(From Proxy): Lower case: " << lower << " upper case: " << upper << std::endl;
 
-    service_proxy_ptr.Release();
+        //service_proxy_ptr.RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
 
-    ClientServiceLib::IServicePtr service_ptr;
-    if (!try_com_method([&service_ptr]() { return service_ptr.CreateInstance(__uuidof(ClientServiceLib::Service)); }))
-        return 1;
+        service_proxy_ptr.Release();
 
-    upper_bstr = service_ptr->ToUpper(lower.c_str());
-    upper = static_cast<wchar_t const*>(upper_bstr), upper_bstr.length();
+        ClientServiceLib::IServicePtr service_ptr;
+        if (!try_com_method([&service_ptr]() { return service_ptr.CreateInstance(__uuidof(ClientServiceLib::Service)); }))
+            return 1;
 
-    std::wcout  << "Lower case: " << lower << " upper case: " << upper << std::endl;
+        upper_bstr = service_ptr->ToUpper(lower.c_str());
+        upper = static_cast<wchar_t const*>(upper_bstr), upper_bstr.length();
+
+        std::wcout  << "Lower case: " << lower << " upper case: " << upper << std::endl;
 
     } catch (ATL::CAtlException const&) {
         service_proxy_ptr.Release();

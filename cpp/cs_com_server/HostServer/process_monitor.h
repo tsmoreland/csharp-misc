@@ -1,5 +1,5 @@
-//
-// Copyright � 2020 Terry Moreland
+﻿//
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -10,17 +10,29 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-// pch.h: This is a precompiled header file.
-// Files listed below are compiled only once, improving build performance for future builds.
-// This also affects IntelliSense performance, including code completion and many code browsing features.
-// However, files listed here are ALL re-compiled if any one of them is updated between builds.
-// Do not add files here that you will be updating frequently as this negates the performance advantage.
 
-#ifndef PCH_H
-#define PCH_H
+#pragma once
 
-// add headers that you want to pre-compile here
-#include "framework.h"
-#include <algorithm>
+#include <Windows.h>
+#include <thread>
+#include "process.h"
 
-#endif //PCH_H
+namespace host_server
+{
+    class process_monitor final 
+    {
+    public:
+        static process_monitor& get_instance() noexcept;
+
+        void exit_when_process_exits(process&& process);
+
+        process_monitor(process_monitor const&) = delete;
+        process_monitor(process_monitor&&) noexcept = delete;
+        process_monitor& operator=(process_monitor const&) = delete;
+        process_monitor& operator=(process_monitor&&) noexcept = delete;
+    private:
+        process_monitor() = default;
+        std::thread m_monitor_thread{}; 
+
+    };
+}
