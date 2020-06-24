@@ -15,7 +15,7 @@
 
 #include "pch.h"
 #include "ServiceProxy.h"
-#include "process_monitor.h"
+#include "process.h"
 #include "windows_exception.h"
 #include <comdef.h>
 // CServiceProxy
@@ -36,11 +36,10 @@ STDMETHODIMP CServiceProxy::ToUpper(BSTR input, BSTR* output) noexcept
 
 STDMETHODIMP CServiceProxy::RegisterOwningProcessId(INT processId) noexcept
 {
-	using host_server::process_monitor;
 	using host_server::process;
 	try {
 		auto const pid = static_cast<DWORD>(processId);
-		process_monitor::get_instance().exit_when_process_exits(process(pid));
+		host_server::exit_when_process_exits(process(pid));
         return S_OK;
 	} catch (modern_win32::windows_exception const&) {
 		return E_INVALIDARG;

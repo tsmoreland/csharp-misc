@@ -43,4 +43,6 @@ namespace host_server
 
         void close();
     };
+
+    void exit_when_process_exits(process&& owner);
 }

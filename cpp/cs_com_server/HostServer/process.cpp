@@ -15,9 +15,22 @@
 #include "process.h"
 #include "windows_exception.h"
 #include <stdexcept>
+#include <thread>
 
 namespace host_server
 {
+
+constexpr auto process_poll_period() 
+{
+    return std::chrono::seconds(10);
+}
+
+const int MAX_CONSECUTIVE_FAILURES = 3;
+
+void exit() 
+{
+    ExitProcess(0U);
+}
 
 process::process(DWORD const process_id)
     : m_process_handle(OpenProcess(PROCESS_QUERY_INFORMATION, false, process_id))
@@ -41,7 +54,6 @@ process& process::operator=(process&& other) noexcept
         static_cast<void>(reset(other.release()));
     return *this;
 }
-
 
 process::~process()
 {
@@ -85,6 +97,34 @@ process::operator bool() const noexcept
 void process::close()
 {
     CloseHandle(m_process_handle);
+}
+
+void exit_when_process_exits(process&& owner)
+{
+    std::thread(
+        [](process&& owner) {
+            try {
+                int consecutive_poll_failures{0};
+                bool done{false};
+                while (!done) {
+                    std::this_thread::sleep_for(process_poll_period());
+                    try {
+                        if (!owner.is_running()) {
+                            done = true;
+                            exit();
+                        }
+                        consecutive_poll_failures = 0;
+                    } catch (modern_win32::windows_exception const&) {
+                        if (++consecutive_poll_failures > MAX_CONSECUTIVE_FAILURES) {
+                            exit();
+                        }
+                    }
+                }
+            } catch (...) {
+                exit();
+            }
+        }, std::move(owner))
+    .detach();
 }
 
 }

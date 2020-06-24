@@ -46,9 +46,6 @@
     <ClInclude Include="ServiceProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="process_monitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="windows_exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ServiceProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="process_monitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="process.cpp">

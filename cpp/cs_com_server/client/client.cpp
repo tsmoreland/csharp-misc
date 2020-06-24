@@ -49,9 +49,7 @@ int main()
         std::wstring upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
         std::wcout  << "(From Proxy): Lower case: " << lower << " upper case: " << upper << std::endl;
 
-        //service_proxy_ptr.RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
-
-        service_proxy_ptr.Release();
+        service_proxy_ptr->RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
 
         ClientServiceLib::IServicePtr service_ptr;
         if (!try_com_method([&service_ptr]() { return service_ptr.CreateInstance(__uuidof(ClientServiceLib::Service)); }))
