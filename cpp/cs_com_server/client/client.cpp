@@ -37,19 +37,24 @@ int main()
 {
     com_environment env;
 
-    std::wstring const lower = L"all lower case";
-    HostServerLib::IServiceProxyPtr service_proxy_ptr{};
 
-    if (!try_com_method([&service_proxy_ptr]() { return service_proxy_ptr.CreateInstance(__uuidof(HostServerLib::ServiceProxy), nullptr, CLSCTX_LOCAL_SERVER); }))
-        return 1;
 
     try {
+        CsClientService::_ServicePtr cs_service_ptr;
+        if (!try_com_method([&cs_service_ptr]() { return cs_service_ptr.CreateInstance(__uuidof(CsClientService::Service), nullptr, CLSCTX_LOCAL_SERVER); }))
+            return 1;
+
+        std::wstring const lower = L"all lower case";
+        HostServerLib::IServiceProxyPtr service_proxy_ptr{};
+        service_proxy_ptr->RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
+
+        if (!try_com_method([&service_proxy_ptr]() { return service_proxy_ptr.CreateInstance(__uuidof(HostServerLib::ServiceProxy), nullptr, CLSCTX_LOCAL_SERVER); }))
+            return 1;
+
         _bstr_t const input(lower.c_str());
         auto upper_bstr = service_proxy_ptr->ToUpper(input);
         std::wstring upper(static_cast<wchar_t const*>(upper_bstr), upper_bstr.length());
         std::wcout  << "(From Proxy): Lower case: " << lower << " upper case: " << upper << std::endl;
-
-        service_proxy_ptr->RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
 
         ClientServiceLib::IServicePtr service_ptr;
         if (!try_com_method([&service_ptr]() { return service_ptr.CreateInstance(__uuidof(ClientServiceLib::Service)); }))
@@ -61,10 +66,8 @@ int main()
         std::wcout  << "Lower case: " << lower << " upper case: " << upper << std::endl;
 
     } catch (ATL::CAtlException const&) {
-        service_proxy_ptr.Release();
         return 2;
     } catch (_com_error const&) {
-        service_proxy_ptr.Release();
         return 3;
     }
 

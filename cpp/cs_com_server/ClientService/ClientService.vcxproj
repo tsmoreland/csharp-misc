@@ -123,7 +123,8 @@
       <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
-      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo</Command>
+      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo
+tlbimp $(INTDIR)$(ProjectName).tlb /out: $(TargetDir)interop.$(ProjectName).dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,7 +162,8 @@
       <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
-      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo</Command>
+      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo
+tlbimp $(INTDIR)$(ProjectName).tlb /out: $(TargetDir)interop.$(ProjectName).dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -202,7 +204,8 @@
       <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
-      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo</Command>
+      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo
+tlbimp $(INTDIR)$(ProjectName).tlb /out: $(TargetDir)interop.$(ProjectName).dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -242,7 +245,8 @@
       <AdditionalManifestFiles>manifest.xml</AdditionalManifestFiles>
     </Manifest>
     <PostBuildEvent>
-      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo</Command>
+      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo
+tlbimp $(INTDIR)$(ProjectName).tlb /out: $(TargetDir)interop.$(ProjectName).dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
