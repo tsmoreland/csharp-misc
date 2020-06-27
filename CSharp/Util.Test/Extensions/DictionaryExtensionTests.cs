@@ -50,6 +50,24 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Assert.Contains("'mergeHandler'", exception.Message);
         }
 
+        [Fact]
+        public void Intersect_ThrowsArgumentNullExceptionForNullFirstValue()
+        {
+            Dictionary<int, string> first = null!;
+            Dictionary<int, string> second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+            var exception = Assert.Throws<ArgumentNullException>(() => first.Intersect(second, UnexpectedMerge));
+            Assert.Contains($"'{nameof(first)}'", exception.Message);
+        }
+        
+        [Fact]
+        public void Intersect_ThrowsArgumentNullExceptionForNullSecondValue()
+        {
+            Dictionary<int, string> first = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+            Dictionary<int, string> second = null!;
+            var exception = Assert.Throws<ArgumentNullException>(() => first.Intersect(second, UnexpectedMerge));
+            Assert.Contains($"'{nameof(second)}'", exception.Message);
+        }
+
         private static string UnexpectedMerge(string first, string second)
         {
             Assert.True(false, "unexpected call to merge");

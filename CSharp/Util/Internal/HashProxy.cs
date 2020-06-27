@@ -11,7 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#pragma warning disable S1128 // False postive regaarding unnecessary using
+#if !(NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48)
 using System;
+#endif
+#pragma warning restore S1128 // False postive regaarding unnecessary using
 
 namespace Moreland.CSharp.Util.Internal
 {
