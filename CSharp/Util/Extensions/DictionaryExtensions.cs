@@ -14,11 +14,15 @@
 using System;
 using System.Collections.Generic;
 
+namespace Moreland.CSharp.Extensions
+{
+    public delegate TValue MergeHandler<TValue>(TValue first, TValue second);
+}
+
 namespace System.Linq
 {
     public static class DictionaryExtensions
     {
-        public delegate TValue MergeConfict<TValue>(TValue first, TValue second);
 
         /// <summary>
         /// Performs a union of two dictionarys using <paramref name="mergeHandler"/> to handle duplicate entries
@@ -42,7 +46,7 @@ namespace System.Linq
         /// input sequences, where duplicates are merged using <paramref name="mergeHandler"/>
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="mergeHandler"/> are <c>null</c></exception>
-        public static IDictionary<TKey, TValue> Union<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second, MergeConfict<TValue> mergeHandler)
+        public static IDictionary<TKey, TValue> Union<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second, Moreland.CSharp.Extensions.MergeHandler<TValue> mergeHandler)
             where TKey : notnull
         {
             if (first == null)
@@ -127,7 +131,7 @@ namespace System.Linq
         /// </param>
         /// <returns>An <see cref="IDictionary{TKey, TValue}"/> that contains the elements that form the set intersection of two sequences.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="conflictHandler"/> are <c>null</c></exception>
-        public static IDictionary<TKey, TValue> Intersect<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second, MergeConfict<TValue> mergeHandler)
+        public static IDictionary<TKey, TValue> Intersect<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second, Moreland.CSharp.Extensions.MergeHandler<TValue> mergeHandler)
             where TKey : notnull
         {
             if (first == null)
