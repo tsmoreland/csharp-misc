@@ -10,7 +10,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Moreland.CSharp.Util</PackageId>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>Terry Moreland</Authors>
     <PackageLicenseExpression></PackageLicenseExpression>
     <Company />
@@ -27,7 +27,12 @@
     <Copyright>Copyright © 2020 Terry Moreland</Copyright>
     <PackageProjectUrl>https://github.com/tsmoreland/Util</PackageProjectUrl>
     <PackageTags>CQS, CQRS, Utility, Optional, Extension</PackageTags>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\moreland-csharp-utilcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\.sonarlint\moreland-csharp-util\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE">
@@ -64,7 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

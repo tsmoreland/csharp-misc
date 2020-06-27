@@ -20,6 +20,14 @@ namespace Moreland.CSharp.Util.Test.Util
     public class MaybeTest
     {
         [Fact]
+        public void DefaultConstructorProducesEmpty()
+        {
+            // Arrange / Act
+            var maybe = new Maybe<Guid>();
+            Assert.Equal(Maybe.Empty<Guid>(), maybe);
+        }
+
+        [Fact]
         public void IsPresentTrueWhenValueProvided()
         {
             // Arrange
@@ -39,9 +47,11 @@ namespace Moreland.CSharp.Util.Test.Util
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
-            var result = TryApplyWhere(maybe, true);
+            _ = TryApplyWhere(maybe, true);
 
-            Assert.NotNull(result);
+            // satisfy need for a call to assert, real assert is in TryApplyWhere
+            Assert.True(true);
+            Assert.True(true);
         }
 
         [Fact]
@@ -66,9 +76,10 @@ namespace Moreland.CSharp.Util.Test.Util
             var maybe = Maybe.Of(value);
 
             // Act / Assert
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            _ = TryApplyFlatMap(maybe, mappedValue);
 
-            Assert.NotNull(result);
+            // satisfy need for a call to assert, real assert is in TryApplyFlatMap
+            Assert.True(true);
         }
 
         [Fact]

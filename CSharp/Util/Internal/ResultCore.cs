@@ -50,11 +50,7 @@ namespace Moreland.CSharp.Util.Internal
 
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
         public override int GetHashCode() =>
-#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
-            HashCodeBuilder.Create(Success, Message, Cause).ToHashCode();
-#           else
-            HashCode.Combine(Success, Message, Cause);
-#           endif
+            HashProxy.Combine(Success, Message, Cause);
 
         #endregion
     }

@@ -29,9 +29,8 @@ namespace Moreland.CSharp.Util
     }
 
     /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
-    public sealed class Maybe<TValue> : IEquatable<Maybe<TValue>>
+    public struct Maybe<TValue> : IEquatable<Maybe<TValue>>
     {
-        #region Public
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
         public TValue Value => HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
@@ -82,10 +81,10 @@ namespace Moreland.CSharp.Util
         public bool ToBoolean() => HasValue;
 
         public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
-            leftHandSide?.Equals(rightHandSide) == true;
+            leftHandSide.Equals(rightHandSide);
         public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
             !(leftHandSide == rightHandSide);
-        public static implicit operator bool(Maybe<TValue> maybe) => maybe?.ToBoolean() == true;
+        public static implicit operator bool(Maybe<TValue> maybe) => maybe.ToBoolean();
 
         /// <summary>Returns the Value</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
@@ -95,33 +94,21 @@ namespace Moreland.CSharp.Util
             ? maybe.Value 
             : throw new ArgumentNullException(nameof(maybe));
 
-        #endregion
-        #region Internal
-        internal Maybe()
-        {
-            HasValue = false;
-            _value = default!;
-        }
         internal Maybe(TValue value)
         {
             _value = value;
             HasValue = value != null;
         }
-        #endregion
-        #region Private
         private readonly TValue _value;
 
-        #endregion
-
         #region IEquatable{Maybe{TValue}}
-        public bool Equals(Maybe<TValue>? other) =>
-            object.ReferenceEquals(this, other) || 
+        public bool Equals(Maybe<TValue> other) =>
             other is Maybe<TValue> nonNullOther &&
             (!HasValue && !nonNullOther.HasValue || Value?.Equals(nonNullOther.Value) == true);
 
         #endregion
         #region Object
-        public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
+        public override bool Equals(object? obj) => obj is Maybe<TValue> maybeObj && Equals(maybeObj);
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
         public override string ToString() =>
             HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;

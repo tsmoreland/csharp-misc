@@ -43,11 +43,7 @@ namespace Moreland.CSharp.Util.Internal
 
         public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide && Equals(rightHandSide);
         public override int GetHashCode() =>
-#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
-            HashCodeBuilder.Create(Value, Result).ToHashCode();
-            #else
-            HashCode.Combine(Value, Result);
-            #endif
+            HashProxy.Combine(Value, Result);
 
         #endregion
     }

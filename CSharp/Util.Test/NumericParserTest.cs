@@ -110,7 +110,7 @@ namespace Moreland.CSharp.Util.Test
             public Context(string input, Maybe<T> expectedValue)
             {
                 _input = input;
-                _actualValue = null!;
+                _actualValue = null;
                 _expectedValue = expectedValue;
             }
 
@@ -126,7 +126,7 @@ namespace Moreland.CSharp.Util.Test
             }
 
             private readonly string _input;
-            private Maybe<T> _actualValue;
+            private Maybe<T>? _actualValue;
             private readonly Maybe<T> _expectedValue;
 
         }
