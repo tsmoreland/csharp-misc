@@ -29,7 +29,7 @@ namespace Moreland.CSharp.Util
     }
 
     /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
-    public struct Maybe<TValue> : IEquatable<Maybe<TValue>>
+    public readonly struct Maybe<TValue> : IEquatable<Maybe<TValue>>
     {
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>

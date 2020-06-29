@@ -475,6 +475,30 @@ namespace Moreland.CSharp.Util.Test
         }
 
         [Fact]
+        public void Equals_FalseWhenEmptyComparedTo()
+        {
+            var maybeValue = Maybe.Of(Guid.NewGuid());
+            var maybeRef = Maybe.Of(new List<string>());
+            var emptyValue = Maybe.Empty<Guid>();
+            var emptyRef = Maybe.Empty<List<string>>();
+
+            bool valueEqual = emptyValue.Equals(maybeValue);
+            bool refEqual = emptyRef.Equals(maybeRef);
+            bool valueOperatorEqual = emptyValue == maybeValue;
+            bool refOperatorEqual = emptyRef ==  maybeRef;
+            bool valueOperatorNotEqual = emptyValue != maybeValue;
+            bool refOperatorNotEqual = emptyRef !=  maybeRef;
+
+            Assert.False(valueEqual);
+            Assert.False(valueOperatorEqual);
+            Assert.True(valueOperatorNotEqual);
+
+            Assert.False(refEqual);
+            Assert.False(refOperatorEqual);
+            Assert.True(refOperatorNotEqual);
+        }
+
+        [Fact]
         public void Equals_FalseWhenTypeDoesNotMatch()
         {
             var maybeValue = Maybe.Of(Guid.NewGuid());

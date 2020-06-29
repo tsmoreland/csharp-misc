@@ -20,6 +20,8 @@ namespace Moreland.CSharp.Util.Test.Extensions
     {
         INullableExtentensionTestContext ActUsingOrElse();
         INullableExtentensionTestContext ActUsingOrElseGet();
+
+        void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception; 
         INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
         void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
 

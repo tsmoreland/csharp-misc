@@ -53,6 +53,12 @@ namespace Moreland.CSharp.Util.Test.Extensions
                 .AssertCorrectResult();
 
         [Fact]
+        public void OrElseGetThrowsWhenSupplierIsNull() =>
+            ReferenceTypeNullableExtensionTestContext
+            .ArrangeUsingSupplier(null, null!)
+            .ActAndAssertThrowUsingOrElseGet<ArgumentNullException>();
+
+        [Fact]
         public void OrElseGetReturnsValueWhenNonNull() =>
             ReferenceTypeNullableExtensionTestContext
                 .Arrange(new object(), new object())
@@ -63,13 +69,22 @@ namespace Moreland.CSharp.Util.Test.Extensions
         public void OrElseThrowsExceptionWhenValueIsNull() =>
             ReferenceTypeNullableExtensionTestContext
                 .Arrange(null, new object())
-                .ActAndAssertThrowUsingOrElseThrow<InvalidOperationException>(() => new InvalidOperationException());
+                .ActAndAssertThrowUsingOrElseThrow<InvalidOperationException>(GetInvalidOperation);
 
         [Fact]
         public void OrElseThrowsNoExceptionWhenValueIsNonNull() =>
             ReferenceTypeNullableExtensionTestContext
                 .Arrange(new object(), new object())
-                .ActUsingOrElseThrow<InvalidOperationException>(() => new InvalidOperationException())
+                .ActUsingOrElseThrow<InvalidOperationException>(GetInvalidOperation)
                 .AssertCorrectResult();
+
+        [Fact]
+        public void OrElseThrowsArgumentNullExceptionWhenSupplierIsNull() =>
+            ReferenceTypeNullableExtensionTestContext
+                .Arrange(new object(), new object())
+                .ActAndAssertThrowUsingOrElseThrow<ArgumentNullException>(null!);
+
+        private static Exception GetInvalidOperation() => 
+            new InvalidOperationException();
     }
 }

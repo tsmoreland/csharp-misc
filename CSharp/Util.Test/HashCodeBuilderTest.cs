@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Moreland.CSharp.Util.Internal;
 using Xunit;
 
 namespace Moreland.CSharp.Util.Test
@@ -155,6 +156,51 @@ namespace Moreland.CSharp.Util.Test
             Assert.Equal(expectedEquality, objEquals);
             Assert.Equal(expectedEquality, operatorEquals);
             Assert.Equal(!expectedEquality, operatorNotEquals);
+        }
+
+        [Fact]
+        public void HashProxy_BuildsHashCode()
+        {
+            var firstCode = HashProxy.Combine(1);
+            var secondCode = HashProxy.Combine(1);
+            bool oneValueEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2);
+            secondCode = HashProxy.Combine(1, 2);
+            bool twoValuesEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2, 3);
+            secondCode = HashProxy.Combine(1, 2, 3);
+            bool threeValuesEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2, 3, 4);
+            secondCode = HashProxy.Combine(1, 2, 3, 4);
+            bool fourValuesEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2, 3, 4, 5);
+            secondCode = HashProxy.Combine(1, 2, 3, 4, 5);
+            bool fiveValuesEqual = firstCode == secondCode;
+            
+            firstCode = HashProxy.Combine(1, 2, 3, 4, 5, 6);
+            secondCode = HashProxy.Combine(1, 2, 3, 4, 5, 6);
+            bool sixValuesEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2, 3, 4, 5, 6, 7);
+            secondCode = HashProxy.Combine(1, 2, 3, 4, 5, 6, 7);
+            bool sevenValuesEqual = firstCode == secondCode;
+
+            firstCode = HashProxy.Combine(1, 2, 3, 4, 5, 6, 7, 8);
+            secondCode = HashProxy.Combine(1, 2, 3, 4, 5, 6, 7, 8);
+            bool eightValuesEqual = firstCode == secondCode;
+
+            Assert.True(oneValueEqual);
+            Assert.True(twoValuesEqual);
+            Assert.True(threeValuesEqual);
+            Assert.True(fourValuesEqual);
+            Assert.True(fiveValuesEqual);
+            Assert.True(sixValuesEqual);
+            Assert.True(sevenValuesEqual);
+            Assert.True(eightValuesEqual);
         }
     }
 }

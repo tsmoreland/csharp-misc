@@ -18,7 +18,7 @@ using Xunit;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
-    public class CommandResultTest
+    public sealed class CommandResultTest
     {
         [Fact]
         public void SuccessfulCommandResultReportsSuccess()
@@ -207,9 +207,17 @@ namespace Moreland.CSharp.Util.Test.Results
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
+            bool operatorEquals = leftHandSide == rightHandSide;
+            bool operatorNotEquals = leftHandSide != rightHandSide;
+            bool objEquals = leftHandSide.Equals((object)rightHandSide);
+            bool nullObjEquals = leftHandSide.Equals((object)null!);
 
             // Assert
             Assert.True(equals);
+            Assert.True(operatorEquals);
+            Assert.False(operatorNotEquals);
+            Assert.True(objEquals);
+            Assert.False(nullObjEquals);
         }
 
         [Fact]
@@ -226,9 +234,17 @@ namespace Moreland.CSharp.Util.Test.Results
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
+            bool operatorEquals = leftHandSide == rightHandSide;
+            bool operatorNotEquals = leftHandSide != rightHandSide;
+            bool objEquals = leftHandSide.Equals((object)rightHandSide);
+            bool nullObjEquals = leftHandSide.Equals((object)null!);
 
             // Assert
             Assert.True(equals);
+            Assert.True(operatorEquals);
+            Assert.False(operatorNotEquals);
+            Assert.True(objEquals);
+            Assert.False(nullObjEquals);
         }
         [Fact]
         public void SuccessfulCommandResultOfTEqualsReturnsTrueForEqualResultsForEquatableReferenceType()

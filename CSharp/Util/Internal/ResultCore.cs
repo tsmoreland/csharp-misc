@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace Moreland.CSharp.Util.Internal
 {
     [DebuggerDisplay("{Success} {Message,nq}")]
-    internal struct ResultCore : IEquatable<ResultCore>
+    internal readonly struct ResultCore : IEquatable<ResultCore>
     {
         public ResultCore(bool success, string message, Exception? cause)
         {
@@ -44,7 +44,7 @@ namespace Moreland.CSharp.Util.Internal
         public bool Equals(ResultCore other) =>
             Success == other.Success &&
             Message == other.Message &&
-            (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
+            (ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
         #region ValueType
 

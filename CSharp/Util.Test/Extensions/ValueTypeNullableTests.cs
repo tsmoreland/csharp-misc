@@ -59,6 +59,12 @@ namespace Moreland.CSharp.Util.Test.Extensions
                 .AssertCorrectResult();
 
         [Fact]
+        public void OrElseGetThrowsWhenSupplierIsNull() =>
+            ValueTypeNullableExtensionTestContext
+            .ArrangeUsingSupplier(null, null!)
+            .ActAndAssertThrowUsingOrElseGet<ArgumentNullException>();
+
+        [Fact]
         public void OrElseThrowsExceptionWhenValueIsNull() =>
             ValueTypeNullableExtensionTestContext
                 .Arrange(null, Guid.NewGuid())
@@ -70,5 +76,11 @@ namespace Moreland.CSharp.Util.Test.Extensions
                 .Arrange(Guid.NewGuid(), Guid.NewGuid())
                 .ActUsingOrElseThrow<InvalidOperationException>(() => new InvalidOperationException())
                 .AssertCorrectResult();
+
+        [Fact]
+        public void OrElseThrowsArgumentNullExceptionWhenSupplierIsNull() =>
+            ValueTypeNullableExtensionTestContext
+                .Arrange(Guid.NewGuid(), Guid.NewGuid())
+                .ActAndAssertThrowUsingOrElseThrow<ArgumentNullException>(null!);
     }
 }
