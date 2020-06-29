@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace Moreland.CSharp.Util.Internal
 {
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
-    public struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>
+    internal readonly struct ValueResultCore<TValue> : IEquatable<ValueResultCore<TValue>>
     {
         public ValueResultCore(TValue value, bool success, string message, Exception? cause)
         {
@@ -43,7 +43,7 @@ namespace Moreland.CSharp.Util.Internal
 
         public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide && Equals(rightHandSide);
         public override int GetHashCode() =>
-            HashProxy.Combine(Value, Result);
+            HashProxy.Combine(Value, Success, Message, Cause);
 
         #endregion
     }
