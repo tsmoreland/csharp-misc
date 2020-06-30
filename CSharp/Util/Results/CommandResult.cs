@@ -34,7 +34,7 @@ namespace Moreland.CSharp.Util.Results
 
         public static CommandResult Failed(string message, Exception? cause = null) => new CommandResult(false, message ?? throw new ArgumentNullException(nameof(message)), cause);
         public static CommandResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
-            new CommandResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+            new CommandResult<TValue>(default!, false, message ?? throw new ArgumentNullException(nameof(message)), cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
 
         public static CommandResult UnknownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 

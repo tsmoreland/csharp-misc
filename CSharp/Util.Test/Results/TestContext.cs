@@ -103,6 +103,12 @@ namespace Moreland.CSharp.Util.Test.Results
                 .ConfigureOrElseThrow("message", new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>("not implemented");
         }
+        public static void FailureResult_OrElseThrowThrowsArgumentNullExceptionIfSupplierIsNull(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithFailure(Guid.NewGuid().ToString())
+                .ActAndAssertWithOrElseThrow<NotSupportedException>();
+        }
         public static void FailedResult_FlatMapNotApplied(TestContextFactory<Guid> factory)
         {
             Guid value = Guid.NewGuid();
@@ -149,6 +155,12 @@ namespace Moreland.CSharp.Util.Test.Results
                 .ArrangeWithFailure(message)
                 .ConfigureOrElseThrow(message, new NotImplementedException())
                 .ActAndAssertWithOrElseThrow<NotImplementedException>(message);
+        }
+        public static void FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithFailure("error")
+                .ActAndAssertWithOrElseThrow<NotImplementedException>();
         }
     }
 
@@ -263,13 +275,7 @@ namespace Moreland.CSharp.Util.Test.Results
         }
         public TestContext<T> ActAndAssertWithOrElseThrow<TException>() where TException : Exception
         {
-            if (OrElseThrowFunc == null)
-            {
-                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
-                return this;
-            }
-
-            if (Result.Success)
+            if (Result.Success && OrElseThrowFunc != null)
             {
                 _actualOrElseValue = Maybe.Of(Result.OrElseThrow(OrElseThrowFunc.Object));
                 OrElseThrowFunc.Verify(f => f.Invoke(), Times.Never);
@@ -277,8 +283,16 @@ namespace Moreland.CSharp.Util.Test.Results
             }
             else
             {
-                Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFunc.Object));
-                OrElseThrowFunc.Verify(f => f.Invoke(), Times.Once);
+                if (OrElseThrowFunc != null)
+                {
+                    Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFunc.Object));
+                    OrElseThrowFunc.Verify(f => f.Invoke(), Times.Once);
+                }
+                else
+                {
+                    Assert.Throws<ArgumentNullException>(() => Result.OrElseThrow((Func<Exception>)null!));
+                    Assert.Throws<ArgumentNullException>(() => Result.OrElseThrow((Func<string, Exception?, Exception>)null!));
+                }
                 return this;
             }
         }
