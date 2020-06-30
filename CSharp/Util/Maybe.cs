@@ -29,12 +29,12 @@ namespace Moreland.CSharp.Util
     }
 
     /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
-    public sealed class Maybe<TValue> : IEquatable<Maybe<TValue>>
+    public readonly struct Maybe<TValue> : IEquatable<Maybe<TValue>>
     {
-        #region Public
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
-        public TValue Value => HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
+        public TValue Value => 
+            HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
         public bool HasValue { get; }
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
@@ -43,13 +43,23 @@ namespace Moreland.CSharp.Util
             : Maybe.Empty<TValue>();
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public Maybe<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
             if (!HasValue)
                 return Maybe.Empty<TMappedValue>();
             return Maybe.Of(mapper.Invoke(Value));
+        }
+
+        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, Maybe<TMappedValue>> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!HasValue)
+                return Maybe.Empty<TMappedValue>();
+            return mapper.Invoke(Value);
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
@@ -82,47 +92,39 @@ namespace Moreland.CSharp.Util
         public bool ToBoolean() => HasValue;
 
         public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
-            leftHandSide?.Equals(rightHandSide) == true;
+            leftHandSide.Equals(rightHandSide);
         public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
             !(leftHandSide == rightHandSide);
-        public static implicit operator bool(Maybe<TValue> maybe) => maybe?.ToBoolean() == true;
+        public static implicit operator bool(Maybe<TValue> maybe) => maybe.ToBoolean();
 
         /// <summary>Returns the Value</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="maybe"/> is <c>null</c></exception>
         /// <exception cref="InvalidOperationException">if <see cref="HasValue"/> is <c>false</c></exception>
+        /// <remarks>
+        /// the following cast won't work if <typeparamref name="TValue"/> is <see cref="object"/> as that will bypass this method and instead
+        /// return the <see cref="Maybe{TValue}"/> as an <see cref="object"/> instead
+        /// </remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
-        public static explicit operator TValue(Maybe<TValue> maybe) => maybe != null! 
-            ? maybe.Value 
-            : throw new ArgumentNullException(nameof(maybe));
+        public static explicit operator TValue(Maybe<TValue> maybe) => 
+            maybe.Value;
 
-        #endregion
-        #region Internal
-        internal Maybe()
-        {
-            HasValue = false;
-            _value = default!;
-        }
         internal Maybe(TValue value)
         {
             _value = value;
             HasValue = value != null;
         }
-        #endregion
-        #region Private
         private readonly TValue _value;
 
-        #endregion
-
         #region IEquatable{Maybe{TValue}}
-        public bool Equals(Maybe<TValue>? other) =>
-            object.ReferenceEquals(this, other) || 
-            other is Maybe<TValue> nonNullOther &&
-            (!HasValue && !nonNullOther.HasValue || Value?.Equals(nonNullOther.Value) == true);
+        public bool Equals(Maybe<TValue> other) =>
+            (!HasValue && !other.HasValue) || (HasValue && other.HasValue && Value?.Equals(other.Value) == true);
 
         #endregion
         #region Object
-        public override bool Equals(object? obj) => Equals(obj as Maybe<TValue>);
-        public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;
+        public override bool Equals(object? obj) => obj is Maybe<TValue> maybeObj && Equals(maybeObj);
+        public override int GetHashCode() => HasValue
+            ? Value?.GetHashCode() ?? 0
+            : 0;
         public override string ToString() =>
             HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
         #endregion

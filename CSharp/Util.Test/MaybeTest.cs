@@ -7,20 +7,30 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYright HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
+using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
-namespace Moreland.CSharp.Util.Test.Util
+namespace Moreland.CSharp.Util.Test
 {
     public class MaybeTest
     {
         [Fact]
-        public void IsPresentTrueWhenValueProvided()
+        public void DefaultConstructorProducesEmpty()
+        {
+            // Arrange / Act
+            var maybe = new Maybe<Guid>();
+            Assert.Equal(Maybe.Empty<Guid>(), maybe);
+        }
+
+        [Fact]
+        public void Of_HasValueTrueWhenHasValue()
         {
             // Arrange
             var maybe = Maybe.Of<Guid>(Guid.NewGuid());
@@ -33,19 +43,21 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void IsPresentTrueWherePredicateInvoked()
+        public void Where_InvokedWhenHasValue()
         {
             // Arrange
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
-            var result = TryApplyWhere(maybe, true);
+            _ = TryApplyWhere(maybe, true);
 
-            Assert.NotNull(result);
+            // satisfy need for a call to assert, real assert is in TryApplyWhere
+            Assert.True(true);
+            Assert.True(true);
         }
 
         [Fact]
-        public void IsPresentTrueWhereApplied()
+        public void Where_ReturnsValueWhenConditionMet()
         {
             // Arrange
             Maybe<Guid> maybe = Maybe.Of(Guid.NewGuid());
@@ -58,25 +70,100 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void IsPresentTrueFlatMapInvoked()
+        public void Where_NotCalledWhenEmpty()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
-            var maybe = Maybe.Of(value);
+            Maybe<Guid> maybe = Maybe.Empty<Guid>();
 
-            // Act / Assert
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            // Act
+            var result = TryApplyWhere(maybe, false);
 
-            Assert.NotNull(result);
+            // Assert
+            Assert.False(result.HasValue);
         }
 
         [Fact]
-        public void IsPresentTrueFlatMapAppliedResultHasValue()
+        public void Map_InvokedWhenHasValue()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act / Assert
+            _ = TryApplyMap(maybe, value);
+
+            // satisfy need for a call to assert, real assert is in TryApplyMap
+            Assert.True(true);
+        }
+
+        [Fact]
+        public void Map_ResultHasValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.True(result.HasValue);
+        }
+        [Fact]
+        public void Map_ReturnsExpectedMappedValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.Equal(value, result.Value);
+        }
+        [Fact]
+        public void Map_ThrowsArgumentNullExceptionWhenMapperIsNull()
+        {
+            var maybe = Maybe.Of(Guid.NewGuid());
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.Map<string>(null!));
+        }
+
+        [Fact]
+        public void Map_ReturnsEmptyWhenSourceIsEmpty()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.False(result.HasValue);
+        }
+
+        [Fact]
+        public void FlatMap_InvokedWhenHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
+            var maybe = Maybe.Of(value);
+
+            // Act / Assert
+            _ = TryApplyFlatMap(maybe, mappedValue);
+
+            // satisfy need for a call to assert, real assert is in TryApplyFlatMap
+            Assert.True(true);
+        }
+
+        [Fact]
+        public void FlatMap_ResultHasValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
             var maybe = Maybe.Of(value);
 
             // Act
@@ -86,21 +173,42 @@ namespace Moreland.CSharp.Util.Test.Util
             Assert.True(result.HasValue);
         }
         [Fact]
-        public void IsPresentTrueFlatMapAppliedResultValueMatchesExcpected()
+        public void FlatMap_ReturnsExpectedMappedValueWhenSourceHasValue()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
             var maybe = Maybe.Of(value);
 
             // Act
             var result = TryApplyFlatMap(maybe, mappedValue);
 
             // Assert
-            Assert.Equal(mappedValue, result.Value);
+            Assert.Equal(mappedValue, result);
         }
         [Fact]
-        public void IsPresentTrueOrElseNotUsed()
+        public void FlatMap_ThrowsArgumentNullExceptionWhenMapperIsNull()
+        {
+            var maybe = Maybe.Of(Guid.NewGuid());
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.FlatMap<string>(null!));
+        }
+
+        [Fact]
+        public void FlatMap_ReturnsEmptyWhenSourceIsEmpty()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyFlatMap(maybe, Maybe.Of(value));
+
+            // Assert
+            Assert.False(result.HasValue);
+        }
+
+        [Fact]
+        public void OrElseOther_ReturnsSourceValueWhenHasValue()
         {
             // Arrange
             Guid value = Guid.NewGuid();
@@ -116,7 +224,70 @@ namespace Moreland.CSharp.Util.Test.Util
 
         }
         [Fact]
-        public void IsPresentTrueOrElseGetOtherNotInvoked()
+        public void OrElseThrow_NoThrowWhenHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act / Assert
+            _ = OrElseThrow(maybe, ex);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
+        }
+        [Fact]
+        public void OrElseThrow_ReturnsValueWhenSourceHasValue_VerifyTestMethod()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (result, _) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.True(result.HasValue);
+        }
+        [Fact]
+        public void OrElseThrow_ReturnsValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (result, _) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.True(result.HasValue);
+            Assert.Equal(value, result.Value);
+        }
+
+        [Fact]
+        public void OrElseOther_EmptyReturnsOther()
+        {
+            // Arrange
+            Guid @else = Guid.NewGuid();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            Guid result = maybe.OrElseOther(@else);
+
+            // Assert
+            Assert.Equal(@else, result);
+        }
+
+        [Fact]
+        public void OrElseGet_ThrowsArgumentNullWhenGetterIsNull()
+        {
+            var maybe = Maybe.Of(Guid.NewGuid());
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.OrElseGet(null!));
+        }
+        [Fact]
+        public void OrElseGet_NotInvokedWhenSourceHasValue()
         {
             // Arrange
             var value = Guid.NewGuid();
@@ -130,7 +301,7 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void IsPresentTrueOrElseGetNotUsedValueMatches()
+        public void OrElseGet_ReturnsSourceValueWhenSourceHasValue()
         {
             // Arrange
             var value = Guid.NewGuid();
@@ -145,234 +316,7 @@ namespace Moreland.CSharp.Util.Test.Util
             Assert.Equal(@value, result);
         }
         [Fact]
-        public void IsPresentTrueOrElseThrowDoesNotThrow()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act / Assert
-            _ = OrElseThrow(maybe, ex);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueOrElseThrowDoesIsPresent()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act
-            var (result, _) = OrElseThrow(maybe, ex);
-
-            // Assert
-            Assert.True(result.HasValue);
-        }
-        [Fact]
-        public void IsPresentTrueOrElseThrowDoesValueMatches()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act
-            var (result, _) = OrElseThrow(maybe, ex);
-
-            // Assert
-            Assert.True(result.HasValue);
-            Assert.Equal(value, result.Value);
-        }
-        [Fact]
-        public void IsPresentTrueImplicitBoolEqualsIsPresent()
-        {
-            // Arrange
-            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
-
-            // Act / Assert
-            IsPresentImplicitBoolEqualsIsPresent(maybe);
-            Assert.True(maybe.HasValue);
-        }
-
-        [Fact]
-        public void IsPresentTrueEqualsReturnsTrueForEqualValueTypeValues()
-        {
-            // Arrange
-            Guid value = Guid.NewGuid();
-            var left = Maybe.Of(value);
-            var right = Maybe.Of(value);
-
-            // Act / Assert
-            IsPresentEqualsReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualValueTypeValues()
-        {
-            // Arrange
-            Guid value = Guid.NewGuid();
-            var left = Maybe.Of(value);
-            var right = Maybe.Of(value);
-
-            // Act / Assert
-            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualValueTypeValues()
-        {
-            // Arrange
-            Guid leftValue = Guid.NewGuid();
-            Guid rightValue = Guid.NewGuid();
-            var left = Maybe.Of(leftValue);
-            var right = Maybe.Of(rightValue);
-
-            // Act / Assert
-            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
-            Assert.NotEqual(leftValue, rightValue);
-        }
-
-        [Fact]
-        public void IsPresentTrueEqualsReturnsTrueForEqualEquatableReferenceTypeValues()
-        {
-            // Arrange
-            Guid value = Guid.NewGuid();
-            var left = Maybe.Of(value.ToString());
-            var right = Maybe.Of(value.ToString());
-
-            // Act / Assert
-            IsPresentEqualsReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualEquatableReferenceTypeValues()
-        {
-            // Arrange
-            string value = Guid.NewGuid().ToString();
-            var left = Maybe.Of(value.ToString());
-            var right = Maybe.Of(value.ToString());
-
-            // Act / Assert
-            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualEquatableReferenceTypeValues()
-        {
-            // Arrange
-            string leftValue = Guid.NewGuid().ToString();
-            string rightValue = Guid.NewGuid().ToString();
-            var left = Maybe.Of(leftValue);
-            var right = Maybe.Of(rightValue);
-
-            // Act / Assert
-            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
-            Assert.NotEqual(leftValue, rightValue);
-        }
-        [Fact]
-        public void IsPresentTrueEqualsReturnsTrueForEqualNonEquatableReferenceTypeValues()
-        {
-            // Arrange
-            object @object = new object();
-            var left = Maybe.Of(@object);
-            var right = Maybe.Of(@object);
-
-            // Act / Assert
-            IsPresentEqualsReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueEqualsOpertorReturnsTrueForEqualNonEquatableReferenceTypeValues()
-        {
-            // Arrange
-            object @object = new object();
-            var left = Maybe.Of(@object);
-            var right = Maybe.Of(@object);
-
-            // Act / Assert
-            IsPresentEqualsOpertorReturnsTrueForEqualValue(left, right);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void IsPresentTrueNotEqualsOpertorReturnsFalseForEqualNonEquatableReferenceTypeValues()
-        {
-            // Arrange
-            object leftValue = new object();
-            object rightValue = new object();
-            var left = Maybe.Of(leftValue);
-            var right = Maybe.Of(rightValue);
-
-            // Act / Assert
-            IsPresentNotEqualsOpertorReturnsFalseForEqualValue(left, right);
-            Assert.NotEqual(leftValue, rightValue);
-        }
-
-        [Fact]
-        public void IsPresentFalseWhenEmpty()
-        {
-            // Arrange
-            var maybe = Maybe.Empty<Guid>();
-
-            // Act
-            bool isPresent = maybe.HasValue;
-
-            // Assert
-            Assert.False(isPresent);
-        }
-
-        [Fact]
-        public void IsPresentFalseFilterNotApplied()
-        {
-            // Arrange
-            Maybe<Guid> maybe = Maybe.Empty<Guid>();
-
-            // Act
-            var result = TryApplyWhere(maybe, false);
-
-            // Assert
-            Assert.False(result.HasValue);
-        }
-
-        [Fact]
-        public void IsPresentFalseFlatMapNotApplied()
-        {
-            // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
-            var maybe = Maybe.Empty<Guid>();
-
-            // Act
-            var result = TryApplyFlatMap(maybe, mappedValue);
-
-            // Assert
-            Assert.False(result.HasValue);
-        }
-
-        [Fact]
-        public void IsPresentFalseOrElseUsed()
-        {
-            // Arrange
-            Guid @else = Guid.NewGuid();
-            var maybe = Maybe.Empty<Guid>();
-
-            // Act
-            Guid result = maybe.OrElseOther(@else);
-
-            // Assert
-            Assert.Equal(@else, result);
-        }
-
-        [Fact]
-        public void IsPresentFalseOrElseGetUsedOtherInvoked()
+        public void OrElseGet_EmptyInvokesProvidedGetter()
         {
             // Arrange
             var @else = Guid.NewGuid();
@@ -384,7 +328,7 @@ namespace Moreland.CSharp.Util.Test.Util
             Assert.True(true, "assert is handled by or else get, this prevents warning");
         }
         [Fact]
-        public void IsPresentFalseOrElseGetUsedValueMatches()
+        public void OrElseGet_EmptyReturnsValueFromGetter()
         {
             // Arrange
             var @else = Guid.NewGuid();
@@ -398,7 +342,13 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void IsPresentFalseOrElseThrowThrows()
+        public void OrElseThrowFromSupplier_ThrowsArgumentNullWhenSupplierIsNull()
+        {
+            var maybe = Maybe.Of(Guid.NewGuid());
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.OrElseThrow(null!));
+        }
+        [Fact]
+        public void OrElseThrowFromSupplier_HasValueIsFalse()
         {
             // Arrange
             var maybe = Maybe.Empty<Guid>();
@@ -409,7 +359,7 @@ namespace Moreland.CSharp.Util.Test.Util
             Assert.False(result.HasValue);
         }
         [Fact]
-        public void IsPresentFalseOrElseThrowExceptionThrownProvidedBySupplier()
+        public void OrElseThrowFromSupplier_ExpectedExceptionThrown()
         {
             // Arrange
             var maybe = Maybe.Empty<Guid>();
@@ -423,18 +373,28 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void IsPresentFalseImplicitBoolEqualsIsPresent()
+        public void ImplicitBool_TrueIfHasValue()
+        {
+            // Arrange
+            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+
+            // Act / Assert
+            ImplicitBoolEqualsIsPresent(maybe);
+            Assert.True(maybe.HasValue);
+        }
+        [Fact]
+        public void ImplicitBool_FalseWhenEmpty()
         {
             // Arrange
             var maybe = Maybe.Empty<Guid>();
 
             // Act / Assert
-            IsPresentImplicitBoolEqualsIsPresent(maybe);
+            ImplicitBoolEqualsIsPresent(maybe);
             Assert.False(maybe);
         }
 
         [Fact]
-        public void IsPresentFalseValueThrows()
+        public void Value_ThrowsInvalidOperationWhenEmpty()
         {
             // Arrange
             var maybe = Maybe.Empty<Guid>();
@@ -444,21 +404,336 @@ namespace Moreland.CSharp.Util.Test.Util
         }
 
         [Fact]
-        public void EmptyMaybeObjectsEqual()
+        public void Equals_BaseEqualsTrueWhenValueEqual()
+        {
+            Guid value = Guid.NewGuid();
+            object @ref = new object();
+            object? valueObject = Maybe.Of(value);
+            var maybeValue = Maybe.Of(value);
+            object? refObject = Maybe.Of(@ref);
+            var maybeRef = Maybe.Of(@ref);
+
+            bool valueEqual = maybeValue.Equals(valueObject);
+            bool refEqual = maybeRef.Equals(refObject);
+
+            Assert.True(valueEqual);
+            Assert.True(refEqual);
+        }
+        [Fact]
+        public void Equals_BaseEqualsFalseWhenValueNotEqual()
+        {
+            object? valueObject = Maybe.Of(Guid.NewGuid());
+            var maybeValue = Maybe.Of(Guid.NewGuid());
+            object? refObject = Maybe.Of(new object());
+            var maybeRef = Maybe.Of(new object());
+
+            bool valueEqual = maybeValue.Equals(valueObject);
+            bool refEqual = maybeRef.Equals(refObject);
+
+            Assert.False(valueEqual);
+            Assert.False(refEqual);
+        }
+
+        [Fact]
+        public void Empty_HasValueFalse()
         {
             // Arrange
-            var empty_one = Maybe.Empty<Guid>();
-            var empty_two = Maybe.Empty<Guid>();
+            var maybe = Maybe.Empty<Guid>();
 
             // Act
-            bool equal = empty_one == empty_two;
+            bool isPresent = maybe.HasValue;
+
+            // Assert
+            Assert.False(isPresent);
+        }
+        [Fact]
+        public void Empty_MaybeObjectsEqual()
+        {
+            // Arrange
+            var emptyOne = Maybe.Empty<Guid>();
+            var emptyTwo = Maybe.Empty<Guid>();
+
+            // Act
+            bool equal = emptyOne == emptyTwo;
 
             // Assert
             Assert.True(equal);
         }
 
+        [Fact]
+        public void OfNullable_HasValueTrueWhenNonNullProvided()
+        {
+            // Arrange
+            var maybeValueType = Maybe.OfNullable<Guid>(Guid.NewGuid());
+            var maybeRefType = Maybe.OfNullable<string>(Guid.NewGuid().ToString());
+
+            // Act
+            bool valueIsPresent = maybeValueType.HasValue;
+            bool refIsPresent = maybeRefType.HasValue;
+
+            // Assert
+            Assert.True(valueIsPresent);
+            Assert.True(refIsPresent);
+        }
+        [Fact]
+        public void OfNullable_HasExpectedValueWhenProvided()
+        {
+            Guid id = Guid.NewGuid();
+
+            var maybeValue = Maybe.OfNullable<Guid>(id);
+            var maybeRef = Maybe.OfNullable<string>(id.ToString());
+
+            Assert.Equal(id, maybeValue.Value);
+            Assert.Equal(id.ToString(), maybeRef.Value);
+        }
+        [Fact]
+        public void OfNullable_HasValueFalseWhenNullProvided()
+        {
+            // Arrange
+            var maybeValue = Maybe.OfNullable<Guid>(null!);
+            var maybeRef = Maybe.OfNullable<string>(null!);
+
+            // Act
+            bool valueIsPresent = maybeValue.HasValue;
+            bool refIsPresent = maybeRef.HasValue;
+
+            // Assert
+            Assert.False(valueIsPresent);
+            Assert.False(refIsPresent);
+        }
+        [Fact]
+        public void OfNullable_IsEmptyWhenNullProvided()
+        {
+            var maybeValue = Maybe.OfNullable<Guid>(null!);
+            var maybeRef = Maybe.OfNullable<string>(null!);
+
+            Assert.Equal(Maybe.Empty<Guid>(), maybeValue);
+            Assert.Equal(Maybe.Empty<string>(), maybeRef);
+        }
+
+        [Fact]
+        public void Equals_FalseWhenComparedToEmpty()
+        {
+            var maybeValue = Maybe.Of(Guid.NewGuid());
+            var maybeRef = Maybe.Of(new List<string>());
+            var emptyValue = Maybe.Empty<Guid>();
+            var emptyRef = Maybe.Empty<List<string>>();
+
+            bool valueEqual = maybeValue.Equals(emptyValue);
+            bool refEqual = maybeRef.Equals(emptyRef);
+            bool valueOperatorEqual = maybeValue == emptyValue;
+            bool refOperatorEqual = maybeRef ==  emptyRef;
+            bool valueOperatorNotEqual = maybeValue != emptyValue;
+            bool refOperatorNotEqual = maybeRef !=  emptyRef;
+
+            Assert.False(valueEqual);
+            Assert.False(valueOperatorEqual);
+            Assert.True(valueOperatorNotEqual);
+
+            Assert.False(refEqual);
+            Assert.False(refOperatorEqual);
+            Assert.True(refOperatorNotEqual);
+        }
+
+        [Fact]
+        public void Equals_FalseWhenEmptyComparedTo()
+        {
+            var maybeValue = Maybe.Of(Guid.NewGuid());
+            var maybeRef = Maybe.Of(new List<string>());
+            var emptyValue = Maybe.Empty<Guid>();
+            var emptyRef = Maybe.Empty<List<string>>();
+
+            bool valueEqual = emptyValue.Equals(maybeValue);
+            bool refEqual = emptyRef.Equals(maybeRef);
+            bool valueOperatorEqual = emptyValue == maybeValue;
+            bool refOperatorEqual = emptyRef ==  maybeRef;
+            bool valueOperatorNotEqual = emptyValue != maybeValue;
+            bool refOperatorNotEqual = emptyRef !=  maybeRef;
+
+            Assert.False(valueEqual);
+            Assert.False(valueOperatorEqual);
+            Assert.True(valueOperatorNotEqual);
+
+            Assert.False(refEqual);
+            Assert.False(refOperatorEqual);
+            Assert.True(refOperatorNotEqual);
+        }
+
+        [Fact]
+        public void Equals_FalseWhenTypeDoesNotMatch()
+        {
+            var maybeValue = Maybe.Of(Guid.NewGuid());
+            var maybeRef = Maybe.Of(new List<string>());
+            var @object = new object();
+
+            Assert.False(maybeValue.Equals(@object));
+            Assert.False(maybeRef.Equals(@object));
+        }
+
+        [Fact]
+        public void Equals_TrueWhenValuesEqual()
+        {
+            // Arrange
+            object @object = new object();
+            Guid value = Guid.NewGuid();
+            var leftValue = Maybe.Of(value);
+            var rightValue = Maybe.Of(value);
+            var leftRef = Maybe.Of(@object);
+            var rightRef = Maybe.Of(@object);
+
+            // Act 
+            bool valueEqual = leftValue.Equals(rightValue);
+            bool refEqual = leftRef.Equals(rightRef);
+
+            Assert.True(valueEqual);
+            Assert.True(refEqual);
+        }
+        [Fact]
+        public void Equals_FalseWhenValuesDoNotEqual()
+        {
+            // Arrange
+            var leftValue = Maybe.Of(Guid.NewGuid());
+            var rightValue = Maybe.Of(Guid.NewGuid());
+            var leftRef = Maybe.Of(new object());
+            var rightRef = Maybe.Of(new object());
+
+            // Act
+            bool valueEqual = leftValue.Equals(rightValue);
+            bool refEqual = leftRef.Equals(rightRef);
+
+            Assert.False(valueEqual);
+            Assert.False(refEqual);
+        }
+        [Fact]
+        public void Equals_OperatorTrueWhenValuesEqual()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            var leftValue = Maybe.Of(value);
+            var rightValue = Maybe.Of(value);
+            var @object = new object();
+            var leftRef = Maybe.Of(@object);
+            var rightRef = Maybe.Of(@object);
+
+            // Act 
+            bool valueEqual = leftValue == rightValue;
+            bool refEqual = leftRef == rightRef;
+            bool valueNotEqual = leftValue != rightValue;
+            bool refNotEqual = leftRef != rightRef;
+            
+            Assert.True(valueEqual);
+            Assert.True(refEqual);
+            Assert.False(valueNotEqual);
+            Assert.False(refNotEqual);
+        }
+        [Fact]
+        public void Equals_OperatorEqualsFalseWhenValuesNotEqual()
+        {
+            // Arrange
+            var leftValue = Maybe.Of(Guid.NewGuid());
+            var rightValue = Maybe.Of(Guid.NewGuid());
+            var leftRef = Maybe.Of(new object());
+            var rightRef = Maybe.Of(new object());
+
+            // Act / Assert
+            bool valueEqual = leftValue == rightValue;
+            bool refEqual = leftRef == rightRef;
+            bool valueNotEqual = leftValue != rightValue;
+            bool refNotEqual = leftRef != rightRef;
+
+            Assert.False(valueEqual);
+            Assert.False(refEqual);
+            Assert.True(valueNotEqual);
+            Assert.True(refNotEqual);
+        }
+
+        [Fact]
+        public void ToString_ReturnsValueStringWhenHasValue()
+        {
+            Guid value = Guid.NewGuid();
+            object @ref = new object();
+            var maybeValue = Maybe.Of(value);
+            var maybeRef = Maybe.Of(@ref);
+
+            string valueString = maybeValue.ToString();
+            string refString = maybeRef.ToString();
+
+            Assert.Equal(value.ToString(), valueString);
+            Assert.Equal(@ref.ToString(), refString);
+        }
+        [Fact]
+        public void ToString_ReturnsEmptyWhenHasNoValue()
+        {
+            var maybeValue = Maybe.Empty<Guid>();
+            var maybeRef = Maybe.Empty<object>();
+
+            Assert.Equal(ProjectResources.NoSuchValue, maybeValue.ToString());
+            Assert.Equal(ProjectResources.NoSuchValue, maybeRef.ToString());
+        }
+
+        [Fact]
+        public void GetHashCode_ReturnsValueHashCodeWhenHasValue()
+        {
+            Guid value = Guid.NewGuid();
+            object @ref = new object();
+            var maybeValue = Maybe.Of(value);
+            var maybeRef = Maybe.Of(@ref);
+
+            int valueHashCode = maybeValue.GetHashCode();
+            int refHashCode = maybeRef.GetHashCode();
+
+            Assert.Equal(value.GetHashCode(), valueHashCode);
+            Assert.Equal(@ref.GetHashCode(), refHashCode);
+
+        }
+        [Fact]
+        public void GetHashCode_ReturnsZeroWhenEmpty()
+        {
+            var maybeValue = Maybe.Empty<Guid>();
+            var maybeRef = Maybe.Empty<object>();
+
+            int valueHashCode = maybeValue.GetHashCode();
+            int refHashCode = maybeRef.GetHashCode();
+
+            Assert.Equal(0, valueHashCode);
+            Assert.Equal(0, refHashCode);
+        }
+        [Fact]
+        public void GetHashCode_ReturnsZeroWhenValueIsNull()
+        {
+            var maybeRef = Maybe.Of<object>(null!);
+
+            int refHashCode = maybeRef.GetHashCode();
+
+            Assert.Equal(0, refHashCode);
+        }
+
+        [Fact]
+        public void ExplicitCast_ReturnsValueWhenHasValue()
+        {
+            Guid value = Guid.NewGuid();
+            List<string> @ref = new List<string>();
+            var maybeValue = Maybe.Of(value);
+            var maybeRef = Maybe.Of(@ref);
+
+            Guid actualValue = (Guid)maybeValue;
+            object actualRef = (List<string>)maybeRef;
+
+            Assert.Equal(value, actualValue);
+            Assert.Equal(@ref, actualRef);
+        }
+        [Fact]
+        public void ExplicitCast_ThrowsInvalidOperationWhenEmpty()
+        {
+            var maybeValue = Maybe.Empty<Guid>();
+            var maybeRef = Maybe.Empty<List<string>>();
+
+            Assert.Throws<InvalidOperationException>(() => _ = (Guid)maybeValue);
+            Assert.Throws<InvalidOperationException>(() => _ = (List<string>)maybeRef);
+        }
+
         #region Private
-        private void IsPresentImplicitBoolEqualsIsPresent<T>(Maybe<T> maybe)
+        private void ImplicitBoolEqualsIsPresent<T>(Maybe<T> maybe)
         {
             // Arrange
             // handled by caller
@@ -488,10 +763,26 @@ namespace Moreland.CSharp.Util.Test.Util
                 predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Never);
             return maybeResult;
         }
-        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
+        private Maybe<U> TryApplyMap<T, U>(Maybe<T> maybe, U mappedValue)
         {
             // Arrange
             var flatMap = new Mock<Func<T, U>>();
+            flatMap
+                .Setup(mapper => mapper.Invoke(It.IsAny<T>()))
+                .Returns(mappedValue);
+
+            // Act
+            var mapped = maybe.Map(flatMap.Object);
+            if (maybe.HasValue)
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+            else
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
+            return mapped;
+        }
+        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, Maybe<U> mappedValue)
+        {
+            // Arrange
+            var flatMap = new Mock<Func<T, Maybe<U>>>();
             flatMap
                 .Setup(mapper => mapper.Invoke(It.IsAny<T>()))
                 .Returns(mappedValue);
@@ -549,36 +840,6 @@ namespace Moreland.CSharp.Util.Test.Util
             return (result, thrown);
         }
 
-        private void IsPresentEqualsReturnsTrueForEqualValue<T>(Maybe<T> left, Maybe<T> right)
-        {
-            // Arrange
-
-            // Act
-            bool equal = left.Equals(right);
-
-            // Assert
-            Assert.True(equal);
-        }
-        private void IsPresentEqualsOpertorReturnsTrueForEqualValue<T>(Maybe<T> left, Maybe<T> right)
-        {
-            // Arrange
-
-            // Act
-            bool equal =  left == right;
-
-            // Assert
-            Assert.True(equal);
-        }
-        private void IsPresentNotEqualsOpertorReturnsFalseForEqualValue<T>(Maybe<T> left, Maybe<T> right)
-        {
-            // Arrange
-
-            // Act
-            bool notEqual = left != right;
-
-            // Assert
-            Assert.True(notEqual);
-        }
         #endregion
     }
 }

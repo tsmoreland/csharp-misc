@@ -1,5 +1,5 @@
-//
-// Copyright � 2020 Terry Moreland
+﻿//
+// Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -15,6 +15,7 @@ using Xunit;
 using Moreland.CSharp.Util.Results;
 using System;
 using System.Security.Cryptography;
+using Moreland.CSharp.Util.Internal;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
@@ -31,6 +32,20 @@ namespace Moreland.CSharp.Util.Test.Results
 
             // Assert
             Assert.True(uid.Success);
+        }
+
+        [Fact]
+        public void SuccessfulResult_ReturnsStoredMessage()
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            var message = Guid.NewGuid().ToString();
+
+            // Act
+            var result = QueryResult.Ok(value, message);
+
+            // Assert
+            Assert.Equal(message, result.Message);
         }
 
         [Fact]
@@ -95,9 +110,17 @@ namespace Moreland.CSharp.Util.Test.Results
 
             // Act
             bool equals = leftHandSide.Equals(rightHandSide);
+            bool operatorEquals = leftHandSide == rightHandSide;
+            bool operatorNotEquals = leftHandSide != rightHandSide;
+            bool objEquals = leftHandSide.Equals((object)rightHandSide);
+            bool nullObjEquals = leftHandSide.Equals((object)null!);
 
             // Assert
             Assert.True(equals);
+            Assert.True(operatorEquals);
+            Assert.False(operatorNotEquals);
+            Assert.True(objEquals);
+            Assert.False(nullObjEquals);
         }
 
         [Fact]
@@ -253,5 +276,22 @@ namespace Moreland.CSharp.Util.Test.Results
         public void FailedResult_OrElseThrowThrows() =>
             TestContext.FailedResult_OrElseThrowThrows(() => TestContext.BuildQueryContext<Guid>());
 
+        [Fact]
+        public void FailedResult_OrElseThrowOverloadThrows() =>
+            TestContext.FailedResult_OrElseThrowOverloadThrows(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowThrowsArgumentNullExceptionWhenSupplierIsNull() =>
+            TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => 
+                TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void GetHashCode_MadeUpOfDeconstructedValue()
+        {
+            var result = QueryResult.Ok<Guid>(Guid.NewGuid(), Guid.NewGuid().ToString());
+            var (success, value, message, cause) = result;
+
+            Assert.Equal(HashProxy.Combine(value, success, message, cause), result.GetHashCode());
+        }
     }
 }

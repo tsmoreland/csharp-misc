@@ -25,5 +25,15 @@ namespace Moreland.CSharp.Util.Extensions
 #else
             Array.Empty<TValue>();
 #endif
+
+        /// <summary>
+        /// Constructs a new array from <paramref name="values"/>
+        /// </summary>
+        /// <typeparam name="TValue">Element type of the array</typeparam>
+        /// <param name="values">values that make up the new array</param>
+        /// <returns><paramref name="values"/></returns>
+        /// <remarks>Provided for readability purposes as a simple way to construct an array</remarks>
+        public static TValue[] Of<TValue>(params TValue[] values) =>
+            values;
     }
 }

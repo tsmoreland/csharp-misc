@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace Moreland.CSharp.Util.Internal
 {
     [DebuggerDisplay("{Success} {Message,nq}")]
-    internal struct ResultCore : IEquatable<ResultCore>
+    internal readonly struct ResultCore : IEquatable<ResultCore>
     {
         public ResultCore(bool success, string message, Exception? cause)
         {
@@ -44,17 +44,13 @@ namespace Moreland.CSharp.Util.Internal
         public bool Equals(ResultCore other) =>
             Success == other.Success &&
             Message == other.Message &&
-            (object.ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
+            (ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
         #region ValueType
 
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
         public override int GetHashCode() =>
-#           if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
-            HashCodeBuilder.Create(Success, Message, Cause).ToHashCode();
-#           else
-            HashCode.Combine(Success, Message, Cause);
-#           endif
+            HashProxy.Combine(Success, Message, Cause);
 
         #endregion
     }

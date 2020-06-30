@@ -23,17 +23,26 @@ namespace Moreland.CSharp.Util.Test.Extensions
         {
             Value = value;
             Or = or;
+            OrSupplier = new Func<Guid>(() => Or);
+        }
+        public ValueTypeNullableExtensionTestContext(Guid? value, Func<Guid> orSupplier)
+        {
+            Value = value;
+            Or = Guid.Empty;
+            OrSupplier = orSupplier;
         }
 
         public static INullableExtentensionTestContext Arrange(Guid? value, Guid or) => 
             new ValueTypeNullableExtensionTestContext(value, or);
+        public static INullableExtentensionTestContext ArrangeUsingSupplier(Guid? value, Func<Guid> orSupplier) => 
+            new ValueTypeNullableExtensionTestContext(value, orSupplier);
 
         public Guid? Value { get; }
         public Guid Or { get; }
 
         public Guid Result { get; private set; } = Guid.Empty;
 
-        public Func<Guid> OrSupplier => OrGetter;
+        public Func<Guid> OrSupplier { get; }
 
         private Guid OrGetter() => Or;
 
@@ -47,6 +56,9 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Result = Value.OrElseGet(OrGetter);
             return this;
         }
+
+        public void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception =>
+            Assert.Throws<TException>(() => Value.OrElseGet(OrSupplier));
         public INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception
         {
             Result = Value.OrElseThrow(supplier);

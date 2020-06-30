@@ -69,9 +69,11 @@ namespace Moreland.CSharp.Util.Extensions
         /// </summary>
         public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
         {
+            if (exceptionSuppliier == null)
+                throw new ArgumentNullException(nameof(exceptionSuppliier));
             if (value != null)
                 return value;
-            throw exceptionSuppliier?.Invoke() ?? throw new ArgumentNullException(nameof(exceptionSuppliier));
+            throw exceptionSuppliier.Invoke();
         }
 
         /// <summary>
@@ -79,9 +81,11 @@ namespace Moreland.CSharp.Util.Extensions
         /// </summary>
         public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : struct
         {
+            if (exceptionSuppliier == null)
+                throw new ArgumentNullException(nameof(exceptionSuppliier));
             if (value != null)
                 return (TValue)value;
-            throw exceptionSuppliier?.Invoke() ?? throw new ArgumentNullException(nameof(exceptionSuppliier));
+            throw exceptionSuppliier.Invoke();
         }
     }
 }

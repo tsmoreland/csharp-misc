@@ -81,12 +81,8 @@ namespace Moreland.CSharp.Util.Test
         public void MaybeParseDecimal_ThrowsExceptionForNullString() =>
             Context.MaybeParse_DoesNotParseInvalidNumber(input => NumericParser.MaybeParseDecimal(input), null!);
 
-        private sealed class Context
+        private static class Context
         {
-            private Context()
-            {
-
-            }
             public static Context<T> Arrange<T>(string input, Maybe<T> expectedValue) =>
                 new Context<T>(input, expectedValue);
 
@@ -110,7 +106,7 @@ namespace Moreland.CSharp.Util.Test
             public Context(string input, Maybe<T> expectedValue)
             {
                 _input = input;
-                _actualValue = null!;
+                _actualValue = null;
                 _expectedValue = expectedValue;
             }
 
@@ -126,7 +122,7 @@ namespace Moreland.CSharp.Util.Test
             }
 
             private readonly string _input;
-            private Maybe<T> _actualValue;
+            private Maybe<T>? _actualValue;
             private readonly Maybe<T> _expectedValue;
 
         }

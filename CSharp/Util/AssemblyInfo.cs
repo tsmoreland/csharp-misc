@@ -11,21 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System.Runtime.CompilerServices;
 
-using System;
-
-namespace Moreland.CSharp.Util.Test.Extensions
-{
-    public interface INullableExtentensionTestContext
-    {
-        INullableExtentensionTestContext ActUsingOrElse();
-        INullableExtentensionTestContext ActUsingOrElseGet();
-
-        void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception; 
-        INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
-        void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
-
-        void AssertHasValue(bool expected);
-        void AssertCorrectResult();
-    }
-}
+[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test")]
