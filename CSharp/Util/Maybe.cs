@@ -43,13 +43,23 @@ namespace Moreland.CSharp.Util
             : Maybe.Empty<TValue>();
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public Maybe<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
             if (!HasValue)
                 return Maybe.Empty<TMappedValue>();
             return Maybe.Of(mapper.Invoke(Value));
+        }
+
+        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, Maybe<TMappedValue>> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!HasValue)
+                return Maybe.Empty<TMappedValue>();
+            return mapper.Invoke(Value);
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>

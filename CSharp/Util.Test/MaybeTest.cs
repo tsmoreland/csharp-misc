@@ -70,11 +70,85 @@ namespace Moreland.CSharp.Util.Test
         }
 
         [Fact]
+        public void Where_NotCalledWhenEmpty()
+        {
+            // Arrange
+            Maybe<Guid> maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyWhere(maybe, false);
+
+            // Assert
+            Assert.False(result.HasValue);
+        }
+
+        [Fact]
+        public void Map_InvokedWhenHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act / Assert
+            _ = TryApplyMap(maybe, value);
+
+            // satisfy need for a call to assert, real assert is in TryApplyMap
+            Assert.True(true);
+        }
+
+        [Fact]
+        public void Map_ResultHasValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.True(result.HasValue);
+        }
+        [Fact]
+        public void Map_ReturnsExpectedMappedValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Of(value);
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.Equal(value, result.Value);
+        }
+        [Fact]
+        public void Map_ThrowsArgumentNullExceptionWhenMapperIsNull()
+        {
+            var maybe = Maybe.Of(Guid.NewGuid());
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.Map<string>(null!));
+        }
+
+        [Fact]
+        public void Map_ReturnsEmptyWhenSourceIsEmpty()
+        {
+            // Arrange
+            var value = Guid.NewGuid().ToString();
+            var maybe = Maybe.Empty<Guid>();
+
+            // Act
+            var result = TryApplyMap(maybe, value);
+
+            // Assert
+            Assert.False(result.HasValue);
+        }
+
+        [Fact]
         public void FlatMap_InvokedWhenHasValue()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
             var maybe = Maybe.Of(value);
 
             // Act / Assert
@@ -88,8 +162,8 @@ namespace Moreland.CSharp.Util.Test
         public void FlatMap_ResultHasValueWhenSourceHasValue()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
             var maybe = Maybe.Of(value);
 
             // Act
@@ -102,15 +176,15 @@ namespace Moreland.CSharp.Util.Test
         public void FlatMap_ReturnsExpectedMappedValueWhenSourceHasValue()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
+            var mappedValue = Maybe.Of(value);
             var maybe = Maybe.Of(value);
 
             // Act
             var result = TryApplyFlatMap(maybe, mappedValue);
 
             // Assert
-            Assert.Equal(mappedValue, result.Value);
+            Assert.Equal(mappedValue, result);
         }
         [Fact]
         public void FlatMap_ThrowsArgumentNullExceptionWhenMapperIsNull()
@@ -118,29 +192,16 @@ namespace Moreland.CSharp.Util.Test
             var maybe = Maybe.Of(Guid.NewGuid());
             Assert.Throws<ArgumentNullException>(() => _ = maybe.FlatMap<string>(null!));
         }
-        [Fact]
-        public void FlatMap_NotCalledWhenEmpty()
-        {
-            // Arrange
-            Maybe<Guid> maybe = Maybe.Empty<Guid>();
-
-            // Act
-            var result = TryApplyWhere(maybe, false);
-
-            // Assert
-            Assert.False(result.HasValue);
-        }
 
         [Fact]
         public void FlatMap_ReturnsEmptyWhenSourceIsEmpty()
         {
             // Arrange
-            Guid value = Guid.NewGuid();
-            string mappedValue = value.ToString();
+            var value = Guid.NewGuid().ToString();
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            var result = TryApplyFlatMap(maybe, mappedValue);
+            var result = TryApplyFlatMap(maybe, Maybe.Of(value));
 
             // Assert
             Assert.False(result.HasValue);
@@ -702,10 +763,26 @@ namespace Moreland.CSharp.Util.Test
                 predicate.Verify(p => p.Invoke(It.IsAny<T>()), Times.Never);
             return maybeResult;
         }
-        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, U mappedValue)
+        private Maybe<U> TryApplyMap<T, U>(Maybe<T> maybe, U mappedValue)
         {
             // Arrange
             var flatMap = new Mock<Func<T, U>>();
+            flatMap
+                .Setup(mapper => mapper.Invoke(It.IsAny<T>()))
+                .Returns(mappedValue);
+
+            // Act
+            var mapped = maybe.Map(flatMap.Object);
+            if (maybe.HasValue)
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+            else
+                flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
+            return mapped;
+        }
+        private Maybe<U> TryApplyFlatMap<T, U>(Maybe<T> maybe, Maybe<U> mappedValue)
+        {
+            // Arrange
+            var flatMap = new Mock<Func<T, Maybe<U>>>();
             flatMap
                 .Setup(mapper => mapper.Invoke(It.IsAny<T>()))
                 .Returns(mappedValue);
