@@ -33,13 +33,12 @@ namespace Moreland.CSharp.Util.Test.Results
             (value) => CommandResult.Ok<TValue>(value),
             (message) => CommandResult.Failed<TValue>(message)
         );
-
         public static void SucessfulResult_FlatMapInvoked(TestContextFactory<Guid> factory)
         {
             Guid value = Guid.NewGuid();
             factory()
                 .ArrangeWithSuccess(value)
-                .ActAndAssertWithFlatMap_VerifyMapperInvoked(value.ToString());
+                .ActAndAssertWithFlatMap_VerifyFlatMapperInvoked(value.ToString());
         }
 
         public static void SucessfulResult_FlatMapAppliedResultSuccess(TestContextFactory<Guid> factory)
@@ -49,6 +48,22 @@ namespace Moreland.CSharp.Util.Test.Results
             factory()
                 .ArrangeWithSuccess(value)
                 .ActAndAssertWithFlatMap_VerifyExpectedResult(value.ToString());
+        }
+        public static void SucessfulResult_MapInvoked(TestContextFactory<Guid> factory)
+        {
+            Guid value = Guid.NewGuid();
+            factory()
+                .ArrangeWithSuccess(value)
+                .ActAndAssertWithMap_VerifyMapperInvoked(value.ToString());
+        }
+
+        public static void SucessfulResult_MapAppliedResultSuccess(TestContextFactory<Guid> factory)
+        {
+            // Arrange
+            Guid value = Guid.NewGuid();
+            factory()
+                .ArrangeWithSuccess(value)
+                .ActAndAssertWithMap_VerifyExpectedResult(value.ToString());
         }
         public static void SucessfulResult_OrElseNotUsed(TestContextFactory<Guid> factory)
         {
@@ -109,12 +124,32 @@ namespace Moreland.CSharp.Util.Test.Results
                 .ArrangeWithFailure(Guid.NewGuid().ToString())
                 .ActAndAssertWithOrElseThrow<NotSupportedException>();
         }
+
+        public static void FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithFailure("error")
+                .ActAndAssertWithFlatMap_ThrowsArgumentNullIfMapperNull<string>();
+        }
         public static void FailedResult_FlatMapNotApplied(TestContextFactory<Guid> factory)
         {
             Guid value = Guid.NewGuid();
             factory()
                 .ArrangeWithFailure("error")
-                .ActAndAssertWithFlatMap_VerifyMapperInvoked(value.ToString());
+                .ActAndAssertWithFlatMap_VerifyFlatMapperInvoked(value.ToString());
+        }
+        public static void FailedResult_MapThrowsArgumentNullWhenMapperIsNull(TestContextFactory<Guid> factory)
+        {
+            factory()
+                .ArrangeWithFailure("error")
+                .ActAndAssertWithMap_ThrowsArgumentNullIfMapperNull<string>();
+        }
+        public static void FailedResult_MapNotApplied(TestContextFactory<Guid> factory)
+        {
+            Guid value = Guid.NewGuid();
+            factory()
+                .ArrangeWithFailure("error")
+                .ActAndAssertWithMap_VerifyMapperInvoked(value.ToString());
         }
         public static void FailedResult_OrElseUsed(TestContextFactory<Guid> factory)
         {
@@ -211,7 +246,92 @@ namespace Moreland.CSharp.Util.Test.Results
                 .Returns(exceptionToThrow);
             return this;
         }
-        public void ActAndAssertWithFlatMap_VerifyMapperInvoked<U>(U mappedValue)
+        public void ActAndAssertWithFlatMap_ThrowsArgumentNullIfMapperNull<U>()
+        {
+            if (Result is CommandResult<T> cmd)
+                Assert.Throws<ArgumentNullException>(() => _ = cmd.FlatMap<U>(null!));
+            else if (Result is QueryResult<T> query)
+                Assert.Throws<ArgumentNullException>(() => _ = query.FlatMap<U>(null!));
+            else
+                throw new NotSupportedException($"test for {Result.GetType()} not implemented");
+        }
+        public void ActAndAssertWithFlatMap_VerifyFlatMapperInvoked<U>(U FlatMappedValue)
+        {
+
+            if (Result is CommandResult<T> cmd)
+            {
+                var FlatMapper = new Mock<Func<T, CommandResult<U>>>();
+                FlatMapper
+                    .Setup(o => o.Invoke(It.IsAny<T>()))
+                    .Returns(CommandResult.Ok(FlatMappedValue));
+                _ = cmd.FlatMap(FlatMapper.Object);
+
+                if (Result.Success)
+                    FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+                else
+                    FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
+            }
+            else if (Result is QueryResult<T> query)
+            {
+                var FlatMapper = new Mock<Func<T, QueryResult<U>>>();
+                FlatMapper
+                    .Setup(o => o.Invoke(It.IsAny<T>()))
+                    .Returns(QueryResult.Ok(FlatMappedValue));
+                _ = query.FlatMap(FlatMapper.Object);
+
+                if (Result.Success)
+                    FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
+                else
+                    FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
+            }
+            else
+                throw new NotSupportedException($"test for {Result.GetType()} not implemented");
+
+        }
+        public void ActAndAssertWithMap_ThrowsArgumentNullIfMapperNull<U>()
+        {
+            if (Result is CommandResult<T> cmd)
+                Assert.Throws<ArgumentNullException>(() => _ = cmd.Map<U>(null!));
+            else if (Result is QueryResult<T> query)
+                Assert.Throws<ArgumentNullException>(() => _ = query.Map<U>(null!));
+            else
+                throw new NotSupportedException($"test for {Result.GetType()} not implemented");
+        }
+        public void ActAndAssertWithFlatMap_VerifyExpectedResult<U>(U FlatMappedValue)
+        {
+
+            bool success;
+            U FlatMapped;
+            if (Result is CommandResult<T> cmd)
+            {
+                var FlatMapper = new Mock<Func<T, CommandResult<U>>>();
+                FlatMapper
+                    .Setup(o => o.Invoke(It.IsAny<T>()))
+                    .Returns(CommandResult.Ok(FlatMappedValue));
+                (success, FlatMapped) = cmd.FlatMap(FlatMapper.Object);
+
+                if (Result.Success)
+                    Assert.Equal(FlatMappedValue, FlatMapped);
+                else
+                    Assert.False(success);
+            }
+            else if (Result is QueryResult<T> query)
+            {
+                var FlatMapper = new Mock<Func<T, QueryResult<U>>>();
+                FlatMapper
+                    .Setup(o => o.Invoke(It.IsAny<T>()))
+                    .Returns(QueryResult.Ok(FlatMappedValue));
+                (success, FlatMapped) = query.FlatMap(FlatMapper.Object);
+
+                if (Result.Success)
+                    Assert.Equal(FlatMappedValue, FlatMapped);
+                else
+                    Assert.False(success);
+            }
+            else
+                throw new NotSupportedException($"test for {Result.GetType()} not implemented");
+        }
+        public void ActAndAssertWithMap_VerifyMapperInvoked<U>(U mappedValue)
         {
             var mapper = new Mock<Func<T, U>>();
             mapper
@@ -219,9 +339,9 @@ namespace Moreland.CSharp.Util.Test.Results
                 .Returns(mappedValue);
 
             if (Result is CommandResult<T> cmd)
-                _ = cmd.FlatMap(mapper.Object);
+                _ = cmd.Map(mapper.Object);
             else if (Result is QueryResult<T> query)
-                _ = query.FlatMap(mapper.Object);
+                _ = query.Map(mapper.Object);
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
 
@@ -230,7 +350,7 @@ namespace Moreland.CSharp.Util.Test.Results
             else
                 mapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Never);
         }
-        public void ActAndAssertWithFlatMap_VerifyExpectedResult<U>(U mappedValue)
+        public void ActAndAssertWithMap_VerifyExpectedResult<U>(U mappedValue)
         {
             var mapper = new Mock<Func<T, U>>();
             mapper
@@ -240,9 +360,9 @@ namespace Moreland.CSharp.Util.Test.Results
             bool success;
             U mapped;
             if (Result is CommandResult<T> cmd)
-                (success, mapped) = cmd.FlatMap(mapper.Object);
+                (success, mapped) = cmd.Map(mapper.Object);
             else if (Result is QueryResult<T> query)
-                (success, mapped) = query.FlatMap(mapper.Object);
+                (success, mapped) = query.Map(mapper.Object);
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
 

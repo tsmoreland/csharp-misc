@@ -237,6 +237,14 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_FlatMapAppliedResultSuccess(() => TestContext.BuildQueryContext<Guid>());
 
         [Fact]
+        public void SucessfulResult_MapInvoked() => 
+            TestContext.SucessfulResult_MapInvoked(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_MapAppliedResultSuccess() =>
+            TestContext.SucessfulResult_MapAppliedResultSuccess(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
         public void SucessfulResult_OrElseNotUsed() =>
             TestContext.SucessfulResult_OrElseNotUsed(() => TestContext.BuildQueryContext<Guid>());
 
@@ -257,8 +265,24 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_OrElseThrowDoesValueMatches(() => TestContext.BuildQueryContext<Guid>());
 
         [Fact]
+        public void FailedResult_OrElseThrowsArgumentNullWhenSupplierIsNull() =>
+            TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => TestContext.BuildQueryContext<Guid>());
+        
+        [Fact]
+        public void FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull() =>
+            TestContext.FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
         public void FailedResult_FlatMapNotApplied() =>
             TestContext.FailedResult_FlatMapNotApplied(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_MapThrowsArgumentNullWhenMaperIsNull() =>
+            TestContext.FailedResult_MapThrowsArgumentNullWhenMapperIsNull(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_MapNotApplied() =>
+            TestContext.FailedResult_MapNotApplied(() => TestContext.BuildQueryContext<Guid>());
 
         [Fact]
         public void FailedResult_OrElseUsed() =>
@@ -292,6 +316,52 @@ namespace Moreland.CSharp.Util.Test.Results
             var (success, value, message, cause) = result;
 
             Assert.Equal(HashProxy.Combine(value, success, message, cause), result.GetHashCode());
+        }
+
+        [Fact]
+        public void Deconstruct_ValueTypeExportsProvidedValues()
+        {
+            Guid valueType = Guid.NewGuid();
+            var valueResultSuccess = QueryResult.Ok(valueType);
+            var valueResultFailure = QueryResult.Failed<Guid>(Guid.NewGuid().ToString(), new InvalidCastException());
+
+            ActAndAssertDeconstruct(valueResultSuccess);
+            ActAndAssertDeconstruct(valueResultFailure);
+
+        }
+
+        [Fact]
+        public void Deconstruct_ReferenceTypeExportsProvidedValues()
+        {
+            object @object = new object();
+            var refResultSuccess = QueryResult.Ok(@object);
+            var refResultFailure = QueryResult.Failed<object>(Guid.NewGuid().ToString(), new NotSupportedException());
+
+            ActAndAssertDeconstruct(refResultSuccess);
+            ActAndAssertDeconstruct(refResultFailure);
+        }
+
+        private static void ActAndAssertDeconstruct<T>(QueryResult<T> result)
+        {
+            if (result)
+            {
+                var (success, value, message, cause) = result;
+                Assert.Equal(result.Success, success);
+                Assert.Equal(result.Value, value);
+                Assert.Equal(result.Message, message);
+                Assert.Equal(result.Cause, cause);
+
+                (success, value, message) = result;
+                Assert.Equal(result.Success, success);
+                Assert.Equal(result.Value, value);
+                Assert.Equal(result.Message, message);
+
+                (success, value) = result;
+                Assert.Equal(result.Success, success);
+                Assert.Equal(result.Value, value);
+            }
+            else
+                Assert.Throws<InvalidOperationException>(() => (_, _, _, _) = result);
         }
     }
 }

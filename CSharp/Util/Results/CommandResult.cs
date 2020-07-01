@@ -124,9 +124,25 @@ namespace Moreland.CSharp.Util.Results
             message = Message;
             cause = Cause;
         }
+        /// <summary>
+        /// If a value is present, apply the provided Optional-bearing mapping function to it, 
+        /// return that result, otherwise return an empty Optional.
+        /// </summary>
+        public CommandResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, CommandResult<TMappedValue>> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!Success)
+                return CommandResult.Failed<TMappedValue>(Message, Cause);
+            return mapper.Invoke(Value);
+        }
 
-        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public CommandResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        /// <summary>If a value is present, apply the provided mapping function to it, and if the result is non-null, return a Maybe describing the result.</summary>
+        public CommandResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) => 
+            Map(selector);
+
+        /// <summary>If a value is present, apply the provided mapping function to it, and if the result is non-null, return a Maybe describing the result.</summary>
+        public CommandResult<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
