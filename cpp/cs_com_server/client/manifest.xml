@@ -6,9 +6,4 @@
       <assemblyIdentity type="win32" name="ClientService" version="1.0.0.0" />
     </dependentAssembly>
   </dependency>
-  <dependency>
-    <dependentAssembly>
-      <assemblyIdentity type="win32" name="CsClientService" version="1.0.0.0" />
-    </dependentAssembly>
-  </dependency>
 </assembly>

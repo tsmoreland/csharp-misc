@@ -350,6 +350,13 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="{5c45f962-1585-4e47-9ffd-922ba54e67a5}">
+      <Guid>5c45f962-1585-4e47-9ffd-922ba54e67a5</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
