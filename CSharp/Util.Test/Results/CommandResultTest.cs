@@ -396,6 +396,14 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_FlatMapAppliedResultSuccess(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
+        public void SucessfulResult_MapInvoked() => 
+            TestContext.SucessfulResult_MapInvoked(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_MapAppliedResultSuccess() =>
+            TestContext.SucessfulResult_MapAppliedResultSuccess(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
         public void SucessfulResult_OrElseNotUsed() =>
             TestContext.SucessfulResult_OrElseNotUsed(() => TestContext.BuildCommandContext<Guid>());
 
@@ -422,8 +430,20 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_OrElseThrowOverloadDoesValueMatches(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
+        public void FailedResult_FlatMapThrowsArgumentNullWhenMaperIsNull() =>
+            TestContext.FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
         public void FailedResult_FlatMapNotApplied() =>
             TestContext.FailedResult_FlatMapNotApplied(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_MapThrowsArgumentNullWhenMaperIsNull() =>
+            TestContext.FailedResult_MapThrowsArgumentNullWhenMapperIsNull(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_MapNotApplied() =>
+            TestContext.FailedResult_MapNotApplied(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
         public void FailedResult_OrElseUsed() =>
@@ -449,6 +469,10 @@ namespace Moreland.CSharp.Util.Test.Results
         public void FailedResult_OrElseThrowThrowsArgumentNullExceptionWhenSupplierIsNull() =>
             TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => 
                 TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseThrowsArgumentNullWhenSupplierIsNull() =>
+            TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
         public void ExplcitCast_ReturnsExpectedValueWhenSuccess()

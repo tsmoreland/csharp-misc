@@ -38,9 +38,17 @@ namespace Moreland.CSharp.Util
         public bool HasValue { get; }
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
+        public Maybe<TValue> Filter(Predicate<TValue> predicate) => 
+            Where(predicate);
+
+        /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
         public Maybe<TValue> Where(Predicate<TValue> predicate) => HasValue && predicate?.Invoke(Value) == true 
             ? this 
             : Maybe.Empty<TValue>();
+
+        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
+        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) =>
+            Map(selector);
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
         public Maybe<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)

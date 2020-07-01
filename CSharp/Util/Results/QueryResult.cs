@@ -76,10 +76,30 @@ namespace Moreland.CSharp.Util.Results
         }
 
         /// <summary>
-        /// If result is a success, it applies the provided Result-bearing mapping function to it, 
-        /// returns that result, otherwise returns an empty Maybe. 
+        /// If a value is present, apply the provided Optional-bearing mapping function to it, 
+        /// return that result, otherwise return an empty Optional.
         /// </summary>
-        public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, QueryResult<TMappedValue>> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+            if (!Success)
+                return QueryResult.Failed<TMappedValue>(Message, Cause);
+            return mapper.Invoke(Value);
+        }
+
+        /// <summary>
+        /// If a value is present, apply the provided mapping function to it, 
+        /// and if the result is non-null, return an Optional describing the result. 
+        /// </summary>
+        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) =>
+            Map(selector);
+
+        /// <summary>
+        /// If a value is present, apply the provided mapping function to it, 
+        /// and if the result is non-null, return an Optional describing the result. 
+        /// </summary>
+        public QueryResult<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
