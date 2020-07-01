@@ -22,6 +22,7 @@
 #include <string>
 #include <comdef.h>
 #include <atlbase.h>
+#include "CsCoreClientService.h"
 
 using namespace client;
 
@@ -32,24 +33,20 @@ constexpr auto try_com_method(F functor)
     return SUCCEEDED(hr);
 }
 
+using namespace core::client_service;
 
 int main()
 {
     com_environment env;
 
-
-
     try {
-        CsClientService::_ServicePtr cs_service_ptr;
-        if (!try_com_method([&cs_service_ptr]() { return cs_service_ptr.CreateInstance(__uuidof(CsClientService::Service), nullptr, CLSCTX_LOCAL_SERVER); }))
-            return 1;
-
         std::wstring const lower = L"all lower case";
         HostServerLib::IServiceProxyPtr service_proxy_ptr{};
-        service_proxy_ptr->RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
 
         if (!try_com_method([&service_proxy_ptr]() { return service_proxy_ptr.CreateInstance(__uuidof(HostServerLib::ServiceProxy), nullptr, CLSCTX_LOCAL_SERVER); }))
             return 1;
+
+        service_proxy_ptr->RegisterOwningProcessId(static_cast<int>(GetCurrentProcessId()));
 
         _bstr_t const input(lower.c_str());
         auto upper_bstr = service_proxy_ptr->ToUpper(input);
@@ -64,6 +61,24 @@ int main()
         upper = static_cast<wchar_t const*>(upper_bstr), upper_bstr.length();
 
         std::wcout  << "Lower case: " << lower << " upper case: " << upper << std::endl;
+
+        CsClientService::_ServicePtr cs_service_ptr;
+        if (!try_com_method([&cs_service_ptr]() { return cs_service_ptr.CreateInstance(__uuidof(CsClientService::Service), nullptr, CLSCTX_INPROC); }))
+            return 1;
+
+        core_service_ptr core_service;
+        if (!try_com_method([&core_service]() { return core_service.CreateInstance(__uuidof(CoreClientService), nullptr, CLSCTX_INPROC); }))
+            return 1;
+
+        int i;
+        std::cin >> i;
+
+        std::wstring const all_upper = L"ALL UPPER CASE";
+        upper_bstr = core_service->ToLower(all_upper.c_str());
+        upper = static_cast<wchar_t const*>(upper_bstr), upper_bstr.length();
+        std::wcout  << "Upper case: " << all_upper << " lower case: " << upper << std::endl;
+
+        std::cin >> i;
 
     } catch (ATL::CAtlException const&) {
         return 2;

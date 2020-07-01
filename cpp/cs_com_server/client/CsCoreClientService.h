@@ -12,23 +12,31 @@
 // 
 
 #pragma once
+#pragma pack(push, 8)
 
+#include <comdef.h>
 
-#ifdef _WIN64
-#   ifdef _DEBUG
-#       import "../HostServer/x64/Debug/HostServer.tlb"
-#       import "../ClientService/x64/Debug/ClientService.tlb"
-#   else
-#       import "../HostServer/x64/Release/HostServer.tlb"
-#       import "../ClientService/x64/Release/ClientService.tlb"
-#   endif
-#else
-#   ifdef _DEBUG
-#       import "../HostServer/Win32/Debug/HostServer.tlb"
-#       import "../ClientService/Win32/Debug/ClientService.tlb" rename("value", "csValue")
-#       import "../Win32/Debug/CsClientService.tlb"
-#   else
-#       import "../HostServer/Win32/Release/HostServer.tlb"
-#       import "../ClientService/Win32/Release/ClientService.tlb"
-#   endif
-#endif
+namespace core::client_service
+{
+    struct __declspec(uuid("999B9B4F-F983-49F2-889B-087C3C4FB57C")) ICoreClientService;
+    struct CoreClientService;
+
+    using core_service_ptr = _com_ptr_t<_com_IIID<ICoreClientService, &__uuidof(ICoreClientService)> >;
+
+    struct __declspec(uuid("999B9B4F-F983-49F2-889B-087C3C4FB57C"))
+    ICoreClientService : IUnknown
+    {
+        _bstr_t ToLower(_bstr_t input)
+        {
+            BSTR result = 0;
+            if (auto const hr = raw_ToLower(input, &result); FAILED(hr))
+                _com_issue_errorex(hr, this, __uuidof(this));
+            return _bstr_t(result, false);
+        }
+
+        virtual HRESULT __stdcall raw_ToLower(BSTR input, BSTR* output) = 0;
+    };
+
+    struct __declspec(uuid("8C1466E8-87CC-4CBC-B4E6-124024CFEDF3"))
+    CoreClientService;
+}

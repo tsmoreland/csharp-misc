@@ -173,6 +173,7 @@
     <ClInclude Include="com_environment.h" />
     <ClInclude Include="com_exception.h" />
     <ClInclude Include="com_imports.h" />
+    <ClInclude Include="CsCoreClientService.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientService\ClientService.vcxproj">

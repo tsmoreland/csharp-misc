@@ -32,6 +32,9 @@
     <ClInclude Include="com_imports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CsCoreClientService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="manifest.xml">
