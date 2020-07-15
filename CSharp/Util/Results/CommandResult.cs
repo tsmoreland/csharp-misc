@@ -189,6 +189,28 @@ namespace Moreland.CSharp.Util.Results
             throw exceptionSupplier.Invoke(Message, Cause);
         }
 
+        /// <summary>
+        /// Returns the current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </summary>
+        /// <param name="handleError">
+        /// <see cref="Func{string, Exception?, CommandResult{TValue}}"/> given message and 
+        /// exception cause and returns a <see cref="CommandResult{TValue}"/> as an alternate result
+        /// </param>
+        /// <returns>
+        /// current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </returns>
+        public CommandResult<TValue> OrElseHandleError(Func<string, Exception?, CommandResult<TValue>> handleError)
+        {
+            if (handleError == null)
+                throw new ArgumentNullException(nameof(handleError));
+
+            return Success
+                ? this
+                : handleError.Invoke(Message, Cause);
+        }
+
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region IEquatable{QueryResult{TValue}}
