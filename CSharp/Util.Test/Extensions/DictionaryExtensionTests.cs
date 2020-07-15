@@ -51,6 +51,50 @@ namespace Moreland.CSharp.Util.Test.Extensions
         }
 
         [Fact]
+        public void Union_MergeUsingFirstChoosesFirst()
+        {
+            var first = ArrayExtensions.Of(3, 4, 5).ToDictionary(value => value, value => value.ToString());
+            var second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+
+            var result = first.UnionMergeUsingFirst(second);
+
+            Assert.Equal(first[3], result[3]);
+        }
+
+        [Fact]
+        public void Union_MergeUsingFirstContainsExpectedKeys()
+        {
+            var first = ArrayExtensions.Of(3, 4, 5).ToDictionary(value => value, value => value.ToString());
+            var second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+
+            var result = first.UnionMergeUsingFirst(second);
+
+            Assert.Equal(new[] {1, 2, 3, 4, 5}, result.Keys.OrderBy(k => k).ToArray());
+        }
+
+        [Fact]
+        public void Union_MergeUsingSecondChoosesSecond()
+        {
+            var first = ArrayExtensions.Of(3, 4, 5).ToDictionary(value => value, value => value.ToString());
+            var second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+
+            var result = first.UnionMergeUsingSecond(second);
+
+            Assert.Equal(first[3], result[3]);
+        }
+
+        [Fact]
+        public void Union_MergeUsingSecondContainsExpectedKeys()
+        {
+            var first = ArrayExtensions.Of(3, 4, 5).ToDictionary(value => value, value => value.ToString());
+            var second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+
+            var result = first.UnionMergeUsingSecond(second);
+
+            Assert.Equal(new[] {1, 2, 3, 4, 5}, result.Keys.OrderBy(k => k).ToArray());
+        }
+
+        [Fact]
         public void Intersect_ThrowsArgumentNullExceptionForNullFirstValue()
         {
             Dictionary<int, string> first = null!;
@@ -66,6 +110,26 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Dictionary<int, string> second = null!;
             var exception = Assert.Throws<ArgumentNullException>(() => first.Intersect(second, UnexpectedMerge));
             Assert.Contains($"'{nameof(second)}'", exception.Message);
+        }
+
+        [Fact]
+        public void Intersect_ThrowsArgumentNullForNullMergeHandler()
+        {
+            var first = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+            var second = ArrayExtensions.Of(1, 2, 3).ToDictionary(value => value, value => value.ToString());
+
+            var exception = Assert.Throws<ArgumentNullException>(() => first.Intersect(second, null!));
+            Assert.Contains("'mergeHandler'", exception.Message);
+        }
+
+        [Fact]
+        public void Intersect_ContainsExpectedKeys()
+        {
+            Dictionary<int, string> first = ArrayExtensions.Of(1, 2, 3, 4).ToDictionary(value => value, value => value.ToString());
+            Dictionary<int, string> second = ArrayExtensions.Of(3, 4, 5, 6).ToDictionary(value => value, value => value.ToString());
+
+            var result = first.Intersect(second, (a, b) => a);
+            Assert.Equal(new[] {3, 4}, result.Keys.OrderBy(k => k).ToArray());
         }
 
         private static string UnexpectedMerge(string first, string second)

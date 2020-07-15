@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using Xunit;
 
 namespace Moreland.CSharp.Util.Test.Extensions
@@ -31,6 +32,19 @@ namespace Moreland.CSharp.Util.Test.Extensions
 
             // Assert
             Assert.Same(uids, arrayOfUids);
+        }
+
+        [Fact]
+        public void AsOrToArrayDoesCreateNewArrayWhenNotArray()
+        {
+            // Arrange
+            IEnumerable<Guid> uids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act
+            var arrayOfUids = uids.AsOrToArray();
+
+            // Assert
+            Assert.Equal(uids.ToArray(), arrayOfUids);
         }
 
         [Fact]
@@ -61,6 +75,19 @@ namespace Moreland.CSharp.Util.Test.Extensions
         }
 
         [Fact]
+        public void AsOrToListDoesCreateNewListWhenNotList()
+        {
+            // Arrange
+            IEnumerable<Guid> uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act
+            var listOfUids = uids.AsOrToList();
+
+            // Assert
+            Assert.Equal(uids, listOfUids);
+        }
+
+        [Fact]
         public void AsOrToListReturnsEmptyArrayForNullEnumerable()
         {
             // Arrange
@@ -72,6 +99,36 @@ namespace Moreland.CSharp.Util.Test.Extensions
             // Assert
             Assert.NotNull(listOfUids);
             Assert.Empty(listOfUids);
+        }
+
+        [Fact]
+        public void ForEachThrowsArgumentNullIfItemsAreNull()
+        {
+            IEnumerable<int> items = null!;
+
+            var exception = Assert.Throws<ArgumentNullException>(() => items.ForEach((value) => { }));
+            Assert.Contains($"'{nameof(items)}'", exception.Message);
+        }
+        [Fact]
+        public void ForEachThrowsArgumentNullIfConsumerIsNull()
+        {
+            var items = (new List<int>() { 1, 2, 3 }).AsEnumerable();
+            var exception = Assert.Throws<ArgumentNullException>(() => items.ForEach(null!));
+            Assert.Contains("'consumer'", exception.Message);
+        }
+
+        [Fact]
+        public void ForEachIteratesOverEachElement()
+        {
+            var items = (new List<int>() { 1, 2, 3 }).AsEnumerable();
+            var mock = new Mock<object>();
+            mock
+                .Setup(o => o.ToString())
+                .Returns(string.Empty);
+
+            items.ForEach(value => { _ = value + mock.Object.ToString(); });
+
+            mock.Verify(o => o.ToString(), Times.Exactly(items.Count()));
         }
     }
 }

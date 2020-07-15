@@ -190,25 +190,25 @@ namespace Moreland.CSharp.Util.Results
         }
 
         /// <summary>
-        /// Returns the current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </summary>
-        /// <param name="handleError">
+        /// <param name="mapper">
         /// <see cref="Func{string, Exception?, CommandResult{TValue}}"/> given message and 
-        /// exception cause and returns a <see cref="CommandResult{TValue}"/> as an alternate result
+        /// exception cause and returns a <see cref="CommandResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
         /// current result if successful or uses <paramref name="handleError"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public CommandResult<TValue> OrElseHandleError(Func<string, Exception?, CommandResult<TValue>> handleError)
+        public CommandResult<TValue> OrElseFlatMap(Func<string, Exception?, CommandResult<TValue>> mapper)
         {
-            if (handleError == null)
-                throw new ArgumentNullException(nameof(handleError));
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
 
             return Success
                 ? this
-                : handleError.Invoke(Message, Cause);
+                : mapper.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }

@@ -261,8 +261,22 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_OrElseThrowDoesNotThrow(() => TestContext.BuildQueryContext<Guid>());
 
         [Fact]
-        public void SucessfulResult_OrElseThrowDoesValueMatches() =>
+        public void SucessfulResult_OrElseThrowValueMatches() =>
             TestContext.SucessfulResult_OrElseThrowDoesValueMatches(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseFlatMapReturnsInitialResult()
+        {
+            // Arrange
+            var ctx = QueryResult.Ok(Guid.NewGuid());
+            Guid alternate = Guid.NewGuid();
+
+            // Act
+            var result = ctx.OrElseFlatMap((msg, ex) => QueryResult.Ok(alternate));
+
+            // Assert
+            Assert.NotEqual(alternate, result.Value);
+        }
 
         [Fact]
         public void FailedResult_OrElseThrowsArgumentNullWhenSupplierIsNull() =>
@@ -271,6 +285,20 @@ namespace Moreland.CSharp.Util.Test.Results
         [Fact]
         public void FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull() =>
             TestContext.FailedResult_FlatMapThrowsArgumentNullWhenMapperIsNull(() => TestContext.BuildQueryContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseFlatMapReturnsMappedValue() 
+        {
+            // Arrange
+            var ctx = QueryResult.Failed<Guid>("error", new NotImplementedException("not implemented"));
+            Guid alternate = Guid.NewGuid();
+
+            // Act
+            var result = ctx.OrElseFlatMap((msg, ex) => QueryResult.Ok(alternate));
+
+            // Assert
+            Assert.Equal(alternate, result.Value);
+        }
 
         [Fact]
         public void FailedResult_FlatMapNotApplied() =>

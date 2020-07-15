@@ -203,7 +203,7 @@ namespace Moreland.CSharp.Util.Test.Results
             var uid = CommandResult.Ok(value);
 
             // Assert
-            Assert.Equal(value, uid.Value); 
+            Assert.Equal(value, uid.Value);
         }
 
         [Fact]
@@ -216,9 +216,9 @@ namespace Moreland.CSharp.Util.Test.Results
             var @string = CommandResult.Ok<string>(value);
 
             // Assert
-            Assert.Equal(value, @string.Value); 
+            Assert.Equal(value, @string.Value);
         }
-        
+
         [Fact]
         public void Ok_EmptyMessageByDefault()
         {
@@ -388,7 +388,7 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Fact]
-        public void SucessfulResult_FlatMapInvoked() => 
+        public void SucessfulResult_FlatMapInvoked() =>
             TestContext.SucessfulResult_FlatMapInvoked(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
@@ -396,7 +396,7 @@ namespace Moreland.CSharp.Util.Test.Results
             TestContext.SucessfulResult_FlatMapAppliedResultSuccess(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
-        public void SucessfulResult_MapInvoked() => 
+        public void SucessfulResult_MapInvoked() =>
             TestContext.SucessfulResult_MapInvoked(() => TestContext.BuildCommandContext<Guid>());
 
         [Fact]
@@ -418,6 +418,21 @@ namespace Moreland.CSharp.Util.Test.Results
         [Fact]
         public void SucessfulResult_OrElseThrowDoesNotThrow() =>
             TestContext.SucessfulResult_OrElseThrowDoesNotThrow(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void SucessfulResult_OrElseFlatMapReturnsInitialResult()
+        {
+            // Arrange
+            var ctx = CommandResult.Ok(Guid.NewGuid());
+            Guid alternate = Guid.NewGuid();
+
+            // Act
+            var result = ctx.OrElseFlatMap((msg, ex) => CommandResult.Ok(alternate));
+
+            // Assert
+            Assert.NotEqual(alternate, result.Value);
+        }
+
         [Fact]
         public void SucessfulResult_OrElseThrowOverloadDoesNotThrow() =>
             TestContext.SucessfulResult_OrElseThrowOverloadDoesNotThrow(() => TestContext.BuildCommandContext<Guid>());
@@ -467,12 +482,26 @@ namespace Moreland.CSharp.Util.Test.Results
 
         [Fact]
         public void FailedResult_OrElseThrowThrowsArgumentNullExceptionWhenSupplierIsNull() =>
-            TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => 
+            TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() =>
                 TestContext.BuildCommandContext<Guid>());
 
         [Fact]
         public void FailedResult_OrElseThrowsArgumentNullWhenSupplierIsNull() =>
             TestContext.FailedResult_OrElseThrowThrowsArgumentNullWhenSupplierIsNull(() => TestContext.BuildCommandContext<Guid>());
+
+        [Fact]
+        public void FailedResult_OrElseFlatMapReturnsMappedValue() 
+        {
+            // Arrange
+            var ctx = CommandResult.Failed<Guid>("error", new NotImplementedException("not implemented"));
+            Guid alternate = Guid.NewGuid();
+
+            // Act
+            var result = ctx.OrElseFlatMap((msg, ex) => CommandResult.Ok(alternate));
+
+            // Assert
+            Assert.Equal(alternate, result.Value);
+        }
 
         [Fact]
         public void ExplcitCast_ReturnsExpectedValueWhenSuccess()
