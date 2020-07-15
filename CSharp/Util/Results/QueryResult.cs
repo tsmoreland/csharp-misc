@@ -145,6 +145,28 @@ namespace Moreland.CSharp.Util.Results
             throw exceptionSupplier.Invoke(Message, Cause);
         }
 
+        /// <summary>
+        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </summary>
+        /// <param name="mapper">
+        /// <see cref="Func{string, Exception?, QueryResult{TValue}}"/> given message and 
+        /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
+        /// </param>
+        /// <returns>
+        /// current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </returns>
+        public QueryResult<TValue> OrElseFlatMap(Func<string, Exception?, QueryResult<TValue>> mapper)
+        {
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+
+            return Success
+                ? this
+                : mapper.Invoke(Message, Cause);
+        }
+
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region IEquatable{QueryResult{TValue}}

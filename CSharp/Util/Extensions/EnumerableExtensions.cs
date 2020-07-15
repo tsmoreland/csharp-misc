@@ -43,7 +43,7 @@ namespace System.Linq
         /// Performs the specified action on each item of the <see cref="IEnumerable{T}"/>
         /// </summary>
         /// <exception cref="ArgumentNullException">if either <paramref name="consumer"/> or <paramref name="items"/> are <c>null</c></exception>
-        public static void Foreach<T>(this IEnumerable<T> items, Action<T> consumer)
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> consumer)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
