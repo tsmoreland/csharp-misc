@@ -12,6 +12,10 @@
 // 
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Moreland.CSharp.Util.Extensions;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util
@@ -25,7 +29,7 @@ namespace Moreland.CSharp.Util
         /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
         public static Maybe<TValue> OfNullable<TValue>(TValue? value) where TValue : struct => value.HasValue ? new Maybe<TValue>(value.Value) : Empty<TValue>();
         /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
-        public static Maybe<TValue> OfNullable<TValue>(TValue value) where TValue : class => value != null ? new Maybe<TValue>(value) : Empty<TValue>();
+        public static Maybe<TValue> OfNullable<TValue>(TValue? value) where TValue : class => value != null ? new Maybe<TValue>(value) : Empty<TValue>();
     }
 
     /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
@@ -37,12 +41,75 @@ namespace Moreland.CSharp.Util
             HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
         public bool HasValue { get; }
 
+        /// <summary>
+        /// If a value is present, performs the given action with the value, otherwise does nothing.
+        /// </summary>
+        /// <param name="action">the action to be performed, if a value is present</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> is null</exception>
+        public void IfHasValue(Action<TValue> action)
+        {
+            GuardArgumentNull(action, nameof(action));
+
+            if (HasValue)
+                action.Invoke(Value);
+        }
+
+        /// <summary>
+        /// If a value is present, performs the given action with the value, otherwise performs the given empty-based action.
+        /// </summary>
+        /// <param name="action">the action to be performed, if a value is present</param>
+        /// <param name="emptyAction">the empty-based action to be performed, if no value is present</param>
+        /// <exception cref="ArgumentNullException">if a value is present and the given action is null, or no value is present and the given empty-based action is null.</exception>
+        public void IfHasValueOrElse(Action<TValue> action, Action emptyAction)
+        {
+            GuardArgumentNull(action, nameof(action));
+            GuardArgumentNull(emptyAction, nameof(emptyAction));
+
+            if (HasValue)
+                action.Invoke(Value);
+            else
+                emptyAction.Invoke();
+        }
+
+#if !NET40
+        /// <summary>
+        /// If a value is present, performs the given action with the value, otherwise does nothing.
+        /// </summary>
+        /// <param name="action">the action to be performed, if a value is present</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="action"/> is null</exception>
+        public async Task IfHasValueAsync(Func<TValue, Task> action)
+        {
+            GuardArgumentNull(action, nameof(action));
+
+            if (HasValue)
+                await action.Invoke(Value).ConfigureAwait(true);
+        }
+
+        /// <summary>
+        /// If a value is present, performs the given action with the value, otherwise performs the given empty-based action.
+        /// </summary>
+        /// <param name="action">the action to be performed, if a value is present</param>
+        /// <param name="emptyAction">the empty-based action to be performed, if no value is present</param>
+        /// <exception cref="ArgumentNullException">if a value is present and the given action is null, or no value is present and the given empty-based action is null.</exception>
+        public async Task IfHasValueOrElseAsync(Func<TValue, Task> action, Func<Task> emptyAction)
+        {
+            GuardArgumentNull(action, nameof(action));
+            GuardArgumentNull(emptyAction, nameof(emptyAction));
+
+            if (HasValue)
+                await action.Invoke(Value).ConfigureAwait(true);
+            else
+                await emptyAction.Invoke().ConfigureAwait(true);
+        }
+#endif
+
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
         public Maybe<TValue> Filter(Predicate<TValue> predicate) => 
             Where(predicate);
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
-        public Maybe<TValue> Where(Predicate<TValue> predicate) => HasValue && predicate?.Invoke(Value) == true 
+        // ReSharper disable once ConstantConditionalAccessQualifier
+        public Maybe<TValue> Where(Predicate<TValue> predicate) => HasValue && predicate?.Invoke(Value) == true
             ? this 
             : Maybe.Empty<TValue>();
 
@@ -55,9 +122,9 @@ namespace Moreland.CSharp.Util
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
-            if (!HasValue)
-                return Maybe.Empty<TMappedValue>();
-            return Maybe.Of(mapper.Invoke(Value));
+            return HasValue
+                ? Maybe.Of(mapper.Invoke(Value))
+                : Maybe.Empty<TMappedValue>();
         }
 
         /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
@@ -97,6 +164,14 @@ namespace Moreland.CSharp.Util
             throw exceptionSupplier.Invoke();
         }
 
+        /// <summary>
+        /// if value is present, returns an <see cref="IEnumerable{TValue}"/> containing only that value;
+        /// otherwise an empty <see cref="IEnumerable{TValue}"/>
+        /// </summary>
+        public IEnumerable<TValue> AsEnumerable() => HasValue
+            ? ArrayExtensions.Of(Value)
+            : Enumerable.Empty<TValue>();
+
         public bool ToBoolean() => HasValue;
 
         public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
@@ -122,6 +197,13 @@ namespace Moreland.CSharp.Util
             HasValue = value != null;
         }
         private readonly TValue _value;
+
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
+        private static void GuardArgumentNull(object? argument, string parameterName)
+        {
+            if (argument == null)
+                throw new ArgumentNullException(parameterName);
+        }
 
         #region IEquatable{Maybe{TValue}}
         public bool Equals(Maybe<TValue> other) =>

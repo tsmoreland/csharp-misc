@@ -10,7 +10,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Moreland.CSharp.Util</PackageId>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Authors>Terry Moreland</Authors>
     <PackageLicenseExpression></PackageLicenseExpression>
     <Company />
