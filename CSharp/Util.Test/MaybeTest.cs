@@ -33,7 +33,7 @@ namespace Moreland.CSharp.Util.Test
         public void Of_HasValueTrueWhenHasValue()
         {
             // Arrange
-            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+            var maybe = Maybe.Of(Guid.NewGuid());
 
             // Act
             bool isPresent = maybe.HasValue;
@@ -376,7 +376,7 @@ namespace Moreland.CSharp.Util.Test
         public void ImplicitBool_TrueIfHasValue()
         {
             // Arrange
-            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+            var maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
             ImplicitBoolEqualsIsPresent(maybe);
@@ -465,7 +465,7 @@ namespace Moreland.CSharp.Util.Test
         {
             // Arrange
             var maybeValueType = Maybe.OfNullable<Guid>(Guid.NewGuid());
-            var maybeRefType = Maybe.OfNullable<string>(Guid.NewGuid().ToString());
+            var maybeRefType = Maybe.OfNullable(Guid.NewGuid().ToString());
 
             // Act
             bool valueIsPresent = maybeValueType.HasValue;
@@ -481,7 +481,7 @@ namespace Moreland.CSharp.Util.Test
             Guid id = Guid.NewGuid();
 
             var maybeValue = Maybe.OfNullable<Guid>(id);
-            var maybeRef = Maybe.OfNullable<string>(id.ToString());
+            var maybeRef = Maybe.OfNullable(id.ToString());
 
             Assert.Equal(id, maybeValue.Value);
             Assert.Equal(id.ToString(), maybeRef.Value);
