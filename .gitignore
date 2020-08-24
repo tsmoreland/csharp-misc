@@ -351,3 +351,4 @@ MigrationBackup/
 
 .vscode/
 /.sonarlint/Util.slconfig
+/CSharp/Util/Moreland.CSharp.Util.xml

@@ -17,8 +17,17 @@ using System;
 
 namespace Moreland.CSharp.Util.Extensions
 {
+    /// <summary>
+    /// <see cref="System.Array"/> extension methods
+    /// </summary>
     public static class ArrayExtensions
     {
+        /// <summary>
+        /// Returns an Empty array, same functionality as System.Array.Empty{T} available in NET461
+        /// but supported in NET40 and NET45
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
         public static TValue[] Empty<TValue>() =>
 #if NET40 || NET45
             new TValue[0];
