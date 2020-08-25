@@ -25,23 +25,50 @@ namespace Moreland.CSharp.Util
     public sealed class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
         #region Public
+        /// <summary>
+        /// Creates a new HashCode Builder initialized using <paramref name="objects"/>
+        /// </summary>
         public static HashCodeBuilder Create(params object?[] objects) => new HashCodeBuilder(objects);
+        /// <summary>
+        /// Updates the <see cref="HashCodeBuilder"/> with <paramref name="objects"/>
+        /// </summary>
         public HashCodeBuilder WithAddedValues(params object?[] objects) =>
             new HashCodeBuilder(CalculateHashCode(_piecewiseCode, objects));
+        /// <summary>
+        /// Builds the HashCode using the stored values
+        /// </summary>
         public int ToHashCode() => 13 * _piecewiseCode;
 
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator==(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => 
             leftHandSide?._piecewiseCode == rightHandSide?._piecewiseCode;
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => 
             !(leftHandSide == rightHandSide);
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>
+        /// </summary>
         public static bool operator <(HashCodeBuilder left, HashCodeBuilder right) =>
-            left is null ? right is object : left.CompareTo(right) < 0;
+            ReferenceEquals(left, null!) ? !ReferenceEquals(right, null!) : left.CompareTo(right) < 0;
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="left"/> is less or equal tothan <paramref name="right"/>
+        /// </summary>
         public static bool operator <=(HashCodeBuilder left, HashCodeBuilder right) =>
-            left is null || left.CompareTo(right) <= 0;
+            ReferenceEquals(left, null!) || left.CompareTo(right) <= 0;
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>
+        /// </summary>
         public static bool operator >(HashCodeBuilder left, HashCodeBuilder right) =>
-            left is object && left.CompareTo(right) > 0;
+            !ReferenceEquals(left, null!) && left.CompareTo(right) > 0;
+        /// <summary>
+        /// returns <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>
+        /// </summary>
         public static bool operator >=(HashCodeBuilder left, HashCodeBuilder right) =>
-            left is null ? right is null : left.CompareTo(right) >= 0;
+            ReferenceEquals(left, null!) ? ReferenceEquals(right, null!) : left.CompareTo(right) >= 0;
 
         #endregion
         #region Private
@@ -64,20 +91,33 @@ namespace Moreland.CSharp.Util
         #endregion
 
         #region IComparable{HashCodeBuilder}
+        /// <summary>
+        /// <inheritdoc cref="IComparable{HashCodeBuilder}.CompareTo"/>
+        /// </summary>
         public int CompareTo(HashCodeBuilder? other) =>
-            other is HashCodeBuilder hashCode 
-            ? _piecewiseCode.CompareTo(hashCode._piecewiseCode) 
+            other != null
+            ? _piecewiseCode.CompareTo(other._piecewiseCode) 
             : 1; // 1 is based on the decompiled version of System.String's response to the equivalent criteria
 
         #endregion
         #region IEquatable{HashCodeBuilder}
+        /// <summary>
+        /// <inheritdoc cref="IEquatable{HashCodeBuilder}.Equals(HashCodeBuilder)"/>
+        /// </summary>
         public bool Equals(HashCodeBuilder? other) =>
             other != null && other._piecewiseCode == _piecewiseCode;
 
         #endregion
         #region Object
 
+        /// <summary>
+        /// <inheritdoc cref="object.Equals(object?)"/>
+        /// </summary>
         public override bool Equals(object? obj) => Equals(obj as HashCodeBuilder);
+        /// <summary>
+        /// <inheritdoc cref="object.GetHashCode"/>
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode() => _piecewiseCode.GetHashCode();
 
         #endregion

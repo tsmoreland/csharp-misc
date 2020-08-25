@@ -13,12 +13,25 @@
 
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace System.Linq
 {
+    /// <summary>
+    /// <see cref="IList{T}"/> extension methods
+    /// </summary>
     public static class List
     {
+        /// <summary>
+        /// Returns new list containing <paramref name="items"/>
+        /// </summary>
         public static IList<T> Of<T>(params T[] items) => new List<T>(items);
+        /// <summary>
+        /// Returns new list containing <paramref name="items"/>
+        /// </summary>
         public static IList<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
+        /// <summary>
+        /// Returns new empty list
+        /// </summary>
         public static IList<T> Empty<T>() => new List<T>();
     }
 }

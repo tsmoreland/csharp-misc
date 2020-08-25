@@ -16,6 +16,10 @@ using System;
 
 namespace Moreland.CSharp.Util.Results
 {
+    /// <summary>
+    /// Common Value Result definitions
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
     public interface IValueResult<TValue>
     {
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
@@ -42,13 +46,16 @@ namespace Moreland.CSharp.Util.Results
         TValue OrElseGet(Func<TValue> other);
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         TValue OrElseThrow(Func<Exception> exceptionSupplier);
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier);
+        /// <summary>
+        /// Returns <see cref="Success"/>
+        /// </summary>
         bool ToBoolean();
     }
 }

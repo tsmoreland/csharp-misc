@@ -20,6 +20,9 @@ using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util
 {
+    /// <summary>
+    /// Maybe Factory methods
+    /// </summary>
     public static class Maybe
     {
         /// <summary>Returns an empty Maybe instance.</summary>
@@ -39,6 +42,9 @@ namespace Moreland.CSharp.Util
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
         public TValue Value => 
             HasValue ? _value : throw new InvalidOperationException(ProjectResources.NoSuchValue);
+        /// <summary>
+        /// Returns <c>true</c> if <see cref="Maybe{TValue}"/> contains a value
+        /// </summary>
         public bool HasValue { get; }
 
         /// <summary>
@@ -172,12 +178,24 @@ namespace Moreland.CSharp.Util
             ? ArrayExtensions.Of(Value)
             : Enumerable.Empty<TValue>();
 
+        /// <summary>
+        /// Returns <see cref="HasValue"/>
+        /// </summary>
         public bool ToBoolean() => HasValue;
 
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
             leftHandSide.Equals(rightHandSide);
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
             !(leftHandSide == rightHandSide);
+        /// <summary>
+        /// Returns <see cref="ToBoolean"/>
+        /// </summary>
         public static implicit operator bool(Maybe<TValue> maybe) => maybe.ToBoolean();
 
         /// <summary>Returns the Value</summary>
@@ -206,15 +224,27 @@ namespace Moreland.CSharp.Util
         }
 
         #region IEquatable{Maybe{TValue}}
+        /// <summary>
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
+        /// </summary>
         public bool Equals(Maybe<TValue> other) =>
             (!HasValue && !other.HasValue) || (HasValue && other.HasValue && Value?.Equals(other.Value) == true);
 
         #endregion
         #region Object
+        /// <summary>
+        /// <inheritdoc cref="ValueType.Equals(object?)"/>
+        /// </summary>
         public override bool Equals(object? obj) => obj is Maybe<TValue> maybeObj && Equals(maybeObj);
+        /// <summary>
+        /// <inheritdoc cref="ValueType.GetHashCode"/>
+        /// </summary>
         public override int GetHashCode() => HasValue
             ? Value?.GetHashCode() ?? 0
             : 0;
+        /// <summary>
+        /// <see cref="ValueType.ToString"/>
+        /// </summary>
         public override string ToString() =>
             HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
         #endregion
