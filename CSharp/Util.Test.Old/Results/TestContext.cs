@@ -16,7 +16,7 @@ using System;
 using Moreland.CSharp.Util.Results;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Results
+namespace Moreland.CSharp.Util.Test.Old.Results
 {
     public delegate IValueResult<T> SuccessResultFactory<T>(T value);
     public delegate IValueResult<T> FailureResultFactory<T>(string message);

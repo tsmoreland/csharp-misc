@@ -14,7 +14,7 @@
 using System;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
 
     public sealed class ReferenceTypeNullableTests

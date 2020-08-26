@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using Xunit;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Old
 {
     public class MaybeTest
     {

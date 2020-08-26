@@ -17,7 +17,7 @@ using System.Linq;
 using Moq;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
     public sealed class EnumerableTests
     {

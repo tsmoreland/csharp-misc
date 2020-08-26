@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
     public interface INullableExtentensionTestContext
     {

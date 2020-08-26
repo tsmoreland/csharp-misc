@@ -17,7 +17,7 @@ using Moreland.CSharp.Util.Extensions;
 using Moreland.CSharp.Util.Internal;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Results
+namespace Moreland.CSharp.Util.Test.Old.Results
 {
     public sealed class ValueResultCoreTest
     {

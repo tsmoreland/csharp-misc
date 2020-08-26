@@ -15,7 +15,7 @@ using System;
 using Moreland.CSharp.Util.Extensions;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
     public class ValueTypeNullableExtensionTestContext : INullableExtentensionTestContext
     {

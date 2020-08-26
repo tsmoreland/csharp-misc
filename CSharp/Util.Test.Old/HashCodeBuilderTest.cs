@@ -15,7 +15,7 @@ using System;
 using Moreland.CSharp.Util.Internal;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Old
 {
     public class HashCodeBuilderTest
     {

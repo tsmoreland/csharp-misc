@@ -14,7 +14,7 @@
 using System;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Old
 {
     public sealed class NumericParserTest
     {
