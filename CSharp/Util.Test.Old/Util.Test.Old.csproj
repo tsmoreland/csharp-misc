@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
     <RootNamespace>Moreland.CSharp.Util.Test</RootNamespace>
-    <AssemblyName>Moreland.CSharp.Util.Test</AssemblyName>
+    <AssemblyName>Moreland.CSharp.Util.Test.Old</AssemblyName>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
