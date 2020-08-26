@@ -34,7 +34,7 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// Converts the string represenation of a number to its 32-bit signed integer equivalent
         /// </summary>
-        /// <returns><see cref="Maybe{int}"/> containing a value on success or empty on failure</returns>
+        /// <returns><see cref="Maybe{Int32}"/> containing a value on success or empty on failure</returns>
         public static Maybe<int> MaybeParseInt(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             int.TryParse(s, style, provider, out int result)
             ? Maybe.Of(result)
@@ -43,7 +43,7 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// Converts the string represenation of a number to its 64-bit signed integer equivalent
         /// </summary>
-        /// <returns><see cref="Maybe{long}"/> containing a value on success or empty on failure</returns>
+        /// <returns><see cref="Maybe{Long}"/> containing a value on success or empty on failure</returns>
         public static Maybe<long> MaybeParseLong(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             long.TryParse(s, style, provider, out long result)
             ? Maybe.Of(result)
@@ -52,7 +52,7 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// Converts the string represenation of a number to its double-precision floating point equivalent equivalent
         /// </summary>
-        /// <returns><see cref="Maybe{double}"/> containing a value on success or empty on failure</returns>
+        /// <returns><see cref="Maybe{Double}"/> containing a value on success or empty on failure</returns>
         public static Maybe<double> MaybeParseDouble(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             double.TryParse(s, style, provider, out double result)
             ? Maybe.Of(result)
@@ -61,7 +61,7 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// Converts the string represenation of a number to its float-precision floating point equivalent equivalent
         /// </summary>
-        /// <returns><see cref="Maybe{float}"/> containing a value on success or empty on failure</returns>
+        /// <returns><see cref="Maybe{Float}"/> containing a value on success or empty on failure</returns>
         public static Maybe<float> MaybeParseFloat(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             float.TryParse(s, style, provider, out float result)
             ? Maybe.Of(result)

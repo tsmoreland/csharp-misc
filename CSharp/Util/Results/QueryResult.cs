@@ -18,10 +18,25 @@ using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util.Results
 {
+    /// <summary>
+    /// Factory methods for <see cref="QueryResult{T}"/>
+    /// </summary>
     public static class QueryResult
     {
+        /// <summary>
+        /// Factory method for successful query with result <paramref name="value"/>
+        /// </summary>
         public static QueryResult<TValue> Ok<TValue>(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
+        /// <summary>
+        /// Factory methods for successful query with result <paramref name="value"/> and <paramref name="message"/>
+        /// </summary>
         public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => new QueryResult<TValue>(value, true, message ?? string.Empty);
+        /// <summary>
+        /// Factory method for Failed Query
+        /// </summary>
+        /// <typeparam name="TValue">the type of returned <see cref="QueryResult{TValue}"/></typeparam>
+        /// <param name="message">message detailed while the query failed</param>
+        /// <param name="cause">optional exception providing further details</param>
         public static QueryResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
             new QueryResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
     }
@@ -45,11 +60,27 @@ namespace Moreland.CSharp.Util.Results
         public string Message => ValueResult.Message;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
+        /// <summary>
+        /// Returns <see cref="Success"/>
+        /// </summary>
         public bool ToBoolean() => Success;
 
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        /// <summary>
+        /// Returns <see cref="ToBoolean"/>
+        /// </summary>
         public static implicit operator bool(QueryResult<TValue> result) => result.ToBoolean();
+        /// <summary>
+        /// Returns <see cref="Value"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">if the <paramref name="result"/> does not have a value</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
@@ -123,7 +154,7 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         public TValue OrElseThrow(Func<Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
@@ -135,7 +166,7 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
@@ -150,11 +181,11 @@ namespace Moreland.CSharp.Util.Results
         /// allow the result to be converted to an alternate successful result
         /// </summary>
         /// <param name="mapper">
-        /// <see cref="Func{string, Exception?, QueryResult{TValue}}"/> given message and 
+        /// Functor given message and 
         /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// current result if successful or uses <paramref name="mapper"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
         public QueryResult<TValue> OrElseFlatMap(Func<string, Exception?, QueryResult<TValue>> mapper)
@@ -170,13 +201,22 @@ namespace Moreland.CSharp.Util.Results
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region IEquatable{QueryResult{TValue}}
+        /// <summary>
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
+        /// </summary>
         public bool Equals(QueryResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
 
         #endregion
         #region ValueType
 
+        /// <summary>
+        /// <inheritdoc cref="ValueType.Equals(object?)"/>
+        /// </summary>
         public override bool Equals(object? obj) => obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
+        /// <summary>
+        /// <inheritdoc cref="ValueType.GetHashCode"/>
+        /// </summary>
         public override int GetHashCode() => ValueResult.GetHashCode();
 
         #endregion

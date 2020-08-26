@@ -15,6 +15,13 @@ using System;
 
 namespace Moreland.CSharp.Util.Extensions
 {
+    /// <summary>
+    /// Extensions to Nullable types
+    /// </summary>
+    /// <remarks>
+    /// This includes <see cref="Nullable{T}"/> as well as structs using the <c>?</c> operator or
+    /// when nullable is enabled classes using <c>?</c>
+    /// </remarks>
     public static class NullableExtensions
     {
         /// <summary>Returns true if <paramref name="value"/> is non-null</summary>
