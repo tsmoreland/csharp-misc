@@ -2,9 +2,9 @@ name: Trunk CI Build
 
 on:   
   push:
-    branches: [ trunk ]
+    branches: [ trunk, develop ]
   pull_request:
-    branches: [ trunk ]
+    branches: [ trunk, develop ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: '5.0.100-preview.8.20417.14'
     - name: Install dependencies
       run: dotnet restore
     - name: Build
