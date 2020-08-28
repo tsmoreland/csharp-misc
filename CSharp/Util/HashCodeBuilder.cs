@@ -13,18 +13,27 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Moreland.CSharp.Util
 {
+#if NET40 || NET45 || NET46 || NET472 || NET48 || NETSTANDARD2_0
     /// <summary>
     /// Intended for use in .NET Standard 2.0 or .NET Framework 4.8 and below, 
-    /// <see cref="HashCode.Combine{T1}(T1)"/> variations should be preferred
-    /// if available
     /// </summary>
+#else
+    /// <summary>
+    /// Intended for use in .NET Standard 2.0 or .NET Framework 4.8 and below, 
+    /// </summary>
+    /// <remarks>
+    /// <see cref="HashCode.Combine{T1}"/> variations should be preferred
+    /// </remarks>
+#endif
     [DebuggerDisplay("{_piecewiseCode}")]
     public sealed class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
     {
         #region Public
+
         /// <summary>
         /// Creates a new HashCode Builder initialized using <paramref name="objects"/>
         /// </summary>
@@ -81,13 +90,8 @@ namespace Moreland.CSharp.Util
         {
             _piecewiseCode = piecewiseHashCodeBuilder;
         }
-        private static int CalculateHashCode(in int initialValue, object?[] objects)
-        {
-            var result = initialValue;
-            foreach (var @object in objects)
-                result = (result * 397) ^ (@object?.GetHashCode() ?? 0);
-            return result;
-        }
+        private static int CalculateHashCode(in int initialValue, object?[] objects) =>
+            objects.Aggregate(initialValue, (current, @object) => (current * 397) ^ (@object?.GetHashCode() ?? 0));
         #endregion
 
         #region IComparable{HashCodeBuilder}
@@ -117,7 +121,6 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// <inheritdoc cref="object.GetHashCode"/>
         /// </summary>
-        /// <returns></returns>
         public override int GetHashCode() => _piecewiseCode.GetHashCode();
 
         #endregion
