@@ -82,7 +82,6 @@ namespace Moreland.CSharp.Util.Test.Old
             // Assert
             Assert.False(result.HasValue);
         }
-        */
 
         [Fact]
         public void Map_InvokedWhenHasValue()
@@ -208,6 +207,7 @@ namespace Moreland.CSharp.Util.Test.Old
             // Assert
             Assert.False(result.HasValue);
         }
+        */
 
         [Fact]
         public void OrElseOther_ReturnsSourceValueWhenHasValue()
