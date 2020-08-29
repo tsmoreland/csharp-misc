@@ -48,25 +48,25 @@ namespace Moreland.CSharp.Util.Test.Old.Extensions
 
         public INullableExtentensionTestContext ActUsingOrElse()
         {
-            Result = Value.OrElseOther(Or);
+            Result = Value.ValueOr(Or);
             return this;
         }
         public INullableExtentensionTestContext ActUsingOrElseGet()
         {
-            Result = Value.OrElseGet(OrGetter);
+            Result = Value.ValueOr(OrGetter);
             return this;
         }
 
         public void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception =>
-            Assert.Throws<TException>(() => Value.OrElseGet(OrSupplier));
+            Assert.Throws<TException>(() => Value.ValueOr(OrSupplier));
         public INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception
         {
-            Result = Value.OrElseThrow(supplier);
+            Result = Value.ValueOrThrow(supplier);
             return this;
         }
         public void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception
         {
-            Assert.Throws<TException>(() => Value.OrElseThrow(supplier));
+            Assert.Throws<TException>(() => Value.ValueOrThrow(supplier));
         }
 
         public void AssertHasValue(bool expected) => Assert.Equal(expected, Value.HasValue());

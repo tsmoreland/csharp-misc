@@ -50,6 +50,8 @@ namespace Moreland.CSharp.Util.Test
     {
         private readonly Func<T> _builder;
         private Maybe<T> _maybeWithValue;
+        private Func<T, object> _selector = null!;
+        private Func<T, Maybe<object>> _maybeSelector = null!;
 
         protected MaybeTests(Func<T> builder)
         {
@@ -60,6 +62,8 @@ namespace Moreland.CSharp.Util.Test
         public void Setup()
         {
             _maybeWithValue = Maybe.Of(_builder());
+            _selector = Substitute.For<Func<T, object>>();
+            _maybeSelector = Substitute.For<Func<T, Maybe<object>>>();
         }
 
 
@@ -90,7 +94,7 @@ namespace Moreland.CSharp.Util.Test
 
             var actual = maybe.Where(predicate);
             
-            Assert.That(actual.HasValue, Is.False);
+            Assert.That(actual.IsEmpty, Is.True);
         }
 
         [Test]
@@ -101,7 +105,7 @@ namespace Moreland.CSharp.Util.Test
 
             var actual = _maybeWithValue.Where(predicate);
 
-            Assert.That(actual.HasValue, Is.False);
+            Assert.That(actual.IsEmpty, Is.True);
         }
 
         [Test]
@@ -113,6 +117,62 @@ namespace Moreland.CSharp.Util.Test
             var actual = _maybeWithValue.Where(predicate);
 
             Assert.That(actual.Value, Is.EqualTo(_maybeWithValue.Value));
+        }
+
+        [Test]
+        public void Select_ThrowsArgumentNullException_WhenSelectorIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.Select((Func<T, object>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+        }
+
+        [Test]
+        public void Select_ReturnsUpdatedMaybe_WhenHasValueAndSelectorIsNonNull()
+        {
+            var expected = new object();
+            _selector.Invoke(Arg.Any<T>()).Returns(expected);
+
+            var actual = _maybeWithValue.Select(_selector);
+
+            Assert.That(actual.Value, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Select_ReturnsEmpty_WhenDoesNotHasValue()
+        {
+            _selector.Invoke(Arg.Any<T>()).Returns(new object());
+
+            var actual = Maybe.Empty<T>().Select(_selector);
+
+            Assert.That(actual.IsEmpty, Is.True);
+        }
+
+        [Test]
+        public void SelectMaybe_ThrowsArgumentNullException_WhenSelectorIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.Select((Func<T, Maybe<object>>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+        }
+
+        [Test]
+        public void SelectMaybe_ReturnsUpdatedMaybe_WhenHasValueAndSelectorIsNonNull()
+        {
+            var expected = Maybe.Of(new object());
+            _maybeSelector.Invoke(Arg.Any<T>()).Returns(expected);
+
+            var actual = _maybeWithValue.Select(_maybeSelector);
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void SelectMaybe_ReturnsEmpty_WhenDoesNotHasValue()
+        {
+            _maybeSelector.Invoke(Arg.Any<T>()).Returns(Maybe.Of(new object()));
+
+            var actual = Maybe.Empty<T>().Select(_maybeSelector);
+
+            Assert.That(actual.IsEmpty, Is.True);
         }
     }
 }
