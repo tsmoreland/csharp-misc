@@ -13,53 +13,106 @@
 
 using System;
 using System.Collections.Generic;
+using NSubstitute;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
 
 namespace Moreland.CSharp.Util.Test
 {
     [TestFixture]
-    public sealed class MaybeTests
+    public sealed class MaybeValueTypeTests : MaybeTests<Guid>
     {
-        private MaybeTests<Guid> _valueTests = null!;
-        private MaybeTests<string> _equatableRefTests = null!;
-        private MaybeTests<List<string>> _refTests = null!;
+        public MaybeValueTypeTests()
+            : base(() => BuildRandomGuid())
+        {
+        }
+    }
+
+    [TestFixture]
+    public sealed class MaybeEquatableRefTypeTests : MaybeTests<string>
+    {
+        public MaybeEquatableRefTypeTests()
+            : base(() => BuildRandomString())
+        {
+        }
+    }
+
+    [TestFixture]
+    public sealed class MaybeRefTypeTests : MaybeTests<List<string>>
+    {
+        public MaybeRefTypeTests()
+            : base(() => BuildRandomListOfString())
+        {
+        }
+    }
+
+    public abstract class MaybeTests<T>
+    {
+        private readonly Func<T> _builder;
+        private Maybe<T> _maybeWithValue;
+
+        protected MaybeTests(Func<T> builder)
+        {
+            _builder = builder;
+        }
 
         [SetUp]
         public void Setup()
         {
-            _valueTests = new MaybeTests<Guid>(() => BuildRandomGuid());
-            _equatableRefTests = new MaybeTests<string>(() => BuildRandomString());
-            _refTests = new MaybeTests<List<string>>(() => BuildRandomListOfString());
+            _maybeWithValue = Maybe.Of(_builder());
         }
 
-        [Test]
-        public void Constructor_ReturnsEmpty_WhenUsingValueType() =>
-            _valueTests.Constructor_ReturnsEmpty_WhenInvoked();
 
         [Test]
-        public void Constructor_ReturnsEmpty_WhenUsingEquatableRefType() =>
-            _equatableRefTests.Constructor_ReturnsEmpty_WhenInvoked();
-
-        [Test]
-        public void Constructor_ReturnsEmpty_WhenUsingRefType() =>
-            _refTests.Constructor_ReturnsEmpty_WhenInvoked();
-    }
-
-    public sealed class MaybeTests<T>
-    {
-        private readonly Func<T> _factory;
-
-        public MaybeTests(Func<T> factory)
-        {
-            _factory = factory;
-        }
-
         public void Constructor_ReturnsEmpty_WhenInvoked()
         {
             var maybe = new Maybe<T>();
 
             Assert.That(maybe, Is.EqualTo(Maybe.Empty<T>()));
+        }
+
+        [Test]
+        public void HasValue_ReturnsTrue_BuiltUsingOfWithNonNull()
+        {
+            bool hasValue = _maybeWithValue.HasValue;
+
+            Assert.That(hasValue, Is.True);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Where_ReturnsEmpty_WhenDoesNotHaveValue(bool filterResult)
+        {
+            var predicate = Substitute.For<Predicate<T>>();
+            predicate.Invoke(Arg.Any<T>()).Returns(filterResult);
+
+            var maybe = Maybe.Empty<T>();
+
+            var actual = maybe.Where(predicate);
+            
+            Assert.That(actual.HasValue, Is.False);
+        }
+
+        [Test]
+        public void Where_ReturnsEmpty_WhenHasValueButPredicateReturnsFalse()
+        {
+            var predicate = Substitute.For<Predicate<T>>();
+            predicate.Invoke(Arg.Any<T>()).Returns(false);
+
+            var actual = _maybeWithValue.Where(predicate);
+
+            Assert.That(actual.HasValue, Is.False);
+        }
+
+        [Test]
+        public void Where_ReturnsWithValue_WhenHasValueAndPredicateReturnsTrue()
+        {
+            var predicate = Substitute.For<Predicate<T>>();
+            predicate.Invoke(Arg.Any<T>()).Returns(true);
+
+            var actual = _maybeWithValue.Where(predicate);
+
+            Assert.That(actual.Value, Is.EqualTo(_maybeWithValue.Value));
         }
     }
 }

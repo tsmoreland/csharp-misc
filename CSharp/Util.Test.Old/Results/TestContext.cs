@@ -376,7 +376,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         {
             if (OrElseThrowFunc == null)
             {
-                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
+                Assert.True(false, "ValueOrThrow not set, please configure this method before calling act");
                 return this;
             }
 
@@ -420,7 +420,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         {
             if (OrElseThrowFuncOverload == null)
             {
-                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
+                Assert.True(false, "ValueOrThrow not set, please configure this method before calling act");
                 return this;
             }
 
@@ -447,7 +447,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         {
             if (OrElseGetFunc == null)
             {
-                Assert.True(false, "OrElseGet not set, please configure this method before calling act");
+                Assert.True(false, "ValueOr not set, please configure this method before calling act");
                 return this;
             }
 

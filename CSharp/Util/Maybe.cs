@@ -66,7 +66,7 @@ namespace Moreland.CSharp.Util
         /// <param name="action">the action to be performed, if a value is present</param>
         /// <param name="emptyAction">the empty-based action to be performed, if no value is present</param>
         /// <exception cref="ArgumentNullException">if a value is present and the given action is null, or no value is present and the given empty-based action is null.</exception>
-        public void IfHasValueOrElse(Action<TValue> action, Action emptyAction)
+        public void IfHasValue(Action<TValue> action, Action emptyAction)
         {
             GuardArgumentNull(action, nameof(action));
             GuardArgumentNull(emptyAction, nameof(emptyAction));
@@ -97,7 +97,7 @@ namespace Moreland.CSharp.Util
         /// <param name="action">the action to be performed, if a value is present</param>
         /// <param name="emptyAction">the empty-based action to be performed, if no value is present</param>
         /// <exception cref="ArgumentNullException">if a value is present and the given action is null, or no value is present and the given empty-based action is null.</exception>
-        public async Task IfHasValueOrElseAsync(Func<TValue, Task> action, Func<Task> emptyAction)
+        public async Task IfHasValueAsync(Func<TValue, Task> action, Func<Task> emptyAction)
         {
             GuardArgumentNull(action, nameof(action));
             GuardArgumentNull(emptyAction, nameof(emptyAction));
@@ -110,21 +110,18 @@ namespace Moreland.CSharp.Util
 #endif
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
-        public Maybe<TValue> Filter(Predicate<TValue> predicate) => 
-            Where(predicate);
-
-        /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
         // ReSharper disable once ConstantConditionalAccessQualifier
         public Maybe<TValue> Where(Predicate<TValue> predicate) => HasValue && predicate?.Invoke(Value) == true
             ? this 
             : Maybe.Empty<TValue>();
 
-        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) =>
-            Map(selector);
-
-        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        /// <summary>
+        /// If a value is present, it applies the provided Maybe-bearing
+        /// mapping function to it, returns that result, otherwise returns an
+        /// empty Maybe.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="mapper"/> is <c>null</c></exception>
+        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
@@ -133,25 +130,31 @@ namespace Moreland.CSharp.Util
                 : Maybe.Empty<TMappedValue>();
         }
 
-        /// <summary>If a value is present, it applies the provided Maybe-bearing mapping function to it, returns that result, otherwise returns an empty Maybe. </summary>
-        public Maybe<TMappedValue> FlatMap<TMappedValue>(Func<TValue, Maybe<TMappedValue>> mapper)
+
+        /// <summary>
+        /// If a value is present, it applies the provided Maybe-bearing
+        /// mapping function to it, returns that result, otherwise returns an
+        /// empty Maybe.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">when <paramref name="mapper"/> is null</exception>
+        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, Maybe<TMappedValue>> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
-            if (!HasValue)
-                return Maybe.Empty<TMappedValue>();
-            return mapper.Invoke(Value);
+            return !HasValue 
+                ? Maybe.Empty<TMappedValue>() 
+                : mapper.Invoke(Value);
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
-        public TValue OrElseOther(TValue other) => HasValue 
+        public TValue ValueOr(TValue other) => HasValue 
             ? Value 
             : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue OrElseGet(Func<TValue> other)
+        public TValue ValueOr(Func<TValue> other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
@@ -161,7 +164,7 @@ namespace Moreland.CSharp.Util
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
-        public TValue OrElseThrow(Func<Exception> exceptionSupplier)
+        public TValue ValueOrThrow(Func<Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
@@ -184,15 +187,15 @@ namespace Moreland.CSharp.Util
         public bool ToBoolean() => HasValue;
 
         /// <summary>
-        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// Returns <c>true</c> if <paramref name="first"/> is equal to <paramref name="second"/>
         /// </summary>
-        public static bool operator==(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
-            leftHandSide.Equals(rightHandSide);
+        public static bool operator==(Maybe<TValue> first, Maybe<TValue> second) => 
+            first.Equals(second);
         /// <summary>
-        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// Returns <c>true</c> if <paramref name="first"/> is not equal to <paramref name="second"/>
         /// </summary>
-        public static bool operator!=(Maybe<TValue> leftHandSide, Maybe<TValue> rightHandSide) => 
-            !(leftHandSide == rightHandSide);
+        public static bool operator!=(Maybe<TValue> first, Maybe<TValue> second) => 
+            !(first == second);
         /// <summary>
         /// Returns <see cref="ToBoolean"/>
         /// </summary>
@@ -243,7 +246,7 @@ namespace Moreland.CSharp.Util
             ? Value?.GetHashCode() ?? 0
             : 0;
         /// <summary>
-        /// <see cref="ValueType.ToString"/>
+        /// <inheritdoc cref="ValueType.ToString"/>
         /// </summary>
         public override string ToString() =>
             HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
