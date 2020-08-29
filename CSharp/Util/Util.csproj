@@ -32,6 +32,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Debug\**" />
+    <None Remove="Release\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\..\.sonarlint\moreland-csharp-util\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
 
