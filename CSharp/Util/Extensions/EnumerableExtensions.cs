@@ -15,8 +15,12 @@ using System.Collections.Generic;
 using Moreland.CSharp.Util;
 using Moreland.CSharp.Util.Extensions;
 
+// ReSharper disable once CheckNamespace
 namespace System.Linq
 {
+    /// <summary>
+    /// Extension methods for <see cref="IEnumerable{T}"/>
+    /// </summary>
     public static class EnumerableExtensions
     {
         /// <summary>Returns the first item in the collection wrapped in a <see cref="Maybe{TValue}"/> or <see cref="Maybe.Empty{TValue}"/> if <paramref name="enumerable"/> is empty. </summary>
@@ -29,15 +33,15 @@ namespace System.Linq
         /// <summary>Returns <paramref name="enumerable"/> as array of <typeparamref name="TValue"/> without building a new array if it already is one and an empty array if <paramref name="enumerable"/> is <c>null</c></summary>
         public static TValue[] AsOrToArray<TValue>(this IEnumerable<TValue> enumerable) => enumerable is TValue[] array 
             ? array 
-            : enumerable?.ToArray() ?? ArrayExtensions.Empty<TValue>();
+            : enumerable.ToArray() ?? ArrayExtensions.Empty<TValue>();
 
         /// <summary>
         /// Returns <paramref name="enumerable"/> as <see cref="IList{TValue}"/> of <typeparamref name="TValue"/> without building a new list if it already is one 
-        /// and an empty list if <paramref name="enumerable"/> is <c>null</c><
-        /// /summary>
+        /// and an empty list if <paramref name="enumerable"/> is <c>null</c>
+        /// </summary>
         public static IList<TValue> AsOrToList<TValue>(this IEnumerable<TValue> enumerable) => enumerable is IList<TValue> list
             ? list
-            : enumerable?.ToList() ?? new List<TValue>();
+            : enumerable.ToList() ?? new List<TValue>();
 
         /// <summary>
         /// Performs the specified action on each item of the <see cref="IEnumerable{T}"/>

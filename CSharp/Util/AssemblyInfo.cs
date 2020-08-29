@@ -14,3 +14,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test")]
+[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test.Old")]

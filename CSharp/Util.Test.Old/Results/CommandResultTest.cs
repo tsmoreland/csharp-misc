@@ -18,7 +18,7 @@ using Moreland.CSharp.Util.Internal;
 using Moreland.CSharp.Util.Results;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Results
+namespace Moreland.CSharp.Util.Test.Old.Results
 {
     public sealed class CommandResultTest
     {

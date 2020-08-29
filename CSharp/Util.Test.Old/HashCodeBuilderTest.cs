@@ -11,10 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
 using Moreland.CSharp.Util.Internal;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Old
 {
     public class HashCodeBuilderTest
     {
@@ -108,13 +109,6 @@ namespace Moreland.CSharp.Util.Test
             var first = HashCodeBuilder.Create(1, 2, 3);
             var second = HashCodeBuilder.Create(4, 5, 6);
             HashCodeBuilder third = null!;
-            var firstCode = first.ToHashCode();
-            var secondCode = second.ToHashCode();
-
-            Assert.Equal(first < second, firstCode < secondCode);
-            Assert.Equal(first > second, firstCode > secondCode);
-            Assert.Equal(first <= second, firstCode <= secondCode);
-            Assert.Equal(first >= second, firstCode >= secondCode);
 
             Assert.True(first > third);
             Assert.False(first < third);
@@ -125,6 +119,34 @@ namespace Moreland.CSharp.Util.Test
             Assert.True(third < second);
             Assert.False(third >= second);
             Assert.True(third <= second);
+        }
+
+        [Fact]
+        public void OperatorLessThan_ValuesLessThanIsEqualToValueCodeLessThan()
+        {
+            var (first, firstCode, second, secondCode) = GetBuildersAndBuiltValues();
+            Assert.Equal(first < second, firstCode < secondCode);
+        }
+
+        [Fact]
+        public void OperatorLessThanOrEqualTo_ValuesLessThanOrEqualToIsEqualToValueCodeLessThanOrEqualTo()
+        {
+            var (first, firstCode, second, secondCode) = GetBuildersAndBuiltValues();
+            Assert.Equal(first <= second, firstCode <= secondCode);
+        }
+
+        [Fact]
+        public void OperatorGreaterThan_ValuesGreaterThanIsEqualToValueCodeGreaterThan()
+        {
+            var (first, firstCode, second, secondCode) = GetBuildersAndBuiltValues();
+            Assert.Equal(first > second, firstCode > secondCode);
+        }
+
+        [Fact]
+        public void OperatorGreaterThanOrEqualTo_ValuesGreaterThanOrEqualToIsEqualToValueCodeGreaterThanOrEqualTo()
+        {
+            var (first, firstCode, second, secondCode) = GetBuildersAndBuiltValues();
+            Assert.Equal(first >= second, firstCode >= secondCode);
         }
 
         [Fact]
@@ -202,5 +224,17 @@ namespace Moreland.CSharp.Util.Test
             Assert.True(sevenValuesEqual);
             Assert.True(eightValuesEqual);
         }
+
+        private static ValueTuple<HashCodeBuilder, int, HashCodeBuilder, int> GetBuildersAndBuiltValues()
+        {
+            var first = HashCodeBuilder.Create(1, 2, 3);
+            var second = HashCodeBuilder.Create(4, 5, 6);
+
+            var firstCode = first.ToHashCode();
+            var secondCode = second.ToHashCode();
+
+            return (first, firstCode, second, secondCode);
+        }
+
     }
 }

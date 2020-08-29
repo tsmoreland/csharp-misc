@@ -11,21 +11,35 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
-using System;
-
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
-    public interface INullableExtentensionTestContext
+    public class ListExtensionTests
     {
-        INullableExtentensionTestContext ActUsingOrElse();
-        INullableExtentensionTestContext ActUsingOrElseGet();
+        [Fact]
+        public void ListOfArrayContainsProvidedItems()
+        {
+            var list = List.Of(1, 2, 3);
+            Assert.Equal(new List<int>() { 1, 2, 3 }, list);
+        }
 
-        void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception; 
-        INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
-        void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
+        [Fact]
+        public void ListOfEnumerableContainsProvidedItems()
+        {
+            var enumerable = (new List<int>() { 1, 2, 3 }).AsEnumerable();
+            var list = List.Of(enumerable);
+            Assert.Equal(new List<int>() { 1, 2, 3 }, list);
+        }
 
-        void AssertHasValue(bool expected);
-        void AssertCorrectResult();
+        [Fact]
+        public void EmptyHasNoValues()
+        {
+            var empty = List.Empty<int>();
+
+            Assert.Equal(0, empty.Count);
+        }
     }
 }

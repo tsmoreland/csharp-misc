@@ -27,15 +27,40 @@ namespace Moreland.CSharp.Util.Results
             Result = new ResultCore(success, message, cause);
         }
 
+        /// <summary>
+        /// Builds a successful <see cref="CommandResult{TValue}"/> with value 
+        /// </summary>
         public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
+        /// <summary>
+        /// Builds a successful <see cref="CommandResult{TValue}"/> with value and optional message
+        /// </summary>
         public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
+        /// <summary>
+        /// Builds a successful <see cref="CommandResult"/> 
+        /// </summary>
         public static CommandResult Ok() => _ok;
+        /// <summary>
+        /// Builds a successful <see cref="CommandResult"/> with optional message
+        /// </summary>
         public static CommandResult Ok(string message) => new CommandResult(true, message ?? string.Empty, null);
 
-        public static CommandResult Failed(string message, Exception? cause = null) => new CommandResult(false, message ?? throw new ArgumentNullException(nameof(message)), cause);
+        /// <summary>
+        /// Builds a <see cref="CommandResult"/> with a failed result
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cause"></param>
+        /// <returns></returns>
+        public static CommandResult Failed(string message, Exception? cause = null) => 
+            new CommandResult(false, message ?? throw new ArgumentNullException(nameof(message)), cause);
+        /// <summary>
+        /// Builds a <see cref="CommandResult{TValue}"/> with a failed result
+        /// </summary>
         public static CommandResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
             new CommandResult<TValue>(default!, false, message ?? throw new ArgumentNullException(nameof(message)), cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
 
+        /// <summary>
+        /// represents an unknown error result
+        /// </summary>
         public static CommandResult UnknownError { get; } = new CommandResult(false, "Unknown error occurred.", null);
 
         /// <summary>The result of the operation</summary>
@@ -44,11 +69,28 @@ namespace Moreland.CSharp.Util.Results
         public string Message => Result.Message;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => Result.Cause;
+        /// <summary>
+        /// Returns <see cref="Success"/>
+        /// </summary>
+        /// <returns></returns>
         public bool ToBoolean() => Success;
 
-        public static bool operator==(CommandResult leftHandSide, CommandResult rightHandSide) => leftHandSide.Equals(rightHandSide);
-        public static bool operator!=(CommandResult leftHandSide, CommandResult rightHandSide) => !(leftHandSide == rightHandSide);
-        public static implicit operator bool(CommandResult result) => result.ToBoolean();
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// </summary>
+        public static bool operator==(CommandResult leftHandSide, CommandResult rightHandSide) => 
+            leftHandSide.Equals(rightHandSide);
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// </summary>
+        public static bool operator!=(CommandResult leftHandSide, CommandResult rightHandSide) => 
+            !(leftHandSide == rightHandSide);
+        /// <summary>
+        /// Returns <see cref="ToBoolean"/>
+        /// </summary>
+        /// <param name="result"></param>
+        public static implicit operator bool(CommandResult result) => 
+            result.ToBoolean();
 
         /// <summary>Deconstructs the components of <see cref="CommandResult"/> into seperate variables</summary>
         public void Deconstruct(out bool success, out string message)
@@ -68,16 +110,29 @@ namespace Moreland.CSharp.Util.Results
         private static readonly CommandResult _ok = new CommandResult(true, string.Empty, null);
 
         #region IEquatable{CommandResult}
+        /// <summary>
+        /// <inheritdoc cref="IEquatable{CommandResult}.Equals(CommandResult)"/>
+        /// </summary>
         public bool Equals(CommandResult other) =>
             Result.Equals(other.Result);
         #endregion
         #region ValueType
 
+        /// <summary>
+        /// <inheritdoc cref="Object.Equals(Object?)"/>
+        /// </summary>
         public override bool Equals(object? obj) => obj is CommandResult rightHandSide && Equals(rightHandSide);
+        /// <summary>
+        /// <inheritdoc cref="Object.GetHashCode"/>
+        /// </summary>
         public override int GetHashCode() => Result.GetHashCode();
         #endregion
     }
 
+    /// <summary>
+    /// A Command Result storing a result value of <typeparamref name="TValue"/>
+    /// </summary>
+    /// <typeparam name="TValue">type of the Value stored on success</typeparam>
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
     public struct CommandResult<TValue> : IValueResult<TValue>, IEquatable<CommandResult<TValue>>
     {
@@ -95,11 +150,27 @@ namespace Moreland.CSharp.Util.Results
         public string Message => ValueResult.Message;
         /// <summary>Exceptional cause of the failure, only meaningful if <see cref="Success"/> is <c>false</c></summary>
         public Exception? Cause => ValueResult.Cause;
+        /// <summary>
+        /// Returns <see cref="Success"/>
+        /// </summary>
         public bool ToBoolean() => Success;
 
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator==(CommandResult<TValue> leftHandSide, CommandResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
+        /// </summary>
         public static bool operator!=(CommandResult<TValue> leftHandSide, CommandResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        /// <summary>
+        /// Returns <see cref="ToBoolean"/>
+        /// </summary>
         public static implicit operator bool(CommandResult<TValue> result) => result.ToBoolean();
+        /// <summary>
+        /// Returns <see cref="Value"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">if <see cref="Success"/> is not <c>true</c></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(CommandResult<TValue> result) => result.Value;
 
@@ -149,7 +220,7 @@ namespace Moreland.CSharp.Util.Results
             if (!Success)
                 return CommandResult.Failed<TMappedValue>(Message, Cause);
             // map type explicit to avoid any possible issues with TMappedValue being string
-            return CommandResult.Ok<TMappedValue>(mapper.Invoke(Value));
+            return CommandResult.Ok(mapper.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
@@ -167,7 +238,7 @@ namespace Moreland.CSharp.Util.Results
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         public TValue OrElseThrow(Func<Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
@@ -179,7 +250,7 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
-        /// <exception cref="Exception">if <see cref="HasValue"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
+        /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
         public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
@@ -194,11 +265,11 @@ namespace Moreland.CSharp.Util.Results
         /// allow the result to be converted to an alternate successful result
         /// </summary>
         /// <param name="mapper">
-        /// <see cref="Func{string, Exception?, CommandResult{TValue}}"/> given message and 
-        /// exception cause and returns a <see cref="CommandResult{TValue}"/> to an alternate result
+        /// Func  given message and exception cause and returns a
+        /// <see cref="CommandResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="handleError"/> to handle the error
+        /// current result if successful or uses <paramref name="mapper"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
         public CommandResult<TValue> OrElseFlatMap(Func<string, Exception?, CommandResult<TValue>> mapper)
@@ -214,13 +285,22 @@ namespace Moreland.CSharp.Util.Results
         private ValueResultCore<TValue> ValueResult { get; }
 
         #region IEquatable{QueryResult{TValue}}
+        /// <summary>
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
+        /// </summary>
         public bool Equals(CommandResult<TValue> other) =>
             ValueResult.Equals(other.ValueResult);
 
         #endregion
         #region ValueType
 
+        /// <summary>
+        /// <inheritdoc cref="Object.Equals(Object?)"/>
+        /// </summary>
         public override bool Equals(object? obj) => obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
+        /// <summary>
+        /// <inheritdoc cref="Object.GetHashCode"/>
+        /// </summary>
         public override int GetHashCode() => ValueResult.GetHashCode();
 
         #endregion

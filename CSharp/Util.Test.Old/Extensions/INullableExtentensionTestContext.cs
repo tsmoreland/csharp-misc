@@ -11,50 +11,21 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+
 using System;
-using System.Linq;
-using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
-    public sealed class MaybeFirstTest
+    public interface INullableExtentensionTestContext
     {
-        [Fact]
-        public void MaybeWithValuePresentWhenEnumerableNotEmpty()
-        {
-            // Arrange
-            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+        INullableExtentensionTestContext ActUsingOrElse();
+        INullableExtentensionTestContext ActUsingOrElseGet();
 
-            // Act
-            var maybe = uids.MaybeFirst();
+        void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception; 
+        INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
+        void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
 
-            // Assert
-            Assert.True(maybe.HasValue);
-        }
-        [Fact]
-        public void MaybeWithCorrectValueWhenEnumerableNotEmpty()
-        {
-            // Arrange
-            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
-
-            // Act
-            var maybe = uids.MaybeFirst();
-
-            // Assert
-            Assert.Equal(uids[0], maybe.Value);
-        }
-
-        [Fact]
-        public void MaybeEmptyWhenEnumerableEmpty()
-        {
-            // Arrange
-            var uids = Array.Empty<Guid>();
-
-            // Act
-            var maybe = uids.MaybeFirst();
-
-            // Assert
-            Assert.False(maybe.HasValue);
-        }
+        void AssertHasValue(bool expected);
+        void AssertCorrectResult();
     }
 }

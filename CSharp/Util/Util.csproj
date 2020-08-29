@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;netstandard2.0;netstandard2.1;net40;net45;net46;net472;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;netcoreapp2.1;netstandard2.1;netstandard2.0;net40;net45;net46;net472;net48</TargetFrameworks>
     <RootNamespace>Moreland.CSharp.Util</RootNamespace>
     <AssemblyName>Moreland.CSharp.Util</AssemblyName>
     <LangVersion>8</LangVersion>
@@ -10,7 +10,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageId>Moreland.CSharp.Util</PackageId>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Authors>Terry Moreland</Authors>
     <PackageLicenseExpression></PackageLicenseExpression>
     <Company />
@@ -28,7 +28,13 @@
     <PackageProjectUrl>https://github.com/tsmoreland/Util</PackageProjectUrl>
     <PackageTags>CQS, CQRS, Utility, Optional, Extension</PackageTags>
     <CodeAnalysisRuleSet>..\..\.sonarlint\moreland-csharp-utilcsharp.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>$(Configuration)\$(TargetFramework)\$(Platform)\Moreland.CSharp.Util.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Debug\**" />
+    <None Remove="Release\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\.sonarlint\moreland-csharp-util\CSharp\SonarLint.xml" Link="SonarLint.xml" />
@@ -41,13 +47,12 @@
     </None>
   </ItemGroup>
 
-
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

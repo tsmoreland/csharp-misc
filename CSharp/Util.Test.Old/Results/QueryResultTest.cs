@@ -17,7 +17,7 @@ using System;
 using System.Security.Cryptography;
 using Moreland.CSharp.Util.Internal;
 
-namespace Moreland.CSharp.Util.Test.Results
+namespace Moreland.CSharp.Util.Test.Old.Results
 {
     public class QueryResultTest
     {

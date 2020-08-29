@@ -11,16 +11,25 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
 using System.Collections.Generic;
 
 namespace Moreland.CSharp.Extensions
 {
+    /// <summary>
+    /// Delegate type used to merge dictionaries with matching keys
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="first">value from the first dictionary</param>
+    /// <param name="second">value from the second dictionary</param>
+    /// <returns>the result of the merge</returns>
     public delegate TValue MergeHandler<TValue>(TValue first, TValue second);
 }
 
 namespace System.Linq
 {
+    /// <summary>
+    /// Extension methods for <see cref="IDictionary{TKey,TValue}"/>
+    /// </summary>
     public static class DictionaryExtensions
     {
 
@@ -38,7 +47,7 @@ namespace System.Linq
         /// second set for the union
         /// </param>
         /// <param name="mergeHandler">
-        /// <see cref="MergeUsingFirst{TValue}(TValue, TValue)"/> used to merge conflicting entries 
+        /// <see cref="Moreland.CSharp.Extensions.MergeHandler{TValue}"/> used to merge conflicting entries 
         /// between <paramref name="first"/> and <paramref name="second"/>
         /// </param>
         /// <returns>
@@ -87,7 +96,7 @@ namespace System.Linq
         /// An <see cref="IDictionary{TKey, TValue}"/> that contains the elements from both
         /// input sequences, where duplicates are merged by using value from <paramref name="first"/>
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="conflictHandler"/> are <c>null</c></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="first"/>, or <paramref name="second"/> are <c>null</c></exception>
         public static IDictionary<TKey, TValue> UnionMergeUsingFirst<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second)
             where TKey : notnull =>
             Union(first, second, (firstValue, secondValue) => firstValue);
@@ -109,7 +118,7 @@ namespace System.Linq
         /// An <see cref="IDictionary{TKey, TValue}"/> that contains the elements from both
         /// input sequences, where duplicates are merged by using value from <paramref name="second"/>
         /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="conflictHandler"/> are <c>null</c></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="first"/>, or <paramref name="second"/> are <c>null</c></exception>
         public static IDictionary<TKey, TValue> UnionMergeUsingSecond<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second)
             where TKey : notnull =>
             Union(first, second, (firstValue, secondValue) => secondValue);
@@ -126,11 +135,11 @@ namespace System.Linq
         /// <param name="second">
         /// </param>
         /// <param name="mergeHandler">
-        /// <see cref="MergeUsingFirst{TValue}(TValue, TValue)"/> used to merge conflicting entries 
+        /// <see cref="Moreland.CSharp.Extensions.MergeHandler{TValue}"/> used to merge conflicting entries 
         /// between <paramref name="first"/> and <paramref name="second"/>
         /// </param>
         /// <returns>An <see cref="IDictionary{TKey, TValue}"/> that contains the elements that form the set intersection of two sequences.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="conflictHandler"/> are <c>null</c></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="first"/>, or <paramref name="second"/> are <c>null</c></exception>
         public static IDictionary<TKey, TValue> Intersect<TKey, TValue>(this IDictionary<TKey, TValue> first, IDictionary<TKey, TValue> second, Moreland.CSharp.Extensions.MergeHandler<TValue> mergeHandler)
             where TKey : notnull
         {

@@ -16,7 +16,7 @@ using System;
 using Moreland.CSharp.Util.Results;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Results
+namespace Moreland.CSharp.Util.Test.Old.Results
 {
     public delegate IValueResult<T> SuccessResultFactory<T>(T value);
     public delegate IValueResult<T> FailureResultFactory<T>(string message);
@@ -376,7 +376,7 @@ namespace Moreland.CSharp.Util.Test.Results
         {
             if (OrElseThrowFunc == null)
             {
-                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
+                Assert.True(false, "ValueOrThrow not set, please configure this method before calling act");
                 return this;
             }
 
@@ -420,7 +420,7 @@ namespace Moreland.CSharp.Util.Test.Results
         {
             if (OrElseThrowFuncOverload == null)
             {
-                Assert.True(false, "OrElseThrow not set, please configure this method before calling act");
+                Assert.True(false, "ValueOrThrow not set, please configure this method before calling act");
                 return this;
             }
 
@@ -447,7 +447,7 @@ namespace Moreland.CSharp.Util.Test.Results
         {
             if (OrElseGetFunc == null)
             {
-                Assert.True(false, "OrElseGet not set, please configure this method before calling act");
+                Assert.True(false, "ValueOr not set, please configure this method before calling act");
                 return this;
             }
 

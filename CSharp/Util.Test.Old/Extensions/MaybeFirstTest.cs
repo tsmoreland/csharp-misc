@@ -11,35 +11,50 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
-    public class ListExtensionTests
+    public sealed class MaybeFirstTest
     {
         [Fact]
-        public void ListOfArrayContainsProvidedItems()
+        public void MaybeWithValuePresentWhenEnumerableNotEmpty()
         {
-            var list = List.Of(1, 2, 3);
-            Assert.Equal(new List<int>() { 1, 2, 3 }, list);
+            // Arrange
+            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act
+            var maybe = uids.MaybeFirst();
+
+            // Assert
+            Assert.True(maybe.HasValue);
+        }
+        [Fact]
+        public void MaybeWithCorrectValueWhenEnumerableNotEmpty()
+        {
+            // Arrange
+            var uids = new [] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act
+            var maybe = uids.MaybeFirst();
+
+            // Assert
+            Assert.Equal(uids[0], maybe.Value);
         }
 
         [Fact]
-        public void ListOfEnumerableContainsProvidedItems()
+        public void MaybeEmptyWhenEnumerableEmpty()
         {
-            var enumerable = (new List<int>() { 1, 2, 3 }).AsEnumerable();
-            var list = List.Of(enumerable);
-            Assert.Equal(new List<int>() { 1, 2, 3 }, list);
-        }
+            // Arrange
+            var uids = Array.Empty<Guid>();
 
-        [Fact]
-        public void EmptyHasNoValues()
-        {
-            var empty = List.Empty<int>();
+            // Act
+            var maybe = uids.MaybeFirst();
 
-            Assert.Equal(0, empty.Count);
+            // Assert
+            Assert.False(maybe.HasValue);
         }
     }
 }

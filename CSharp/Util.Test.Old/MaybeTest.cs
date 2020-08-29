@@ -17,10 +17,11 @@ using System.Collections.Generic;
 using Xunit;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Old
 {
     public class MaybeTest
     {
+        /*
         [Fact]
         public void DefaultConstructorProducesEmpty()
         {
@@ -33,7 +34,7 @@ namespace Moreland.CSharp.Util.Test
         public void Of_HasValueTrueWhenHasValue()
         {
             // Arrange
-            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+            var maybe = Maybe.Of(Guid.NewGuid());
 
             // Act
             bool isPresent = maybe.HasValue;
@@ -81,6 +82,7 @@ namespace Moreland.CSharp.Util.Test
             // Assert
             Assert.False(result.HasValue);
         }
+        */
 
         [Fact]
         public void Map_InvokedWhenHasValue()
@@ -126,7 +128,7 @@ namespace Moreland.CSharp.Util.Test
         public void Map_ThrowsArgumentNullExceptionWhenMapperIsNull()
         {
             var maybe = Maybe.Of(Guid.NewGuid());
-            Assert.Throws<ArgumentNullException>(() => _ = maybe.Map<string>(null!));
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.Select<string>((Func<Guid, string>) null!));
         }
 
         [Fact]
@@ -190,7 +192,7 @@ namespace Moreland.CSharp.Util.Test
         public void FlatMap_ThrowsArgumentNullExceptionWhenMapperIsNull()
         {
             var maybe = Maybe.Of(Guid.NewGuid());
-            Assert.Throws<ArgumentNullException>(() => _ = maybe.FlatMap<string>(null!));
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.Select<string>((Func<Guid, Maybe<string>>)null!));
         }
 
         [Fact]
@@ -216,7 +218,7 @@ namespace Moreland.CSharp.Util.Test
             var maybe = Maybe.Of(value);
 
             // Act
-            Guid result = maybe.OrElseOther(@else);
+            Guid result = maybe.ValueOr(@else);
 
             // Assert
             Assert.NotEqual(value, @else); // sanity check
@@ -274,7 +276,7 @@ namespace Moreland.CSharp.Util.Test
             var maybe = Maybe.Empty<Guid>();
 
             // Act
-            Guid result = maybe.OrElseOther(@else);
+            Guid result = maybe.ValueOr(@else);
 
             // Assert
             Assert.Equal(@else, result);
@@ -284,7 +286,7 @@ namespace Moreland.CSharp.Util.Test
         public void OrElseGet_ThrowsArgumentNullWhenGetterIsNull()
         {
             var maybe = Maybe.Of(Guid.NewGuid());
-            Assert.Throws<ArgumentNullException>(() => _ = maybe.OrElseGet(null!));
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.ValueOr(null!));
         }
         [Fact]
         public void OrElseGet_NotInvokedWhenSourceHasValue()
@@ -345,7 +347,7 @@ namespace Moreland.CSharp.Util.Test
         public void OrElseThrowFromSupplier_ThrowsArgumentNullWhenSupplierIsNull()
         {
             var maybe = Maybe.Of(Guid.NewGuid());
-            Assert.Throws<ArgumentNullException>(() => _ = maybe.OrElseThrow(null!));
+            Assert.Throws<ArgumentNullException>(() => _ = maybe.ValueOrThrow(null!));
         }
         [Fact]
         public void OrElseThrowFromSupplier_HasValueIsFalse()
@@ -376,7 +378,7 @@ namespace Moreland.CSharp.Util.Test
         public void ImplicitBool_TrueIfHasValue()
         {
             // Arrange
-            var maybe = Maybe.Of<Guid>(Guid.NewGuid());
+            var maybe = Maybe.Of(Guid.NewGuid());
 
             // Act / Assert
             ImplicitBoolEqualsIsPresent(maybe);
@@ -465,7 +467,7 @@ namespace Moreland.CSharp.Util.Test
         {
             // Arrange
             var maybeValueType = Maybe.OfNullable<Guid>(Guid.NewGuid());
-            var maybeRefType = Maybe.OfNullable<string>(Guid.NewGuid().ToString());
+            var maybeRefType = Maybe.OfNullable(Guid.NewGuid().ToString());
 
             // Act
             bool valueIsPresent = maybeValueType.HasValue;
@@ -481,7 +483,7 @@ namespace Moreland.CSharp.Util.Test
             Guid id = Guid.NewGuid();
 
             var maybeValue = Maybe.OfNullable<Guid>(id);
-            var maybeRef = Maybe.OfNullable<string>(id.ToString());
+            var maybeRef = Maybe.OfNullable(id.ToString());
 
             Assert.Equal(id, maybeValue.Value);
             Assert.Equal(id.ToString(), maybeRef.Value);
@@ -772,7 +774,7 @@ namespace Moreland.CSharp.Util.Test
                 .Returns(mappedValue);
 
             // Act
-            var mapped = maybe.Map(flatMap.Object);
+            var mapped = maybe.Select(flatMap.Object);
             if (maybe.HasValue)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
             else
@@ -788,7 +790,7 @@ namespace Moreland.CSharp.Util.Test
                 .Returns(mappedValue);
 
             // Act
-            var mapped = maybe.FlatMap(flatMap.Object);
+            var mapped = maybe.Select(flatMap.Object);
             if (maybe.HasValue)
                 flatMap.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
             else
@@ -804,7 +806,7 @@ namespace Moreland.CSharp.Util.Test
                 .Returns(@else);
 
             // Act
-            T result = maybe.OrElseGet(other.Object);
+            T result = maybe.ValueOr(other.Object);
 
             // Assert
             if (!maybe.HasValue)
@@ -828,12 +830,12 @@ namespace Moreland.CSharp.Util.Test
             // Act
             if (!maybe.HasValue)
             {
-                thrown = Assert.Throws<TException>(() => maybe.OrElseThrow(supplier.Object));
+                thrown = Assert.Throws<TException>(() => maybe.ValueOrThrow(supplier.Object));
                 supplier.Verify(s => s.Invoke(), Times.Once);
             }
             else
             {
-                result = Maybe.Of(maybe.OrElseThrow(supplier.Object));
+                result = Maybe.Of(maybe.ValueOrThrow(supplier.Object));
                 supplier.Verify(s => s.Invoke(), Times.Never);
             }
 

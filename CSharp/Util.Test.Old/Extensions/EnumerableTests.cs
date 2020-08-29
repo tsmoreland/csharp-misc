@@ -17,7 +17,7 @@ using System.Linq;
 using Moq;
 using Xunit;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Old.Extensions
 {
     public sealed class EnumerableTests
     {
@@ -48,17 +48,14 @@ namespace Moreland.CSharp.Util.Test.Extensions
         }
 
         [Fact]
-        public void AsOrToArrayReturnsEmptyArrayForNullEnumerable()
+        public void AsOrToArray_ThrowsArgumentNullException_WhenEnumerabeIsNull()
         {
             // Arrange
             IEnumerable<Guid> uids = null!;
 
-            // Act
-            var arrayOfUids = uids.AsOrToArray();
-
-            // Assert
-            Assert.NotNull(arrayOfUids);
-            Assert.Empty(arrayOfUids);
+            // Act / Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = uids.AsOrToArray());
+            Assert.Equal("source", ex.ParamName);
         }
 
         [Fact]
@@ -88,17 +85,15 @@ namespace Moreland.CSharp.Util.Test.Extensions
         }
 
         [Fact]
-        public void AsOrToListReturnsEmptyArrayForNullEnumerable()
+        public void AsOrToList_ThrowsArgumentNullException_WhenEnumerableIsNull()
         {
             // Arrange
             IEnumerable<Guid> uids = null!;
 
-            // Act
-            var listOfUids = uids.AsOrToList();
+            // Act / Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = uids.AsOrToList());
+            Assert.Equal("source", ex.ParamName);
 
-            // Assert
-            Assert.NotNull(listOfUids);
-            Assert.Empty(listOfUids);
         }
 
         [Fact]

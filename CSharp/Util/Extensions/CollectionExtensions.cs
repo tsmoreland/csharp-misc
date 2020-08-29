@@ -13,8 +13,12 @@
 
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace System.Linq
 {
+    /// <summary>
+    /// Extension methods to generic Collection types
+    /// </summary>
     public static class CollectionExtensions
     {
         /// <summary>
