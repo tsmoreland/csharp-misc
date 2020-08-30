@@ -162,6 +162,22 @@ namespace Moreland.CSharp.Util.Test
                 : Assert.ThrowsAsync<ArgumentNullException>(async () => await _maybeWithValue.IfHasValueAsync(null!));
 
             Assert.That(ex.ParamName, Is.EqualTo("action"));
+        }        
+
+        [Test]
+        public void IfHasValue_EmptyActionInvoked_WhenEmpty()
+        {
+            Maybe.Empty<T>().IfHasValue(_action, _emptyAction);
+
+            _emptyAction.Received(1).Invoke();
+        }
+
+        [Test]
+        public void IfHasValue_ActionNotInvoked_WhenEmpty()
+        {
+            Maybe.Empty<T>().IfHasValue(_action, _emptyAction);
+
+            _action.Received(0).Invoke(Arg.Any<T>());
         }
 
         [Test]
@@ -193,6 +209,28 @@ namespace Moreland.CSharp.Util.Test
             await _maybeWithValue.IfHasValueAsync(_actionAsync, _emptyActionAsync);
 
             await _emptyActionAsync.Received(0).Invoke();
+        }
+
+        [Test]
+        public async Task IfHasValueAsync_EmptyActionInvoked_WhenEmpty()
+        {
+            _actionAsync.Invoke(Arg.Any<T>()).Returns(Task.CompletedTask);
+            _emptyActionAsync.Invoke().Returns(Task.CompletedTask);
+
+            await Maybe.Empty<T>().IfHasValueAsync(_actionAsync, _emptyActionAsync);
+
+            await _emptyActionAsync.Received(1).Invoke();
+        }
+
+        [Test]
+        public async Task IfHasValueAsync_ActionNotInvoked_WhenEmpty()
+        {
+            _actionAsync.Invoke(Arg.Any<T>()).Returns(Task.CompletedTask);
+            _emptyActionAsync.Invoke().Returns(Task.CompletedTask);
+
+            await Maybe.Empty<T>().IfHasValueAsync(_actionAsync, _emptyActionAsync);
+
+            await _actionAsync.Received(0).Invoke(Arg.Any<T>());
         }
 
         [TestCase(true)]
