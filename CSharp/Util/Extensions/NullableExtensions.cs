@@ -36,7 +36,7 @@ namespace Moreland.CSharp.Util.Extensions
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue OrElseOther<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
+        public static TValue ValueOr<TValue>(this TValue? value, TValue or) where TValue : class => value ?? or;
 
         /// <summary>simple wrapper around null coallese operator for improved readability</summary>
         /// <typeparam name="TValue">nullable value type</typeparam>
@@ -44,13 +44,13 @@ namespace Moreland.CSharp.Util.Extensions
         /// <param name="or">alternate value which should not be null</param>
         /// <returns><paramref name="value"/> if non-null; otherwise, <paramref name="or"/></returns>
         /// <remarks>no null check is performed on <paramref name="or"/> so null may still be returned if that value is null</remarks>
-        public static TValue OrElseOther<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
+        public static TValue ValueOr<TValue>(this TValue? value, TValue or) where TValue : struct => value ?? or;
 
         /// <summary>
         /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
         /// </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
-        public static TValue OrElseGet<TValue>(this TValue? value, Func<TValue> supplier) where TValue : class
+        public static TValue ValueOr<TValue>(this TValue? value, Func<TValue> supplier) where TValue : class
         {
             if (value != null)
                 return value;
@@ -62,7 +62,7 @@ namespace Moreland.CSharp.Util.Extensions
         /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
         /// </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
-        public static TValue OrElseGet<TValue>(this TValue? value, Func<TValue> supplier) where TValue : struct
+        public static TValue ValueOr<TValue>(this TValue? value, Func<TValue> supplier) where TValue : struct
         {
             if (value != null)
                 return (TValue)value;
@@ -74,7 +74,7 @@ namespace Moreland.CSharp.Util.Extensions
         /// <summary>
         /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
         /// </summary>
-        public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
+        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
         {
             if (exceptionSuppliier == null)
                 throw new ArgumentNullException(nameof(exceptionSuppliier));
@@ -86,7 +86,7 @@ namespace Moreland.CSharp.Util.Extensions
         /// <summary>
         /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
         /// </summary>
-        public static TValue OrElseThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : struct
+        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : struct
         {
             if (exceptionSuppliier == null)
                 throw new ArgumentNullException(nameof(exceptionSuppliier));

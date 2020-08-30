@@ -48,6 +48,11 @@ namespace Moreland.CSharp.Util
         public bool HasValue { get; }
 
         /// <summary>
+        /// Returns <c>true</c> if <see cref="HasValue"/> is <c>false</c>
+        /// </summary>
+        public bool IsEmpty => !HasValue;
+
+        /// <summary>
         /// If a value is present, performs the given action with the value, otherwise does nothing.
         /// </summary>
         /// <param name="action">the action to be performed, if a value is present</param>
@@ -120,30 +125,29 @@ namespace Moreland.CSharp.Util
         /// mapping function to it, returns that result, otherwise returns an
         /// empty Maybe.
         /// </summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="mapper"/> is <c>null</c></exception>
-        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        /// <exception cref="ArgumentNullException">if <paramref name="selector"/> is <c>null</c></exception>
+        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
             return HasValue
-                ? Maybe.Of(mapper.Invoke(Value))
+                ? Maybe.Of(selector.Invoke(Value))
                 : Maybe.Empty<TMappedValue>();
         }
-
 
         /// <summary>
         /// If a value is present, it applies the provided Maybe-bearing
         /// mapping function to it, returns that result, otherwise returns an
         /// empty Maybe.
         /// </summary>
-        /// <exception cref="ArgumentNullException">when <paramref name="mapper"/> is null</exception>
-        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, Maybe<TMappedValue>> mapper)
+        /// <exception cref="ArgumentNullException">when <paramref name="selector"/> is null</exception>
+        public Maybe<TMappedValue> Select<TMappedValue>(Func<TValue, Maybe<TMappedValue>> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
             return !HasValue 
                 ? Maybe.Empty<TMappedValue>() 
-                : mapper.Invoke(Value);
+                : selector.Invoke(Value);
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
