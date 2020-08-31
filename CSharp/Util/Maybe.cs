@@ -156,13 +156,13 @@ namespace Moreland.CSharp.Util
             ? Value 
             : other;
 
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue ValueOr(Func<TValue> other)
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public TValue ValueOr(Func<TValue> supplier)
         {
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-            return HasValue ? _value : other.Invoke();
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return HasValue ? _value : supplier.Invoke();
         }
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>

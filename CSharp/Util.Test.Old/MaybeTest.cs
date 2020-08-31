@@ -207,7 +207,6 @@ namespace Moreland.CSharp.Util.Test.Old
             // Assert
             Assert.False(result.HasValue);
         }
-        */
 
         [Fact]
         public void OrElseOther_ReturnsSourceValueWhenHasValue()
@@ -225,49 +224,6 @@ namespace Moreland.CSharp.Util.Test.Old
             Assert.Equal(value, result);
 
         }
-        [Fact]
-        public void OrElseThrow_NoThrowWhenHasValue()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act / Assert
-            _ = OrElseThrow(maybe, ex);
-
-            Assert.True(true, "assert is handled by or else get, this prevents warning");
-        }
-        [Fact]
-        public void OrElseThrow_ReturnsValueWhenSourceHasValue_VerifyTestMethod()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act
-            var (result, _) = OrElseThrow(maybe, ex);
-
-            // Assert
-            Assert.True(result.HasValue);
-        }
-        [Fact]
-        public void OrElseThrow_ReturnsValueWhenSourceHasValue()
-        {
-            // Arrange
-            var value = Guid.NewGuid();
-            var maybe = Maybe.Of(value);
-            var ex = new Exception(Guid.NewGuid().ToString());
-
-            // Act
-            var (result, _) = OrElseThrow(maybe, ex);
-
-            // Assert
-            Assert.True(result.HasValue);
-            Assert.Equal(value, result.Value);
-        }
-
         [Fact]
         public void OrElseOther_EmptyReturnsOther()
         {
@@ -343,6 +299,50 @@ namespace Moreland.CSharp.Util.Test.Old
             Assert.Equal(@else, result);
         }
 
+
+        [Fact]
+        public void OrElseThrow_NoThrowWhenHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act / Assert
+            _ = OrElseThrow(maybe, ex);
+
+            Assert.True(true, "assert is handled by or else get, this prevents warning");
+        }
+        [Fact]
+        public void OrElseThrow_ReturnsValueWhenSourceHasValue_VerifyTestMethod()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (result, _) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.True(result.HasValue);
+        }
+        [Fact]
+        public void OrElseThrow_ReturnsValueWhenSourceHasValue()
+        {
+            // Arrange
+            var value = Guid.NewGuid();
+            var maybe = Maybe.Of(value);
+            var ex = new Exception(Guid.NewGuid().ToString());
+
+            // Act
+            var (result, _) = OrElseThrow(maybe, ex);
+
+            // Assert
+            Assert.True(result.HasValue);
+            Assert.Equal(value, result.Value);
+        }
+
         [Fact]
         public void OrElseThrowFromSupplier_ThrowsArgumentNullWhenSupplierIsNull()
         {
@@ -373,6 +373,7 @@ namespace Moreland.CSharp.Util.Test.Old
             // Assert
             Assert.Equal(ex, thrown);
         }
+        */
 
         [Fact]
         public void ImplicitBool_TrueIfHasValue()
