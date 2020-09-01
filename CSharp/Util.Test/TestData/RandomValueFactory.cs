@@ -58,6 +58,21 @@ namespace Moreland.CSharp.Util.Test.TestData
             return list;
         }
 
+        public static T GetValueNotEqualTo<T>(Func<T> generator, params T[] excludes)
+        {
+            if (generator == null)
+                throw new ArgumentNullException(nameof(generator));
+
+            T newValue;
+            do
+            {
+                newValue = generator();
+
+            } while (newValue == null! || excludes.Contains(newValue));
+
+            return newValue;
+        }
+
         private static T Build<T>(Func<byte[], T> converter, params T[] exclusions) where T : struct
         {
             byte[] buffer = new byte[Marshal.SizeOf<T>()];

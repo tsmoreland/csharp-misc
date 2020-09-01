@@ -29,15 +29,13 @@ namespace Moreland.CSharp.Util
         public static Maybe<TValue> Empty<TValue>() => new Maybe<TValue>();
         /// <summary>Returns a Maybe with the specified present value.</summary>
         public static Maybe<TValue> Of<TValue>(TValue value) => new Maybe<TValue>(value);
-        /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
-        public static Maybe<TValue> OfNullable<TValue>(TValue? value) where TValue : struct => value.HasValue ? new Maybe<TValue>(value.Value) : Empty<TValue>();
-        /// <summary>Returns a Maybe describing the specified value, if non-null, otherwise returns an empty Maybe.</summary>
-        public static Maybe<TValue> OfNullable<TValue>(TValue? value) where TValue : class => value != null ? new Maybe<TValue>(value) : Empty<TValue>();
     }
 
     /// <summary>Maybe class heavily influenced by java.util.Optional{T}</summary>
     public readonly struct Maybe<TValue> : IEquatable<Maybe<TValue>>
     {
+        private readonly TValue _value;
+
         /// <summary>If a value is present in this Maybe, returns the value, otherwise throws <see cref="InvalidOperationException"/></summary>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
         public TValue Value => 
@@ -212,6 +210,7 @@ namespace Moreland.CSharp.Util
         /// the following cast won't work if <typeparamref name="TValue"/> is <see cref="object"/> as that will bypass this method and instead
         /// return the <see cref="Maybe{TValue}"/> as an <see cref="object"/> instead
         /// </remarks>
+        /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
         public static explicit operator TValue(Maybe<TValue> maybe) => 
             maybe.Value;
@@ -221,7 +220,6 @@ namespace Moreland.CSharp.Util
             _value = value;
             HasValue = value != null;
         }
-        private readonly TValue _value;
 
         // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private static void GuardArgumentNull(object? argument, string parameterName)
@@ -235,7 +233,7 @@ namespace Moreland.CSharp.Util
         /// <inheritdoc cref="IEquatable{T}.Equals(T)"/>
         /// </summary>
         public bool Equals(Maybe<TValue> other) =>
-            (!HasValue && !other.HasValue) || (HasValue && other.HasValue && Value?.Equals(other.Value) == true);
+            (!HasValue && !other.HasValue) || (HasValue && other.HasValue && Value!.Equals(other.Value));
 
         #endregion
         #region Object
@@ -247,13 +245,15 @@ namespace Moreland.CSharp.Util
         /// <inheritdoc cref="ValueType.GetHashCode"/>
         /// </summary>
         public override int GetHashCode() => HasValue
-            ? Value?.GetHashCode() ?? 0
+            ? Value!.GetHashCode()! 
             : 0;
+
         /// <summary>
         /// <inheritdoc cref="ValueType.ToString"/>
         /// </summary>
-        public override string ToString() =>
-            HasValue ? _value?.ToString() ?? ProjectResources.NullValue : ProjectResources.NoSuchValue;
+        public override string ToString() => HasValue 
+            ? _value!.ToString()! 
+            : ProjectResources.NoSuchValue;
         #endregion
     }
 }

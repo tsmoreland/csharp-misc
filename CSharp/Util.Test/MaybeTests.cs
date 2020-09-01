@@ -243,7 +243,7 @@ namespace Moreland.CSharp.Util.Test
 
         [TestCase(true)]
         [TestCase(false)]
-        public void Where_ReturnsEmpty_WhenDoesNotHaveValue(bool filterResult)
+        public void Where_ReturnsEmpty_WhenIsEmpty(bool filterResult)
         {
             var predicate = Substitute.For<Predicate<T>>();
             predicate.Invoke(Arg.Any<T>()).Returns(filterResult);
@@ -460,20 +460,171 @@ namespace Moreland.CSharp.Util.Test
         {
             var firstValue = _builder();
             var first = Maybe.Of(firstValue);
-            var second = Maybe.Of(GetValueNotEqualTo(firstValue));
+            var second = Maybe.Of(GetValueNotEqualTo(_builder, firstValue));
 
             Assert.That(first == second, Is.False);
-
         }
-        private T GetValueNotEqualTo(T value)
-        {
-            T newValue;
-            do
-            {
-                newValue = _builder();
-            } while (newValue == null! || newValue.Equals(value)); 
 
-            return newValue;
+        [Test]
+        public void OperatorNotEquals_ReturnsFalse_WhenValuesEqual()
+        {
+            var value = _builder();
+            var first = Maybe.Of(value);
+            var second = Maybe.Of(value);
+
+            Assert.That(first != second, Is.False);
+        }
+
+        [Test]
+        public void OperatorNotEquals_ReturnsTrue_WhenValuesNotEqual()
+        {
+            var firstValue = _builder();
+            var first = Maybe.Of(firstValue);
+            var second = Maybe.Of(GetValueNotEqualTo(_builder, firstValue));
+
+            Assert.That(first != second, Is.True);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsTrue_WhenHasValue()
+        {
+            bool hasValue = _maybeWithValue;
+            Assert.That(hasValue, Is.True);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsFalse_WhenIsEmpty()
+        {
+            bool hasValue = Maybe.Empty<T>();
+            Assert.That(hasValue, Is.False);
+        }
+
+        [Test]
+        public void ExplicitCastToValueType_ReturnsValue_WHenHasValue()
+        {
+            var actual = (T)_maybeWithValue;
+            Assert.That(actual, Is.EqualTo(_maybeWithValue.Value));
+        }
+
+        [Test]
+        public void ExplicitCast_ThrowsInvalidOperationException_WhenIsEmpty() =>
+            Assert.Throws<InvalidOperationException>(() => _ = (T)Maybe.Empty<T>());
+
+        [Test]
+        public void IEquatableEquals_ReturnsTrue_WhenValuesEqual()
+        {
+            var value = _builder();
+            var first = Maybe.Of(value);
+            var second = Maybe.Of(value);
+
+            Assert.That(first.Equals(second), Is.True);
+        }
+        [Test]
+        public void IEquatableEquals_ReturnsFalse_WhenValuesNotEqual()
+        {
+            var firstValue = _builder();
+            var first = Maybe.Of(firstValue);
+            var second = Maybe.Of(GetValueNotEqualTo(_builder, firstValue));
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+
+        [Test]
+        public void IEquatableEquals_ReturnsTrue_WhenBothAreEmpty()
+        {
+            var first = Maybe.Empty<T>();
+            var second = Maybe.Empty<T>();
+
+            Assert.That(first.Equals(second), Is.True);
+        }
+
+        [Test]
+        public void IEquatableEquals_ReturnsFalse_WhenFirstMaybeIsEmpty()
+        {
+            var first = Maybe.Empty<T>();
+            var second = _maybeWithValue;
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+        [Test]
+        public void IEquatableEquals_ReturnsFalse_WhenSecondMaybeIsEmpty()
+        {
+            var first = _maybeWithValue;
+            var second = Maybe.Empty<T>();
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+
+        [Test]
+        public void Equals_ReturnsTrue_WhenValuesEqual()
+        {
+            var value = _builder();
+            var first = Maybe.Of(value);
+            object second = Maybe.Of(value);
+
+            Assert.That(first.Equals(second), Is.True);
+        }
+        [Test]
+        public void Equals_ReturnsFalse_WhenValuesNotEqual()
+        {
+            var firstValue = _builder();
+            var first = Maybe.Of(firstValue);
+            object second = Maybe.Of(GetValueNotEqualTo(_builder, firstValue));
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+
+        [Test]
+        public void Equals_ReturnsFalse_WhenComparedValueIsWrongType()
+        {
+            var first = Maybe.Of(_builder());
+            object second = new InaccessableClass();
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+
+        [Test]
+        public void ToString_ReturnsValueAsString_WhenHasValue()
+        {
+            var acutal = _maybeWithValue.ToString();
+            Assert.That(acutal, Is.EqualTo(_maybeWithValue.Value!.ToString()));
+        }
+
+        [Test]
+        public void HashCode_ReturnsValueHashCode_WhenHasValue()
+        {
+            int expected = _maybeWithValue.Value!.GetHashCode();
+
+            int actual = _maybeWithValue.GetHashCode();
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void HashCode_ReturnsZero_WhenIsEmpty()
+        {
+            Assert.That(Maybe.Empty<T>().GetHashCode(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ToString_ReturnsNoSuchValueString_WhenIsEmpty()
+        {
+            var actual = Maybe.Empty<T>().ToString();
+
+            Assert.That(actual, Is.EqualTo(Properties.Resources.NoSuchValue));
+        }
+
+        private class InaccessableClass
+        {
+            /// <summary>Arbitrary value so class isn't empty</summary>
+            public Guid Id { get; } = Guid.NewGuid();
+
+            /// <summary><inheritdoc cref="object.Equals(object?)"/></summary>
+            public override bool Equals(object? obj) =>
+                obj is InaccessableClass inaccessable && inaccessable.Id == Id;
+
+            /// <summary><inheritdoc cref="object.GetHashCode"/></summary>
+            public override int GetHashCode() => Id.GetHashCode();
         }
     }
 }
