@@ -40,19 +40,19 @@ namespace Moreland.CSharp.Util.Results
         void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause);
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
-        TValue OrElseOther(TValue other);
+        TValue ValueOr(TValue other);
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        TValue OrElseGet(Func<TValue> other);
+        TValue ValueOr(Func<TValue> other);
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
-        TValue OrElseThrow(Func<Exception> exceptionSupplier);
+        TValue ValueOrThrow(Func<Exception> exceptionSupplier);
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
-        TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier);
+        TValue ValueOrThrow(Func<string, Exception?, Exception> exceptionSupplier);
         /// <summary>
         /// Returns <see cref="Success"/>
         /// </summary>

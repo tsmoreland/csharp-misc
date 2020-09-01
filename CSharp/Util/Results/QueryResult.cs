@@ -141,11 +141,11 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
-        public TValue OrElseOther(TValue other) => Success ? Value : other;
+        public TValue ValueOr(TValue other) => Success ? Value : other;
 
         /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
         /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue OrElseGet(Func<TValue> other)
+        public TValue ValueOr(Func<TValue> other)
         {
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
@@ -155,7 +155,7 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
-        public TValue OrElseThrow(Func<Exception> exceptionSupplier)
+        public TValue ValueOrThrow(Func<Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
@@ -167,7 +167,7 @@ namespace Moreland.CSharp.Util.Results
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
-        public TValue OrElseThrow(Func<string, Exception?, Exception> exceptionSupplier)
+        public TValue ValueOrThrow(Func<string, Exception?, Exception> exceptionSupplier)
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));

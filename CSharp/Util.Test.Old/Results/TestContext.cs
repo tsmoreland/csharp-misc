@@ -382,12 +382,12 @@ namespace Moreland.CSharp.Util.Test.Old.Results
 
             if (Result.Success)
             {
-                _actualOrElseValue = Maybe.Of(Result.OrElseThrow(OrElseThrowFunc.Object));
+                _actualOrElseValue = Maybe.Of(Result.ValueOrThrow(OrElseThrowFunc.Object));
                 return AssertExpectedResult();
             }
             else
             {
-                Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFunc.Object));
+                Assert.Throws<TException>(() => Result.ValueOrThrow(OrElseThrowFunc.Object));
 
             }
 
@@ -397,7 +397,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         {
             if (Result.Success && OrElseThrowFunc != null)
             {
-                _actualOrElseValue = Maybe.Of(Result.OrElseThrow(OrElseThrowFunc.Object));
+                _actualOrElseValue = Maybe.Of(Result.ValueOrThrow(OrElseThrowFunc.Object));
                 OrElseThrowFunc.Verify(f => f.Invoke(), Times.Never);
                 return AssertExpectedResult();
             }
@@ -405,13 +405,13 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             {
                 if (OrElseThrowFunc != null)
                 {
-                    Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFunc.Object));
+                    Assert.Throws<TException>(() => Result.ValueOrThrow(OrElseThrowFunc.Object));
                     OrElseThrowFunc.Verify(f => f.Invoke(), Times.Once);
                 }
                 else
                 {
-                    Assert.Throws<ArgumentNullException>(() => Result.OrElseThrow((Func<Exception>)null!));
-                    Assert.Throws<ArgumentNullException>(() => Result.OrElseThrow((Func<string, Exception?, Exception>)null!));
+                    Assert.Throws<ArgumentNullException>(() => Result.ValueOrThrow((Func<Exception>)null!));
+                    Assert.Throws<ArgumentNullException>(() => Result.ValueOrThrow((Func<string, Exception?, Exception>)null!));
                 }
                 return this;
             }
@@ -426,13 +426,13 @@ namespace Moreland.CSharp.Util.Test.Old.Results
 
             if (Result.Success)
             {
-                _actualOrElseValue = Maybe.Of(Result.OrElseThrow(OrElseThrowFuncOverload.Object));
+                _actualOrElseValue = Maybe.Of(Result.ValueOrThrow(OrElseThrowFuncOverload.Object));
                 OrElseThrowFuncOverload.Verify(f => f.Invoke(It.IsAny<string>(), It.IsAny<Exception?>()), Times.Never);
                 return AssertExpectedResult();
             }
             else
             {
-                Assert.Throws<TException>(() => Result.OrElseThrow(OrElseThrowFuncOverload.Object));
+                Assert.Throws<TException>(() => Result.ValueOrThrow(OrElseThrowFuncOverload.Object));
                 OrElseThrowFuncOverload.Verify(f => f.Invoke(message, It.IsAny<Exception?>()), Times.Once);
                 return this;
             }
@@ -440,7 +440,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         }
         public TestContext<T> ActWithOrElseOther()
         {
-            _actualOrElseValue = Maybe.Of(Result.OrElseOther(_expectedOrElseValue.Value));
+            _actualOrElseValue = Maybe.Of(Result.ValueOr(_expectedOrElseValue.Value));
             return this;
         }
         public TestContext<T> ActWithOrElseGet()
@@ -451,7 +451,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 return this;
             }
 
-            _actualOrElseValue = Maybe.Of(Result.OrElseGet(OrElseGetFunc.Object));
+            _actualOrElseValue = Maybe.Of(Result.ValueOr(OrElseGetFunc.Object));
             return this;
         }
 
