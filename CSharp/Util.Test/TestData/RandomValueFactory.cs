@@ -25,10 +25,45 @@ namespace Moreland.CSharp.Util.Test.TestData
             new Lazy<RandomNumberGenerator>(RandomNumberGenerator.Create);
         private static RandomNumberGenerator Genertor => _generator.Value;
 
+        public static bool BuildRandomBoolean() =>
+            Build(buffer => BitConverter.ToBoolean(buffer, 0), Array.Empty<bool>());
+
+        public static short BuildRandomInt16(params short[] exclusions) =>
+            Build(buffer => BitConverter.ToInt16(buffer, 0), exclusions);
         public static int BuildRandomInt32(params int[] exclusions) =>
             Build(buffer => BitConverter.ToInt32(buffer, 0), exclusions);
         public static long BuildRandomInt64(params long[] exclusions) =>
             Build(buffer => BitConverter.ToInt64(buffer, 0), exclusions);
+
+        public static float BuildRandomFloat(params float[] exclusions) =>
+            Build(buffer => BitConverter.ToSingle(buffer, 0), exclusions);
+
+        public static double BuildRandomDouble(params double[] exclusions) =>
+            Build(buffer => BitConverter.ToDouble(buffer, 0), exclusions);
+
+        public static decimal BuildRandomDecimal(params decimal[] exclusions)
+        {
+            decimal value;
+            do
+            {
+                try
+                {
+                    value = new decimal(
+                        BuildRandomInt32(),
+                        BuildRandomInt32(),
+                        BuildRandomInt32(),
+                        BuildRandomBoolean(),
+                        (byte)(Math.Abs(BuildRandomInt32()) % 28));
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    value = new decimal(BuildRandomInt64());
+                }
+
+            } while (exclusions.Contains(value));
+
+            return value;
+        }
 
         public static Guid BuildRandomGuid(params Guid[] exclusions)
         {

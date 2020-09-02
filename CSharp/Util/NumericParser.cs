@@ -26,6 +26,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its 32-bit signed Shorteger equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Short}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<short> MaybeParseShort(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             short.TryParse(s, style, provider, out short result)
             ? Maybe.Of(result)
@@ -35,6 +42,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its 32-bit signed integer equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Int32}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<int> MaybeParseInt(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             int.TryParse(s, style, provider, out int result)
             ? Maybe.Of(result)
@@ -44,6 +58,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its 64-bit signed integer equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Long}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<long> MaybeParseLong(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             long.TryParse(s, style, provider, out long result)
             ? Maybe.Of(result)
@@ -53,6 +74,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its double-precision floating point equivalent equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Double}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<double> MaybeParseDouble(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             double.TryParse(s, style, provider, out double result)
             ? Maybe.Of(result)
@@ -62,6 +90,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its float-precision floating point equivalent equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Float}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<float> MaybeParseFloat(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             float.TryParse(s, style, provider, out float result)
             ? Maybe.Of(result)
@@ -71,6 +106,13 @@ namespace Moreland.CSharp.Util
         /// Converts the string represenation of a number to its float-precision floating point equivalent equivalent
         /// </summary>
         /// <returns><see cref="Maybe{Decimal}"/> containing a value on success or empty on failure</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="style"/> is not a <see cref="NumberStyles"/> value.
+        /// -or-
+        /// <paramref name="style"/> is not a combination of
+        /// <see cref="NumberStyles.AllowHexSpecifier"/> and
+        /// <see cref="NumberStyles.HexNumber"/> values.
+        /// </exception>
         public static Maybe<decimal> MaybeParseDecimal(string? s, NumberStyles style = NumberStyles.Any, IFormatProvider? provider = null) => 
             decimal.TryParse(s, style, provider, out decimal result)
             ? Maybe.Of(result)
