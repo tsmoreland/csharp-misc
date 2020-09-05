@@ -119,10 +119,11 @@ namespace Moreland.CSharp.Util
         /// <inheritdoc cref="object.Equals(object?)"/>
         /// </summary>
         public override bool Equals(object? obj) => Equals(obj as HashCodeBuilder);
+
         /// <summary>
         /// <inheritdoc cref="object.GetHashCode"/>
         /// </summary>
-        public override int GetHashCode() => _piecewiseCode.GetHashCode();
+        public override int GetHashCode() => ToHashCode();
 
         #endregion
     }

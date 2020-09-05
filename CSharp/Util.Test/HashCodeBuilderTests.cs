@@ -91,20 +91,47 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = -1)]
         [TestCase(10, 10, ExpectedResult = 0)]
         [TestCase(20, 10, ExpectedResult = 1)]
-        public int CompareTo_ReturnsExpectedResult_WhenComparingProvidedValues(int firstvalue, int secondValue)
+        [TestCase(20, null, ExpectedResult = 1)]
+        public int CompareTo_ReturnsExpectedResult_WhenComparingProvidedValues(int firstValue, int? secondValue)
         {
-            var first = HashCodeBuilder.Create(firstvalue);
-            var second = HashCodeBuilder.Create(secondValue);
+            var first = HashCodeBuilder.Create(firstValue);
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
             return first.CompareTo(second);
         }
 
         [TestCase(10, 20, ExpectedResult = false)]
         [TestCase(10, 10, ExpectedResult = true)]
         [TestCase(20, 10, ExpectedResult = false)]
-        public bool OperatorEquals_ReturnsExpectedResult_WhenComparingProvidedValue(int firstvalue, int secondValue)
+        [TestCase(20, null, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsExpectedResult_WhenUsingProvidedValues(int firstValue, int? secondValue)
         {
-            var first = HashCodeBuilder.Create(firstvalue);
-            var second = HashCodeBuilder.Create(secondValue);
+            var first = HashCodeBuilder.Create(firstValue);
+            object? second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
+
+            return first.Equals(second);
+        }
+
+        [TestCase(10, 20, ExpectedResult = false)]
+        [TestCase(10, 10, ExpectedResult = true)]
+        [TestCase(20, 10, ExpectedResult = false)]
+        [TestCase(20, null, ExpectedResult = false)]
+        public bool IEquatableEquals_ReturnsExpectedResult_WhenUsingProvidedValues(int firstValue, int? secondValue)
+        {
+            var first = HashCodeBuilder.Create(firstValue);
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
+
+            return first.Equals(second);
+        }
+
+        [TestCase(10, 20, ExpectedResult = false)]
+        [TestCase(10, 10, ExpectedResult = true)]
+        [TestCase(20, 10, ExpectedResult = false)]
+        [TestCase(null, 10, ExpectedResult = false)]
+        [TestCase(20, null, ExpectedResult = false)]
+        public bool OperatorEquals_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
+        {
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
 
             return first == second;
         }
@@ -112,25 +139,67 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = true)]
         [TestCase(10, 10, ExpectedResult = false)]
         [TestCase(20, 10, ExpectedResult = true)]
-        public bool OperatorNotEqual_ReturnsExpectedResult_WhenComparingProvidedValue(int firstvalue, int secondValue)
+        public bool OperatorNotEqual_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
-            var first = HashCodeBuilder.Create(firstvalue);
-            var second = HashCodeBuilder.Create(secondValue);
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
 
             return first != second;
         }
 
-        /*
-
-        [TestCase(10, 20, ExpectedResult = )]
-        [TestCase(10, 10, ExpectedResult = )]
-        [TestCase(20, 10, ExpectedResult = )]
-        public bool Operator_ReturnsExpectedResult_WhenComparingProvidedValue(int firstvalue, int secondValue)
+        [TestCase(10, 20, ExpectedResult = false)]
+        [TestCase(10, 10, ExpectedResult = false)]
+        [TestCase(20, 10, ExpectedResult = true)]
+        public bool OperatorGreaterThan_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
-            var first = HashCodeBuilder.Create(firstvalue);
-            var second = HashCodeBuilder.Create(secondValue);
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
 
+            return first! > second!;
         }
-        */
+
+        [TestCase(10, 20, ExpectedResult = false)]
+        [TestCase(10, 10, ExpectedResult = true)]
+        [TestCase(20, 10, ExpectedResult = true)]
+        public bool OperatorGreaterThanOrEqualTo_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
+        {
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
+
+            return first! >= second!;
+        }
+
+        [TestCase(10, 20, ExpectedResult = true)]
+        [TestCase(10, 10, ExpectedResult = false)]
+        [TestCase(20, 10, ExpectedResult = false)]
+        public bool OperatorLessThan_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
+        {
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
+
+            return first! < second!;
+        }
+
+        [TestCase(10, 20, ExpectedResult = true)]
+        [TestCase(10, 10, ExpectedResult = true)]
+        [TestCase(20, 10, ExpectedResult = false)]
+        public bool OperatorLessThanOrEqualTo_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
+        {
+            var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
+            var second = secondValue != null ? HashCodeBuilder.Create(secondValue) : null;
+
+            return first! <= second!;
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsToHashCode_Always()
+        {
+            var builder = HashCodeBuilder.Create(_values);
+
+            int toHashCode = builder.ToHashCode();
+            int getHashCode = builder.GetHashCode();
+
+            Assert.That(getHashCode, Is.EqualTo(toHashCode));
+        }
     }
 }
