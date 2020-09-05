@@ -139,6 +139,8 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = true)]
         [TestCase(10, 10, ExpectedResult = false)]
         [TestCase(20, 10, ExpectedResult = true)]
+        [TestCase(null, 10, ExpectedResult = true)]
+        [TestCase(20, null, ExpectedResult = true)]
         public bool OperatorNotEqual_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
             var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
@@ -150,6 +152,8 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = false)]
         [TestCase(10, 10, ExpectedResult = false)]
         [TestCase(20, 10, ExpectedResult = true)]
+        [TestCase(null, 10, ExpectedResult = false)]
+        [TestCase(20, null, ExpectedResult = true)]
         public bool OperatorGreaterThan_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
             var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
@@ -161,6 +165,8 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = false)]
         [TestCase(10, 10, ExpectedResult = true)]
         [TestCase(20, 10, ExpectedResult = true)]
+        [TestCase(null, 10, ExpectedResult = false)]
+        [TestCase(20, null, ExpectedResult = true)]
         public bool OperatorGreaterThanOrEqualTo_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
             var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
@@ -172,6 +178,8 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = true)]
         [TestCase(10, 10, ExpectedResult = false)]
         [TestCase(20, 10, ExpectedResult = false)]
+        [TestCase(null, 10, ExpectedResult = true)]
+        [TestCase(20, null, ExpectedResult = false)]
         public bool OperatorLessThan_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
             var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
@@ -183,6 +191,8 @@ namespace Moreland.CSharp.Util.Test
         [TestCase(10, 20, ExpectedResult = true)]
         [TestCase(10, 10, ExpectedResult = true)]
         [TestCase(20, 10, ExpectedResult = false)]
+        [TestCase(null, 10, ExpectedResult = true)]
+        [TestCase(20, null, ExpectedResult = false)]
         public bool OperatorLessThanOrEqualTo_ReturnsExpectedResult_WhenComparingProvidedValue(int? firstValue, int? secondValue)
         {
             var first = firstValue != null ? HashCodeBuilder.Create(firstValue) : null;
