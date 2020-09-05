@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -90,7 +91,7 @@ namespace Moreland.CSharp.Util
         {
             _piecewiseCode = piecewiseHashCodeBuilder;
         }
-        private static int CalculateHashCode(in int initialValue, object?[] objects) =>
+        private static int CalculateHashCode(in int initialValue, IEnumerable<object?> objects) =>
             objects.Aggregate(initialValue, (current, @object) => (current * 397) ^ (@object?.GetHashCode() ?? 0));
         #endregion
 

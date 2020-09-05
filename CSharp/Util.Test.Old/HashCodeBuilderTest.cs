@@ -20,22 +20,6 @@ namespace Moreland.CSharp.Util.Test.Old
     public class HashCodeBuilderTest
     {
         [Fact]
-        public void Create_HashCodeZeroWhenEmpty()
-        {
-            var builder = HashCodeBuilder.Create();
-            int hasCode = builder.ToHashCode();
-            Assert.Equal(0, hasCode);
-        }
-
-        [Fact]
-        public void Create_NullValuesGiveHashCodeOfZero()
-        {
-            var builder = HashCodeBuilder.Create(null, null, null);
-            var hashCode = builder.ToHashCode();
-            Assert.Equal(0, hashCode);
-        }
-
-        [Fact]
         public void Equals_EqualWhenBuiltFromSameValues()
         {
             var first = HashCodeBuilder.Create(1, 2, 3);
