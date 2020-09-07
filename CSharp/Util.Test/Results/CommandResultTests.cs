@@ -14,6 +14,7 @@
 using System;
 using Moreland.CSharp.Util.Results;
 using NUnit.Framework;
+using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
@@ -124,7 +125,7 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
-        public void ToBoolean_ReturnsTrue_WhenFailed()
+        public void ToBoolean_ReturnsFalse_WhenFailed()
         {
             Assert.That(_failed.Success, Is.False);
         }
@@ -133,6 +134,124 @@ namespace Moreland.CSharp.Util.Test.Results
         public void ToBoolean_ReturnsTrue_WhenFailedWithCause()
         {
             Assert.That(_failedWithCause.Success, Is.False);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsTrue_WhenOk()
+        {
+            bool @bool = _ok;
+            Assert.That(@bool, Is.True);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsTrue_WhenOkWithMessage()
+        {
+            bool @bool = _okWithMessage;
+            Assert.That(@bool, Is.True);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsFalse_WhenFailed()
+        {
+            bool @bool = _failed;
+            Assert.That(@bool, Is.False);
+        }
+
+        [Test]
+        public void ImplicitBool_ReturnsFalse_WhenFailedWithCause()
+        {
+            bool @bool = _failedWithCause;
+            Assert.That(@bool, Is.False);
+        }
+
+        [TestCase(ResultType.Successful, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, ExpectedResult = true)]
+        [TestCase(ResultType.Null, false, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsTrue_WhenSuccessAndCauseAreEqual(ResultType resultType, bool includeException)
+        {
+            object? result = resultType switch
+            {
+                ResultType.Successful => CommandResult.Ok(_message),
+                ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
+                ResultType.Failure when !includeException => CommandResult.Failed(_message),
+                ResultType.Null => null,
+                _ => null,
+            };
+
+            return _failedWithCause.Equals(result);
+        }
+
+        [TestCase(ResultType.Successful, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, ExpectedResult = true)]
+        public bool IEquatableEquals_ReturnsTrue_WhenSuccessAndCauseAreEqual(ResultType resultType,
+            bool includeException)
+        {
+            CommandResult result = resultType switch
+            {
+                ResultType.Successful => CommandResult.Ok(_message),
+                ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
+                ResultType.Failure when !includeException => CommandResult.Failed(_message),
+                _ => CommandResult.Failed(_message)
+            };
+            return _failedWithCause.Equals(result);
+        }
+
+        [TestCase(ResultType.Successful, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, ExpectedResult = true)]
+        public bool OperatorEquals_ReturnsTrue_WhenSuccessAndCauseAreEqual(ResultType resultType,
+            bool includeException)
+        {
+            CommandResult result = resultType switch
+            {
+                ResultType.Successful => CommandResult.Ok(_message),
+                ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
+                ResultType.Failure when !includeException => CommandResult.Failed(_message),
+                _ => CommandResult.Failed(_message)
+            };
+            return _failedWithCause == result;
+        }
+
+        [TestCase(ResultType.Successful, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, ExpectedResult = false)]
+        public bool OperatorNotEquals_ReturnsTrue_WhenSuccessAndCauseAreEqual(ResultType resultType,
+            bool includeException)
+        {
+            CommandResult result = resultType switch
+            {
+                ResultType.Successful => CommandResult.Ok(_message),
+                ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
+                ResultType.Failure when !includeException => CommandResult.Failed(_message),
+                _ => CommandResult.Failed(_message)
+            };
+            return _failedWithCause != result;
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, false, true, ExpectedResult = true)]
+        public bool GetHashCode_ReturnsEqualCodeForEqualParameters_Always(ResultType resultType,
+            bool includeMessage, bool includeException)
+        {
+            string customMessage = BuildRandomString(_message);
+            CommandResult result = resultType switch
+            {
+                ResultType.Successful when !includeMessage => CommandResult.Ok(_message),
+                ResultType.Successful when includeMessage => CommandResult.Ok(customMessage),
+                ResultType.Failure when includeException && includeMessage => CommandResult.Failed(customMessage, _cause),
+                ResultType.Failure when includeException && !includeMessage => CommandResult.Failed(_message, _cause),
+                ResultType.Failure when !includeException && includeMessage => CommandResult.Failed(customMessage),
+                ResultType.Failure when !includeException && !includeMessage => CommandResult.Failed(_message),
+                _ => CommandResult.Failed(_message)
+            };
+
+            return _failedWithCause.Equals(result);
         }
     }
 }

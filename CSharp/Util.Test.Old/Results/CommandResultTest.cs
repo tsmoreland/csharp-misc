@@ -94,9 +94,9 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         public void GetHashCode_MadeUpOfDeconstructedValue()
         {
             var result = CommandResult.Failed(Guid.NewGuid().ToString(), new InvalidCastException());
-            var (success, message, cause) = result;
+            var (success, _, cause) = result;
 
-            Assert.Equal(HashProxy.Combine(success, message, cause), result.GetHashCode());
+            Assert.Equal(HashProxy.Combine(success, cause), result.GetHashCode());
         }
 
         [Fact]

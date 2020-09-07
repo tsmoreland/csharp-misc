@@ -43,14 +43,13 @@ namespace Moreland.CSharp.Util.Internal
         #region IEquatable{ResultCore}
         public bool Equals(ResultCore other) =>
             Success == other.Success &&
-            Message == other.Message &&
             (ReferenceEquals(Cause, other.Cause) || Cause?.Equals(other.Cause) == true);
         #endregion
         #region ValueType
 
         public override bool Equals(object? obj) => obj is ResultCore result && Equals(result);
         public override int GetHashCode() =>
-            HashProxy.Combine(Success, Message, Cause);
+            HashProxy.Combine(Success, Cause);
 
         #endregion
     }

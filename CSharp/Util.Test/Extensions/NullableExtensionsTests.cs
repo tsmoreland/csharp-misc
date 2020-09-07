@@ -214,5 +214,6 @@ namespace Moreland.CSharp.Util.Test.Extensions
             var actual = Assert.Catch<Exception>(() => _ = value.ValueOrThrow(Supplier));
             Assert.That(actual, Is.EqualTo(expected));
         }
+
     }
 }
