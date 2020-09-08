@@ -41,6 +41,13 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
+        public void Failed_ThrowsArgumentNullException_WhenMessageIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed(null!));
+            Assert.That(ex.ParamName, Is.EqualTo("message"));
+        }
+
+        [Test]
         public void Success_ReturnsTrue_WhenOk()
         {
             Assert.That(_ok.Success, Is.True);
@@ -74,6 +81,12 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Message_ReturnsMessage_WhenOkWithMessage()
         {
             Assert.That(_okWithMessage.Message, Is.EqualTo(_message));
+        }
+
+        [Test]
+        public void Message_ReturnsEmptyString_WhenOkWithMessageGivenNull()
+        {
+            Assert.That(CommandResult.Ok().Message, Is.EqualTo(""));
         }
 
         [Test]
@@ -176,7 +189,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 ResultType.Failure when !includeException => CommandResult.Failed(_message),
                 ResultType.Null => null,
-                _ => null,
+                _ => throw new InvalidOperationException("Invalid test case"),
             };
 
             return _failedWithCause.Equals(result);
@@ -193,7 +206,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Successful => CommandResult.Ok(_message),
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 ResultType.Failure when !includeException => CommandResult.Failed(_message),
-                _ => CommandResult.Failed(_message)
+                _ => throw new InvalidOperationException("Invalid test case"),
             };
             return _failedWithCause.Equals(result);
         }
@@ -209,7 +222,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Successful => CommandResult.Ok(_message),
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 ResultType.Failure when !includeException => CommandResult.Failed(_message),
-                _ => CommandResult.Failed(_message)
+                _ => throw new InvalidOperationException("Invalid test case"),
             };
             return _failedWithCause == result;
         }
@@ -225,7 +238,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Successful => CommandResult.Ok(_message),
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 ResultType.Failure when !includeException => CommandResult.Failed(_message),
-                _ => CommandResult.Failed(_message)
+                _ => throw new InvalidOperationException("Invalid test case"),
             };
             return _failedWithCause != result;
         }
@@ -248,10 +261,85 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Failure when includeException && !includeMessage => CommandResult.Failed(_message, _cause),
                 ResultType.Failure when !includeException && includeMessage => CommandResult.Failed(customMessage),
                 ResultType.Failure when !includeException && !includeMessage => CommandResult.Failed(_message),
-                _ => CommandResult.Failed(_message)
+                _ => throw new InvalidOperationException("Invalid test case"),
             };
 
             return _failedWithCause.Equals(result);
         }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Deconstruct_ToMessagenAndSuccess_ReturnsProvidedMessage_Always(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            CommandResult result = BuildResultForDeconstruct(resultType, includeMessage, includeException);
+
+            var (_, message) = result;
+
+            Assert.That(message, Is.EqualTo(result.Message));
+        }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Deconstruct_ToMessagenAndSuccess_ReturnsProvidedSuccess_Always(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            CommandResult result = BuildResultForDeconstruct(resultType, includeMessage, includeException);
+
+            var (success, _) = result;
+
+            Assert.That(success, Is.EqualTo(result.Success));
+        }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Deconstruct_ToMessagenSuccessAndCause_ReturnsProvidedMessage_Always(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            CommandResult result = BuildResultForDeconstruct(resultType, includeMessage, includeException);
+
+            var (_, message, _) = result;
+
+            Assert.That(message, Is.EqualTo(result.Message));
+        }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Deconstruct_ToMessagenSuccessAndCause_ReturnsProvidedSuccess_Always(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            CommandResult result = BuildResultForDeconstruct(resultType, includeMessage, includeException);
+
+            var (success, _, _) = result;
+
+            Assert.That(success, Is.EqualTo(result.Success));
+        }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Deconstruct_ToMessagenSuccessAndCause_ReturnsProvidedCause_Always(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            CommandResult result = BuildResultForDeconstruct(resultType, includeMessage, includeException);
+
+            var (_, _, cause) = result;
+
+            Assert.That(cause, Is.EqualTo(result.Cause));
+        }
+
+        private CommandResult BuildResultForDeconstruct(ResultType resultType, bool includeMessage, bool includeException) =>
+            resultType switch
+            {
+                ResultType.Successful when !includeMessage => CommandResult.Ok(),
+                ResultType.Successful when includeMessage => CommandResult.Ok(_message),
+                ResultType.Failure when !includeException => CommandResult.Failed(_message),
+                ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
+                _ => throw new InvalidOperationException("Invalid test case"),
+            };
     }
 }
