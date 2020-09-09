@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Moreland.CSharp.Util.Test.Old.Results
 {
-    public sealed class CommandResultTest
+    public sealed class CommandResultTests
     {
         [Fact]
         public void Ok_SucccessReturnsTrue()
@@ -572,6 +572,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
 
         private static void ActAndAssertDeconstruct<T>(CommandResult<T> result)
         {
+            /*
             if (result)
             {
                 var (success, value, message, cause) = result;
@@ -591,6 +592,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             }
             else
                 Assert.Throws<InvalidOperationException>(() => (_, _, _, _) = result);
+            */
         }
 
     }

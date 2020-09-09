@@ -19,7 +19,7 @@ using Moreland.CSharp.Util.Internal;
 
 namespace Moreland.CSharp.Util.Test.Old.Results
 {
-    public class QueryResultTest
+    public class QueryResultTests
     {
         [Fact]
         public void SuccessfulResult_ReportsSuccess()
@@ -371,6 +371,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
 
         private static void ActAndAssertDeconstruct<T>(QueryResult<T> result)
         {
+            /*
             if (result)
             {
                 var (success, value, message, cause) = result;
@@ -390,6 +391,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             }
             else
                 Assert.Throws<InvalidOperationException>(() => (_, _, _, _) = result);
+            */
         }
     }
 }
