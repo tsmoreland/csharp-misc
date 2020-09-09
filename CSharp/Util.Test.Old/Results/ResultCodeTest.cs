@@ -79,7 +79,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         public void GetHashCode_EqualsCombinationOfValues(bool success, string message, Exception? cause)
         {
             var result = new ResultCore(success, message, cause);
-            var expectedHashCode = HashProxy.Combine(success, message, cause);
+            var expectedHashCode = HashProxy.Combine(success, cause);
             var actualHashCode = result.GetHashCode();
 
             Assert.Equal(expectedHashCode, actualHashCode);

@@ -134,7 +134,7 @@ namespace Moreland.CSharp.Util.Results
     /// </summary>
     /// <typeparam name="TValue">type of the Value stored on success</typeparam>
     [DebuggerDisplay("{GetType().Name,nq}: {Value} {Success} {Message,nq}")]
-    public struct CommandResult<TValue> : IValueResult<TValue>, IEquatable<CommandResult<TValue>>
+    public readonly struct CommandResult<TValue> : IValueResult<TValue>, IEquatable<CommandResult<TValue>>
     {
         internal CommandResult(TValue value, bool success, string message, Exception? cause)
         {

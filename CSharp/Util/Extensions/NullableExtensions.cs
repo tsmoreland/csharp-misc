@@ -52,11 +52,9 @@ namespace Moreland.CSharp.Util.Extensions
         /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
         public static TValue ValueOr<TValue>(this TValue? value, Func<TValue> supplier) where TValue : class
         {
-            if (value != null)
-                return value;
             if (supplier == null)
                 throw new ArgumentNullException(nameof(supplier));
-            return supplier.Invoke();
+            return value ?? supplier.Invoke();
         }
         /// <summary>
         /// returns <paramref name="value"/> or value provided by <paramref name="supplier"/>
@@ -64,35 +62,29 @@ namespace Moreland.CSharp.Util.Extensions
         /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is null if <paramref name="value"/> is not</exception>
         public static TValue ValueOr<TValue>(this TValue? value, Func<TValue> supplier) where TValue : struct
         {
-            if (value != null)
-                return (TValue)value;
             if (supplier == null)
                 throw new ArgumentNullException(nameof(supplier));
-            return supplier.Invoke();
+            return value ?? supplier.Invoke();
         }
 
         /// <summary>
-        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
+        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSupplier"/>
         /// </summary>
-        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : class
+        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSupplier) where TValue : class
         {
-            if (exceptionSuppliier == null)
-                throw new ArgumentNullException(nameof(exceptionSuppliier));
-            if (value != null)
-                return value;
-            throw exceptionSuppliier.Invoke();
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            return value ?? throw exceptionSupplier.Invoke();
         }
 
         /// <summary>
-        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSuppliier"/>
+        /// returns <paramref name="value"/> if non-null or throws exception provided by <paramref name="exceptionSupplier"/>
         /// </summary>
-        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSuppliier) where TValue : struct
+        public static TValue ValueOrThrow<TValue>(this TValue? value, Func<Exception> exceptionSupplier) where TValue : struct
         {
-            if (exceptionSuppliier == null)
-                throw new ArgumentNullException(nameof(exceptionSuppliier));
-            if (value != null)
-                return (TValue)value;
-            throw exceptionSuppliier.Invoke();
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
+            return value ?? throw exceptionSupplier.Invoke();
         }
     }
 }
