@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
 
@@ -27,19 +28,19 @@ namespace Moreland.CSharp.Util.Test.Results
     }
 
     [TestFixture]
-    public sealed class EquatableReferenceTypeCommandResultTests : CommandResultTests<int>
+    public sealed class EquatableReferenceTypeCommandResultTests : CommandResultTests<string>
     {
         public EquatableReferenceTypeCommandResultTests()
-            : base(() => BuildRandomInt32())
+            : base(() => BuildRandomString())
         {
         }
     }
 
     [TestFixture]
-    public sealed class ReferenceTypeCommandResultTests : CommandResultTests<int>
+    public sealed class ReferenceTypeCommandResultTests : CommandResultTests<List<string>>
     {
         public ReferenceTypeCommandResultTests()
-            : base(() => BuildRandomInt32())
+            : base(() => BuildRandomListOfString())
         {
         }
     }
