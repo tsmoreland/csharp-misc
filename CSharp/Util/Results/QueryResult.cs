@@ -88,26 +88,28 @@ namespace Moreland.CSharp.Util.Results
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value)
+        public void Deconstruct(out bool success, out Maybe<TValue> value)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
         }
+
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
         }
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
             cause = Cause;
         }
+
 
         /// <summary>
         /// If a value is present, apply the provided Optional-bearing mapping function to it, 
@@ -137,9 +139,9 @@ namespace Moreland.CSharp.Util.Results
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
-            if (!Success)
-                return QueryResult.Failed<TMappedValue>(Message, Cause);
-            return QueryResult.Ok(mapper.Invoke(Value));
+            return !Success 
+                ? QueryResult.Failed<TMappedValue>(Message, Cause) 
+                : QueryResult.Ok(mapper.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>

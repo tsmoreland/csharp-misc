@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using Moreland.CSharp.Util.Results;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
@@ -348,5 +349,71 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 _ => throw new InvalidOperationException("Invalid test case"),
             };
+    }
+
+    internal static class CommandResultTestHelper
+    {
+        public static bool ImplicitBool<T>(IValueResult<T> genericResult)
+        {
+            if (!(genericResult is CommandResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+            return result;
+        }
+
+        public static IValueResult<T> OkBuilder<T>(T value) =>
+            CommandResult.Ok(value);
+        public static IValueResult<T> OkWithMessageBuilder<T>(T value, string message) =>
+            CommandResult.Ok(value, message);
+
+        public static IValueResult<T> FailedBuilder<T>(string message) =>
+            CommandResult.Failed<T>(message);
+        public static IValueResult<T> FailedWithCauseBuilder<T>(string message, Exception? cause) =>
+            CommandResult.Failed<T>(message, cause);
+    }
+
+    [TestFixture]
+    public sealed class ValueTypeCommandResultTests : ValueResultTests<int>
+    {
+        public ValueTypeCommandResultTests()
+            : base(
+                () => BuildRandomInt32(),
+                CommandResultTestHelper.OkBuilder,
+                CommandResultTestHelper.OkWithMessageBuilder,
+                CommandResultTestHelper.FailedBuilder<int>,
+                CommandResultTestHelper.FailedWithCauseBuilder<int>,
+                CommandResultTestHelper.ImplicitBool)
+        {
+        }
+
+    }
+
+    [TestFixture]
+    public sealed class EquatableReferenceTypeCommandResultTests : ValueResultTests<string>
+    {
+        public EquatableReferenceTypeCommandResultTests()
+            : base(
+                () => BuildRandomString(),
+                CommandResultTestHelper.OkBuilder,
+                CommandResultTestHelper.OkWithMessageBuilder,
+                CommandResultTestHelper.FailedBuilder<string>,
+                CommandResultTestHelper.FailedWithCauseBuilder<string>,
+                CommandResultTestHelper.ImplicitBool)
+        {
+        }
+    }
+
+    [TestFixture]
+    public sealed class ReferenceTypeCommandResultTests : ValueResultTests<List<string>>
+    {
+        public ReferenceTypeCommandResultTests()
+            : base(
+                () => BuildRandomListOfString(),
+                CommandResultTestHelper.OkBuilder,
+                CommandResultTestHelper.OkWithMessageBuilder,
+                CommandResultTestHelper.FailedBuilder<List<string>>,
+                CommandResultTestHelper.FailedWithCauseBuilder<List<string>>,
+                CommandResultTestHelper.ImplicitBool)
+        {
+        }
     }
 }

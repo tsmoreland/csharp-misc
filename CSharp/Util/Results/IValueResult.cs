@@ -33,11 +33,11 @@ namespace Moreland.CSharp.Util.Results
         TValue Value { get; }
 
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value);
+        void Deconstruct(out bool success, out Maybe<TValue> value);
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value, out string message);
+        void Deconstruct(out bool success, out Maybe<TValue> value, out string message);
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause);
+        void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause);
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
         TValue ValueOr(TValue other);

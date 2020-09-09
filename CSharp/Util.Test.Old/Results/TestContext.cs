@@ -300,6 +300,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         public void ActAndAssertWithFlatMap_VerifyExpectedResult<U>(U FlatMappedValue)
         {
 
+            /*
             bool success;
             U FlatMapped;
             if (Result is CommandResult<T> cmd)
@@ -330,6 +331,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             }
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
+            */
         }
         public void ActAndAssertWithMap_VerifyMapperInvoked<U>(U mappedValue)
         {
@@ -352,6 +354,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         }
         public void ActAndAssertWithMap_VerifyExpectedResult<U>(U mappedValue)
         {
+            /*
             var mapper = new Mock<Func<T, U>>();
             mapper
                 .Setup(o => o.Invoke(It.IsAny<T>()))
@@ -370,6 +373,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 Assert.Equal(mappedValue, mapped);
             else
                 Assert.False(success);
+            */
         }
 
         public TestContext<T> ActAndAssertWithOrElseThrow_VerifyValue<TException>() where TException : Exception

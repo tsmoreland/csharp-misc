@@ -181,23 +181,23 @@ namespace Moreland.CSharp.Util.Results
         public static explicit operator TValue(CommandResult<TValue> result) => result.Value;
 
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value)
+        public void Deconstruct(out bool success, out Maybe<TValue> value)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
         }
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
         }
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
             cause = Cause;
         }
