@@ -30,11 +30,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Builds a successful <see cref="CommandResult{TValue}"/> with value 
         /// </summary>
-        public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
+        public static CommandResult<TValue> Ok<TValue>(TValue value) => 
+            new CommandResult<TValue>(value, true, string.Empty, null);
         /// <summary>
         /// Builds a successful <see cref="CommandResult{TValue}"/> with value and optional message
         /// </summary>
-        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
+        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => 
+            new CommandResult<TValue>(value, true, message ?? string.Empty, null);
         /// <summary>
         /// Builds a successful <see cref="CommandResult"/> 
         /// </summary>
@@ -42,7 +44,8 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Builds a successful <see cref="CommandResult"/> with optional message
         /// </summary>
-        public static CommandResult Ok(string message) => new CommandResult(true, message ?? string.Empty, null);
+        public static CommandResult Ok(string message) => 
+            new CommandResult(true, message ?? string.Empty, null);
 
         /// <summary>
         /// Builds a <see cref="CommandResult"/> with a failed result

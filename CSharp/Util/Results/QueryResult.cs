@@ -38,7 +38,7 @@ namespace Moreland.CSharp.Util.Results
         /// <param name="message">message detailed while the query failed</param>
         /// <param name="cause">optional exception providing further details</param>
         public static QueryResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
-            new QueryResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+            new QueryResult<TValue>(default!, false, message ?? throw new ArgumentNullException(nameof(message)), cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
     }
 
     /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>

@@ -21,44 +21,44 @@ using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 namespace Moreland.CSharp.Util.Test.Results
 {
     [TestFixture]
-    public sealed class ValueTypeCommandResultTests : CommandResultTests<int>
+    public sealed class ValueTypeQueryResultTests : QueryResultTests<int>
     {
-        public ValueTypeCommandResultTests()
+        public ValueTypeQueryResultTests()
             : base(() => BuildRandomInt32())
         {
         }
     }
 
     [TestFixture]
-    public sealed class EquatableReferenceTypeCommandResultTests : CommandResultTests<string>
+    public sealed class EquatableReferenceTypeQueryResultTests : QueryResultTests<string>
     {
-        public EquatableReferenceTypeCommandResultTests()
+        public EquatableReferenceTypeQueryResultTests()
             : base(() => BuildRandomString())
         {
         }
     }
 
     [TestFixture]
-    public sealed class ReferenceTypeCommandResultTests : CommandResultTests<List<string>>
+    public sealed class ReferenceTypeQueryResultTests : QueryResultTests<List<string>>
     {
-        public ReferenceTypeCommandResultTests()
+        public ReferenceTypeQueryResultTests()
             : base(() => BuildRandomListOfString())
         {
         }
     }
 
-    public abstract class CommandResultTests<T>
+    public abstract class QueryResultTests<T>
     {
         private readonly Func<T> _builder;
         private string _message = null!;
         private Exception _cause = null!;
         private T _value = default!;
-        private CommandResult<T> _ok = CommandResult.Failed<T>("invalid");
-        private CommandResult<T> _okWithMessage = CommandResult.Failed<T>("invalid");
-        private CommandResult<T> _failed = CommandResult.Failed<T>("invalid");
-        private CommandResult<T> _failedWithCause = CommandResult.Failed<T>("invalid");
+        private QueryResult<T> _ok = QueryResult.Failed<T>("invalid");
+        private QueryResult<T> _okWithMessage = QueryResult.Failed<T>("invalid");
+        private QueryResult<T> _failed = QueryResult.Failed<T>("invalid");
+        private QueryResult<T> _failedWithCause = QueryResult.Failed<T>("invalid");
 
-        protected CommandResultTests(Func<T> builder)
+        protected QueryResultTests(Func<T> builder)
         {
             _builder = builder;
         }
@@ -70,23 +70,23 @@ namespace Moreland.CSharp.Util.Test.Results
             _cause = new Exception(_message);
             _value = _builder();
 
-            _ok = CommandResult.Ok(_value);
-            _okWithMessage = CommandResult.Ok(_value, _message);
-            _failed = CommandResult.Failed<T>(_message);
-            _failedWithCause = CommandResult.Failed<T>(_message, _cause);
+            _ok = QueryResult.Ok(_value);
+            _okWithMessage = QueryResult.Ok(_value, _message);
+            _failed = QueryResult.Failed<T>(_message);
+            _failedWithCause = QueryResult.Failed<T>(_message, _cause);
         }
 
         [Test]
         public void Failed_ThrowsArgumentNullException_WhenMessageIsNull()
         {
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed<T>(null!));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = QueryResult.Failed<T>(null!));
             Assert.That(ex.ParamName, Is.EqualTo("message"));
         }
 
         [Test]
         public void FailedWithCause_ThrowsArgumentNullException_WhenMessageIsNull()
         {
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed<T>(null!, _cause));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = QueryResult.Failed<T>(null!, _cause));
             Assert.That(ex.ParamName, Is.EqualTo("message"));
         }
 
@@ -149,7 +149,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [Test]
         public void Message_ReturnsEmptyString_WhenOkWithMessageGivenNull()
         {
-            Assert.That(CommandResult.Ok(_value).Message, Is.EqualTo(""));
+            Assert.That(QueryResult.Ok(_value).Message, Is.EqualTo(""));
         }
 
         [Test]
