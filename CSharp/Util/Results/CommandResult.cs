@@ -143,7 +143,10 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Resulting Value of the Query</summary>
         /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(ProjectResources.InvalidQueryResultValueAccess);
+        public TValue Value => Success 
+            ? ValueResult.Value 
+            : throw new InvalidOperationException(ProjectResources.InvalidResultValueAccess);
+
         /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
         /// <summary>Optional message; should be non-empty of failure but may have a value on success</summary>

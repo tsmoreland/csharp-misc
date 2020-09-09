@@ -48,6 +48,13 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
+        public void FailedWithCause_ThrowsArgumentNullException_WhenMessageIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed(null!, _cause));
+            Assert.That(ex.ParamName, Is.EqualTo("message"));
+        }
+
+        [Test]
         public void Success_ReturnsTrue_WhenOk()
         {
             Assert.That(_ok.Success, Is.True);
