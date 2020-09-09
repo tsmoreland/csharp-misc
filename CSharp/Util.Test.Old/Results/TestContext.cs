@@ -249,9 +249,9 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         public void ActAndAssertWithFlatMap_ThrowsArgumentNullIfMapperNull<U>()
         {
             if (Result is CommandResult<T> cmd)
-                Assert.Throws<ArgumentNullException>(() => _ = cmd.FlatMap<U>(null!));
+                Assert.Throws<ArgumentNullException>(() => _ = cmd.Select<U>((Func<T, CommandResult<U>>)null!));
             else if (Result is QueryResult<T> query)
-                Assert.Throws<ArgumentNullException>(() => _ = query.FlatMap<U>(null!));
+                Assert.Throws<ArgumentNullException>(() => _ = query.Select<U>((Func<T, QueryResult<U>>)null!));
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
         }
@@ -264,7 +264,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 FlatMapper
                     .Setup(o => o.Invoke(It.IsAny<T>()))
                     .Returns(CommandResult.Ok(FlatMappedValue));
-                _ = cmd.FlatMap(FlatMapper.Object);
+                _ = cmd.Select(FlatMapper.Object);
 
                 if (Result.Success)
                     FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
@@ -277,7 +277,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 FlatMapper
                     .Setup(o => o.Invoke(It.IsAny<T>()))
                     .Returns(QueryResult.Ok(FlatMappedValue));
-                _ = query.FlatMap(FlatMapper.Object);
+                _ = query.Select(FlatMapper.Object);
 
                 if (Result.Success)
                     FlatMapper.Verify(m => m.Invoke(It.IsAny<T>()), Times.Once);
@@ -291,9 +291,9 @@ namespace Moreland.CSharp.Util.Test.Old.Results
         public void ActAndAssertWithMap_ThrowsArgumentNullIfMapperNull<U>()
         {
             if (Result is CommandResult<T> cmd)
-                Assert.Throws<ArgumentNullException>(() => _ = cmd.Map<U>(null!));
+                Assert.Throws<ArgumentNullException>(() => _ = cmd.Select<U>((Func<T, U>)null!));
             else if (Result is QueryResult<T> query)
-                Assert.Throws<ArgumentNullException>(() => _ = query.Map<U>(null!));
+                Assert.Throws<ArgumentNullException>(() => _ = query.Select<U>((Func<T, U>)null!));
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
         }
@@ -309,7 +309,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 FlatMapper
                     .Setup(o => o.Invoke(It.IsAny<T>()))
                     .Returns(CommandResult.Ok(FlatMappedValue));
-                (success, FlatMapped) = cmd.FlatMap(FlatMapper.Object);
+                (success, FlatMapped) = cmd.Select(FlatMapper.Object);
 
                 if (Result.Success)
                     Assert.Equal(FlatMappedValue, FlatMapped);
@@ -322,7 +322,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 FlatMapper
                     .Setup(o => o.Invoke(It.IsAny<T>()))
                     .Returns(QueryResult.Ok(FlatMappedValue));
-                (success, FlatMapped) = query.FlatMap(FlatMapper.Object);
+                (success, FlatMapped) = query.Select(FlatMapper.Object);
 
                 if (Result.Success)
                     Assert.Equal(FlatMappedValue, FlatMapped);
@@ -341,9 +341,9 @@ namespace Moreland.CSharp.Util.Test.Old.Results
                 .Returns(mappedValue);
 
             if (Result is CommandResult<T> cmd)
-                _ = cmd.Map(mapper.Object);
+                _ = cmd.Select(mapper.Object);
             else if (Result is QueryResult<T> query)
-                _ = query.Map(mapper.Object);
+                _ = query.Select(mapper.Object);
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
 
@@ -363,9 +363,9 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             bool success;
             U mapped;
             if (Result is CommandResult<T> cmd)
-                (success, mapped) = cmd.Map(mapper.Object);
+                (success, mapped) = cmd.Select(mapper.Object);
             else if (Result is QueryResult<T> query)
-                (success, mapped) = query.Map(mapper.Object);
+                (success, mapped) = query.Select(mapper.Object);
             else
                 throw new NotSupportedException($"test for {Result.GetType()} not implemented");
 

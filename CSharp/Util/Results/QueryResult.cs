@@ -115,33 +115,26 @@ namespace Moreland.CSharp.Util.Results
         /// If a value is present, apply the provided Optional-bearing mapping function to it, 
         /// return that result, otherwise return an empty Optional.
         /// </summary>
-        public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, QueryResult<TMappedValue>> mapper)
+        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, QueryResult<TMappedValue>> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
             if (!Success)
                 return QueryResult.Failed<TMappedValue>(Message, Cause);
-            return mapper.Invoke(Value);
+            return selector.Invoke(Value);
         }
 
         /// <summary>
         /// If a value is present, apply the provided mapping function to it, 
         /// and if the result is non-null, return an Optional describing the result. 
         /// </summary>
-        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) =>
-            Map(selector);
-
-        /// <summary>
-        /// If a value is present, apply the provided mapping function to it, 
-        /// and if the result is non-null, return an Optional describing the result. 
-        /// </summary>
-        public QueryResult<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
             return !Success 
                 ? QueryResult.Failed<TMappedValue>(Message, Cause) 
-                : QueryResult.Ok(mapper.Invoke(Value));
+                : QueryResult.Ok(selector.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
@@ -193,7 +186,7 @@ namespace Moreland.CSharp.Util.Results
         /// current result if successful or uses <paramref name="mapper"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public QueryResult<TValue> OrElseFlatMap(Func<string, Exception?, QueryResult<TValue>> mapper)
+        public QueryResult<TValue> ValueOr(Func<string, Exception?, QueryResult<TValue>> mapper)
         {
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));

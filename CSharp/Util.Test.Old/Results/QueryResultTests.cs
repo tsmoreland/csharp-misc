@@ -272,7 +272,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             Guid alternate = Guid.NewGuid();
 
             // Act
-            var result = ctx.OrElseFlatMap((msg, ex) => QueryResult.Ok(alternate));
+            var result = ctx.ValueOr((msg, ex) => QueryResult.Ok(alternate));
 
             // Assert
             Assert.NotEqual(alternate, result.Value);
@@ -294,7 +294,7 @@ namespace Moreland.CSharp.Util.Test.Old.Results
             Guid alternate = Guid.NewGuid();
 
             // Act
-            var result = ctx.OrElseFlatMap((msg, ex) => QueryResult.Ok(alternate));
+            var result = ctx.ValueOr((msg, ex) => QueryResult.Ok(alternate));
 
             // Assert
             Assert.Equal(alternate, result.Value);
