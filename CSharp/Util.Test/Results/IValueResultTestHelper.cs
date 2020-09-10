@@ -12,45 +12,21 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using Moreland.CSharp.Util.Results;
-using NUnit.Framework;
-using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
-
-    [TestFixture]
-    public sealed class ValueTypeQueryResultTests : ValueResultTests<int>
+    public interface IValueResultTestHelper<T>
     {
-        public ValueTypeQueryResultTests()
-            : base(
-                () => BuildRandomInt32(),
-                new QueryResultTestHelper<int>())
-        {
-        }
+        IValueResult<T> OkBuilder(T value);
+        IValueResult<T> OkWithMessageBuilder(T value, string message);
+        IValueResult<T> FailedBuilder(string message);
+        IValueResult<T> FailedWithCauseBuilder(string message, Exception? cause);
 
-    }
-
-    [TestFixture]
-    public sealed class EquatableReferenceTypeQueryResultTests : ValueResultTests<string>
-    {
-        public EquatableReferenceTypeQueryResultTests()
-            : base(
-                () => BuildRandomString(),
-                new QueryResultTestHelper<string>())
-        {
-        }
-    }
-
-    [TestFixture]
-    public sealed class ReferenceTypeQueryResultTests : ValueResultTests<List<string>>
-    {
-        public ReferenceTypeQueryResultTests()
-            : base(
-                () => BuildRandomListOfString(),
-                new QueryResultTestHelper<List<string>>())
-        {
-        }
+        bool ImplicitBool(IValueResult<T> genericResult);
+        bool ObjectEquals(IValueResult<T> genericFirst, object? second);
+        bool EquatableEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
+        bool OperatorEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
+        bool OperatorNotEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
     }
 }

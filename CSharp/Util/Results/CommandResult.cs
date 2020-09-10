@@ -209,9 +209,9 @@ namespace Moreland.CSharp.Util.Results
         {
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
-            if (!Success)
-                return CommandResult.Failed<TMappedValue>(Message, Cause);
-            return selector.Invoke(Value);
+            return !Success 
+                ? CommandResult.Failed<TMappedValue>(Message, Cause) 
+                : selector.Invoke(Value);
         }
 
         /// <summary>If a value is present, apply the provided mapping function to it, and if the result is non-null, return a Maybe describing the result.</summary>
@@ -219,10 +219,10 @@ namespace Moreland.CSharp.Util.Results
         {
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
-            if (!Success)
-                return CommandResult.Failed<TMappedValue>(Message, Cause);
+            return !Success 
+                ? CommandResult.Failed<TMappedValue>(Message, Cause) 
+                : CommandResult.Ok(selector.Invoke(Value));
             // map type explicit to avoid any possible issues with TMappedValue being string
-            return CommandResult.Ok(selector.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
@@ -245,9 +245,9 @@ namespace Moreland.CSharp.Util.Results
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
-            if (Success)
-                return Value;
-            throw exceptionSupplier.Invoke();
+            return Success 
+                ? Value 
+                : throw exceptionSupplier.Invoke();
         }
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
@@ -257,31 +257,32 @@ namespace Moreland.CSharp.Util.Results
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
-            if (Success)
-                return Value;
-            throw exceptionSupplier.Invoke(Message, Cause);
+            return Success 
+                ? Value 
+                : throw exceptionSupplier.Invoke(Message, Cause);
         }
 
         /// <summary>
-        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </summary>
-        /// <param name="mapper">
+        /// <param name="exceptionSupplier">
         /// Func  given message and exception cause and returns a
         /// <see cref="CommandResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public CommandResult<TValue> ValueOr(Func<string, Exception?, CommandResult<TValue>> mapper)
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is <c>null</c></exception>
+        public CommandResult<TValue> ValueOr(Func<string, Exception?, CommandResult<TValue>> exceptionSupplier)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
 
             return Success
                 ? this
-                : mapper.Invoke(Message, Cause);
+                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }
@@ -299,11 +300,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// <inheritdoc cref="Object.Equals(Object?)"/>
         /// </summary>
-        public override bool Equals(object? obj) => obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override bool Equals(object? obj) => 
+            obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
         /// <summary>
         /// <inheritdoc cref="Object.GetHashCode"/>
         /// </summary>
-        public override int GetHashCode() => ValueResult.GetHashCode();
+        public override int GetHashCode() => 
+            ValueResult.GetHashCode();
 
         #endregion
     }

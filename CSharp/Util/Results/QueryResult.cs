@@ -26,11 +26,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Factory method for successful query with result <paramref name="value"/>
         /// </summary>
-        public static QueryResult<TValue> Ok<TValue>(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
+        public static QueryResult<TValue> Ok<TValue>(TValue value) => 
+            new QueryResult<TValue>(value, true, string.Empty);
         /// <summary>
         /// Factory methods for successful query with result <paramref name="value"/> and <paramref name="message"/>
         /// </summary>
-        public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => new QueryResult<TValue>(value, true, message ?? string.Empty);
+        public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => 
+            new QueryResult<TValue>(value, true, message ?? string.Empty);
         /// <summary>
         /// Factory method for Failed Query
         /// </summary>
@@ -211,11 +213,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// <inheritdoc cref="ValueType.Equals(object?)"/>
         /// </summary>
-        public override bool Equals(object? obj) => obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override bool Equals(object? obj) => 
+            obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
         /// <summary>
         /// <inheritdoc cref="ValueType.GetHashCode"/>
         /// </summary>
-        public override int GetHashCode() => ValueResult.GetHashCode();
+        public override int GetHashCode() => 
+            ValueResult.GetHashCode();
 
         #endregion
     }

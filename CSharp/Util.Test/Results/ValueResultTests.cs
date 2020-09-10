@@ -12,13 +12,13 @@ namespace Moreland.CSharp.Util.Test.Results
         protected delegate IValueResult<T> FailedDelegate(string message);
         protected delegate IValueResult<T> FailedWithCauseDelegate(string messsage, Exception? cause);
         protected delegate bool GetImplicitBoolDelegate(IValueResult<T> result);
+        protected delegate bool ObjectEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
+        protected delegate bool EquatableEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
+        protected delegate bool OperatorEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
+        protected delegate bool OperatorNotEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
 
         private readonly Func<T> _builder;
-        private readonly OkDelegate _okBuilder;
-        private readonly OkWithMessageDelegate _okWithMessageBuilder;
-        private readonly FailedDelegate _failedBuilder;
-        private readonly FailedWithCauseDelegate _failedWithCauseBuilder;
-        private readonly GetImplicitBoolDelegate _getImplicitBool;
+        private readonly IValueResultTestHelper<T> _testHelper;
         private string _message = null!;
         private Exception _cause = null!;
         private T _value = default!;
@@ -27,24 +27,15 @@ namespace Moreland.CSharp.Util.Test.Results
         private IValueResult<T> _failed;
         private IValueResult<T> _failedWithCause;
 
-        protected ValueResultTests(
-            Func<T> builder, 
-            OkDelegate okBuilder, 
-            OkWithMessageDelegate okWithMessageBuilder, 
-            FailedDelegate failedBuilder,
-            FailedWithCauseDelegate failedWithCauseBuilder,
-            GetImplicitBoolDelegate getImplicitBool)
+
+        protected ValueResultTests(Func<T> builder, IValueResultTestHelper<T> testHelper)
         {
             _builder = builder;
-            _okBuilder = okBuilder;
-            _okWithMessageBuilder = okWithMessageBuilder;
-            _failedBuilder = failedBuilder;
-            _failedWithCauseBuilder = failedWithCauseBuilder;
-            _getImplicitBool = getImplicitBool;
-            _ok = _failedBuilder("invalid");
-            _okWithMessage = _failedBuilder("invalid");
-            _failed = _failedBuilder("invalid");
-            _failedWithCause = _failedBuilder("invalid");
+            _testHelper = testHelper;
+            _ok = _testHelper.FailedBuilder("invalid");
+            _okWithMessage = _testHelper.FailedBuilder("invalid");
+            _failed = _testHelper.FailedBuilder("invalid");
+            _failedWithCause = _testHelper.FailedBuilder("invalid");
         }
 
         [SetUp]
@@ -54,23 +45,23 @@ namespace Moreland.CSharp.Util.Test.Results
             _cause = new Exception(_message);
             _value = _builder();
 
-            _ok = _okBuilder(_value);
-            _okWithMessage = _okWithMessageBuilder(_value, _message);
-            _failed = _failedBuilder(_message);
-            _failedWithCause = _failedWithCauseBuilder(_message, _cause);
+            _ok = _testHelper.OkBuilder(_value);
+            _okWithMessage = _testHelper.OkWithMessageBuilder(_value, _message);
+            _failed = _testHelper.FailedBuilder(_message);
+            _failedWithCause = _testHelper.FailedWithCauseBuilder(_message, _cause);
         }
 
         [Test]
         public void Failed_ThrowsArgumentNullException_WhenMessageIsNull()
         {
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = _failedBuilder(null!));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _testHelper.FailedBuilder(null!));
             Assert.That(ex.ParamName, Is.EqualTo("message"));
         }
 
         [Test]
         public void FailedWithCause_ThrowsArgumentNullException_WhenMessageIsNull()
         {
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = _failedWithCauseBuilder(null!, _cause));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _testHelper.FailedWithCauseBuilder(null!, _cause));
             Assert.That(ex.ParamName, Is.EqualTo("message"));
         }
 
@@ -133,7 +124,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [Test]
         public void Message_ReturnsEmptyString_WhenOkWithMessageGivenNull()
         {
-            Assert.That(_okBuilder(_value).Message, Is.EqualTo(""));
+            Assert.That(_testHelper.OkBuilder(_value).Message, Is.EqualTo(""));
         }
 
         [Test]
@@ -199,28 +190,28 @@ namespace Moreland.CSharp.Util.Test.Results
         [Test]
         public void ImplicitBool_ReturnsTrue_WhenOk()
         {
-            bool @bool = _getImplicitBool(_ok);
+            bool @bool = _testHelper.ImplicitBool(_ok);
             Assert.That(@bool, Is.True);
         }
 
         [Test]
         public void ImplicitBool_ReturnsTrue_WhenOkWithMessage()
         {
-            bool @bool = _getImplicitBool(_okWithMessage);
+            bool @bool = _testHelper.ImplicitBool(_okWithMessage);
             Assert.That(@bool, Is.True);
         }
 
         [Test]
         public void ImplicitBool_ReturnsFalse_WhenFailed()
         {
-            bool @bool = _getImplicitBool(_failed);
+            bool @bool = _testHelper.ImplicitBool(_failed);
             Assert.That(@bool, Is.False);
         }
 
         [Test]
         public void ImplicitBool_ReturnsFalse_WhenFailedWithCause()
         {
-            bool @bool = _getImplicitBool(_failedWithCause);
+            bool @bool = _testHelper.ImplicitBool(_failedWithCause);
             Assert.That(@bool, Is.False);
         }
 
@@ -361,13 +352,58 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(cause, Is.EqualTo(result.Cause));
         }
 
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsTrue_WhenOk(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            object? result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.ObjectEquals(_ok, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsTrue_WhenOkWithMessage(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            object? result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.ObjectEquals(_okWithMessage, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsTrue_WhenFailed(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            object? result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.ObjectEquals(_failed, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
+        public bool ObjectEquals_ReturnsTrue_WhenFailedWithCause(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            object? result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.ObjectEquals(_failedWithCause, result);
+        }
+
         private IValueResult<T> BuildResultForDeconstruct(ResultType resultType, T value, bool includeMessage, bool includeException) =>
             resultType switch
             {
-                ResultType.Successful when !includeMessage => _okBuilder(value),
-                ResultType.Successful when includeMessage => _okWithMessageBuilder(value, _message),
-                ResultType.Failure when !includeException => _failedBuilder(_message),
-                ResultType.Failure when includeException => _failedWithCauseBuilder(_message, _cause),
+                ResultType.Successful when !includeMessage => _testHelper.OkBuilder(value),
+                ResultType.Successful when includeMessage => _testHelper.OkWithMessageBuilder(value, _message),
+                ResultType.Failure when !includeException => _testHelper.FailedBuilder(_message),
+                ResultType.Failure when includeException => _testHelper.FailedWithCauseBuilder(_message, _cause),
+                ResultType.Null => null!,
                 _ => throw new InvalidOperationException("Invalid test case"),
             };
     }
