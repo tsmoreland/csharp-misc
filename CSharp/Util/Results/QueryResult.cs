@@ -125,9 +125,9 @@ namespace Moreland.CSharp.Util.Results
         {
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
-            if (!Success)
-                return QueryResult.Failed<TMappedValue>(Message, Cause);
-            return selector.Invoke(Value);
+            return !Success 
+                ? QueryResult.Failed<TMappedValue>(Message, Cause) 
+                : selector.Invoke(Value);
         }
 
         /// <summary>
@@ -145,15 +145,17 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
-        public TValue ValueOr(TValue other) => Success ? Value : other;
+        public TValue ValueOr(TValue other) => Success 
+            ? Value 
+            : other;
 
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue ValueOr(Func<TValue> other)
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public TValue ValueOr(Func<TValue> supplier)
         {
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-            return Success ? Value : other.Invoke();
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return Success ? Value : supplier.Invoke();
         }
 
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
@@ -181,25 +183,25 @@ namespace Moreland.CSharp.Util.Results
         }
 
         /// <summary>
-        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </summary>
-        /// <param name="mapper">
+        /// <param name="exceptionSupplier">
         /// Functor given message and 
         /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public QueryResult<TValue> ValueOr(Func<string, Exception?, QueryResult<TValue>> mapper)
+        public QueryResult<TValue> ValueOrThrow(Func<string, Exception?, QueryResult<TValue>> exceptionSupplier)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
 
             return Success
                 ? this
-                : mapper.Invoke(Message, Cause);
+                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }

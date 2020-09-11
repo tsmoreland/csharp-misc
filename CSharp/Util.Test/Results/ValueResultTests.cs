@@ -516,6 +516,52 @@ namespace Moreland.CSharp.Util.Test.Results
             return _testHelper.OperatorNotEquals(_failedWithCause, result);
         }
 
+        [Test]
+        public void GetHashCode_ReturnsNonZero_WhenOk()
+        {
+            int hashCode = _ok.GetHashCode();
+            Assert.That(hashCode, Is.Not.Zero);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsNonZero_WhenOkWithMessage()
+        {
+            int hashCode = _okWithMessage.GetHashCode();
+            Assert.That(hashCode, Is.Not.Zero);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsSameValue_ForOkWithOrWithoutMessage()
+        {
+            int withMessage = _testHelper.OkBuilder(_value).GetHashCode();
+            int withoutMessage = _testHelper.OkWithMessageBuilder(_value, _message).GetHashCode();
+
+            Assert.That(withoutMessage, Is.EqualTo(withMessage).And.Not.Zero);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsNonZero_WhenFailed()
+        {
+            int hashCode = _failed.GetHashCode();
+            Assert.That(hashCode, Is.Not.Zero);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsNonZero_WhenFailedWithCause()
+        {
+            int hashCode = _failedWithCause.GetHashCode();
+            Assert.That(hashCode, Is.Not.Zero);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsDifferentValue_ForFailedWithOrWithoutCause()
+        {
+            int withCause = _testHelper.FailedBuilder(_message).GetHashCode();
+            int withoutCause = _testHelper.FailedWithCauseBuilder(_message, _cause).GetHashCode();
+
+            Assert.That(withoutCause, Is.Not.EqualTo(withCause).And.Not.Zero);
+        }
+
         private IValueResult<T> BuildResultForDeconstruct(ResultType resultType, T value, bool includeMessage, bool includeException) =>
             resultType switch
             {

@@ -72,5 +72,6 @@ namespace Moreland.CSharp.Util.Test.Results
 
             return first != second;
         }
+
     }
 }

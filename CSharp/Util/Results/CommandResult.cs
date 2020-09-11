@@ -230,13 +230,13 @@ namespace Moreland.CSharp.Util.Results
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
         public TValue ValueOr(TValue other) => Success ? Value : other;
 
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue ValueOr(Func<TValue> other)
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public TValue ValueOr(Func<TValue> supplier)
         {
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-            return Success ? Value : other.Invoke();
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return Success ? Value : supplier.Invoke();
         }
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
@@ -276,7 +276,7 @@ namespace Moreland.CSharp.Util.Results
         /// allow the result to be converted to an alternate successful result
         /// </returns>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is <c>null</c></exception>
-        public CommandResult<TValue> ValueOr(Func<string, Exception?, CommandResult<TValue>> exceptionSupplier)
+        public CommandResult<TValue> ValueOrThrow(Func<string, Exception?, CommandResult<TValue>> exceptionSupplier)
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
