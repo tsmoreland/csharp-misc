@@ -436,6 +436,85 @@ namespace Moreland.CSharp.Util.Test.Results
             return _testHelper.EquatableEquals(_failedWithCause, result);
         }
 
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        public bool OperatorEquals_ReturnsTrue_WhenOk(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorEquals(_ok, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        public bool OperatorEquals_ReturnsTrue_WhenOkWithMessage(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorEquals(_okWithMessage, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        public bool OperatorEquals_ReturnsTrue_WhenFailed(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorEquals(_failed, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        public bool OperatorEquals_ReturnsTrue_WhenFailedWithCause(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorEquals(_failedWithCause, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        public bool OperatorNotEquals_ReturnsTrue_WhenOk(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorNotEquals(_ok, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = false)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        public bool OperatorNotEquals_ReturnsTrue_WhenOkWithMessage(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorNotEquals(_okWithMessage, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = false)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = true)]
+        public bool OperatorNotEquals_ReturnsTrue_WhenFailed(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorNotEquals(_failed, result);
+        }
+
+        [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
+        [TestCase(ResultType.Successful, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, false, ExpectedResult = true)]
+        [TestCase(ResultType.Failure, true, true, ExpectedResult = false)]
+        public bool OperatorNotEquals_ReturnsTrue_WhenFailedWithCause(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+            return _testHelper.OperatorNotEquals(_failedWithCause, result);
+        }
 
         private IValueResult<T> BuildResultForDeconstruct(ResultType resultType, T value, bool includeMessage, bool includeException) =>
             resultType switch

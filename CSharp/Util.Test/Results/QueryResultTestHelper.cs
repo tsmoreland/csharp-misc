@@ -25,6 +25,14 @@ namespace Moreland.CSharp.Util.Test.Results
             return result;
         }
 
+        public T ExplicitValue(IValueResult<T> genericResult)
+        {
+            if (!(genericResult is QueryResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+
+            return (T)result;
+        }
+
         public IValueResult<T> OkBuilder(T value) =>
             QueryResult.Ok(value);
         public IValueResult<T> OkWithMessageBuilder(T value, string message) =>

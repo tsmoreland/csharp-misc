@@ -73,11 +73,15 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
         /// </summary>
-        public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => 
+            leftHandSide.Equals(rightHandSide);
+
         /// <summary>
         /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
         /// </summary>
-        public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => 
+            !(leftHandSide == rightHandSide);
+
         /// <summary>
         /// Returns <see cref="ToBoolean"/>
         /// </summary>

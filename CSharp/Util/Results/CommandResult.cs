@@ -178,7 +178,8 @@ namespace Moreland.CSharp.Util.Results
         /// </summary>
         /// <exception cref="InvalidOperationException">if <see cref="Success"/> is not <c>true</c></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
-        public static explicit operator TValue(CommandResult<TValue> result) => result.Value;
+        public static explicit operator TValue(CommandResult<TValue> result) => 
+            result.Value;
 
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
         public void Deconstruct(out bool success, out Maybe<TValue> value)

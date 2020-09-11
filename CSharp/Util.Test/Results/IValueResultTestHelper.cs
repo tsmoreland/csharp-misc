@@ -24,6 +24,7 @@ namespace Moreland.CSharp.Util.Test.Results
         IValueResult<T> FailedWithCauseBuilder(string message, Exception? cause);
 
         bool ImplicitBool(IValueResult<T> genericResult);
+        T ExplicitValue(IValueResult<T> genericResult);
         bool ObjectEquals(IValueResult<T> genericFirst, object? second);
         bool EquatableEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
         bool OperatorEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
