@@ -19,13 +19,11 @@ namespace Moreland.CSharp.Util.Test.Results
         private IValueResult<T> _failed;
         private IValueResult<T> _failedWithCause;
         private readonly DateTime _selectedValue;
-        private readonly Func<T, DateTime> _selector;
+        private Func<T, DateTime> _selector = null!;
 
         protected ValueResultTests(Func<T> builder, IValueResultTestHelper<T> testHelper)
         {
             _selectedValue = DateTime.Now;
-            _selector = Substitute.For<Func<T, DateTime>>();
-            _selector.Invoke(_value).Returns(_selectedValue);
 
             _builder = builder;
             _testHelper = testHelper;
@@ -41,6 +39,9 @@ namespace Moreland.CSharp.Util.Test.Results
             _message = Guid.NewGuid().ToString("N");
             _cause = new Exception(_message);
             _value = _builder();
+
+            _selector = Substitute.For<Func<T, DateTime>>();
+            _selector.Invoke(_value).Returns(_selectedValue);
 
             _ok = _testHelper.OkBuilder(_value);
             _okWithMessage = _testHelper.OkWithMessageBuilder(_value, _message);
@@ -413,7 +414,7 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Selector_ReturnsSuccessFalse_WhenFailedWithCause()
         {
             var actual = _testHelper.Select(_failedWithCause, _selector);
-            Assert.That(_testHelper.ObjectEquals(_failedWithCause, actual), Is.True);
+            Assert.That(_testHelper.ObjectEquals(_failedWithCause, actual), Is.False);
         }
 
         [Test]
