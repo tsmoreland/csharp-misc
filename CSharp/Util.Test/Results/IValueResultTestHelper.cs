@@ -23,6 +23,9 @@ namespace Moreland.CSharp.Util.Test.Results
         IValueResult<T> FailedBuilder(string message);
         IValueResult<T> FailedWithCauseBuilder(string message, Exception? cause);
 
+        IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, TMapped> genericSelector);
+        IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, IValueResult<TMapped>> genericSelector);
+
         bool ImplicitBool(IValueResult<T> genericResult);
         T ExplicitValue(IValueResult<T> genericResult);
         bool ObjectEquals(IValueResult<T> genericFirst, object? second);

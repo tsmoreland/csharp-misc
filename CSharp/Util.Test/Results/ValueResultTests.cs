@@ -1,22 +1,13 @@
 ﻿using System;
 using Moreland.CSharp.Util.Properties;
 using Moreland.CSharp.Util.Results;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
     public abstract class ValueResultTests<T>
     {
-        protected delegate IValueResult<T> OkDelegate(T value);
-        protected delegate IValueResult<T> OkWithMessageDelegate(T value, string messsage);
-        protected delegate IValueResult<T> FailedDelegate(string message);
-        protected delegate IValueResult<T> FailedWithCauseDelegate(string messsage, Exception? cause);
-        protected delegate bool GetImplicitBoolDelegate(IValueResult<T> result);
-        protected delegate bool ObjectEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
-        protected delegate bool EquatableEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
-        protected delegate bool OperatorEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
-        protected delegate bool OperatorNotEqualsDelegate(IValueResult<T> first, IValueResult<T> second);
-
         private readonly Func<T> _builder;
         private readonly IValueResultTestHelper<T> _testHelper;
         private string _message = null!;
@@ -26,7 +17,6 @@ namespace Moreland.CSharp.Util.Test.Results
         private IValueResult<T> _okWithMessage;
         private IValueResult<T> _failed;
         private IValueResult<T> _failedWithCause;
-
 
         protected ValueResultTests(Func<T> builder, IValueResultTestHelper<T> testHelper)
         {
@@ -350,6 +340,54 @@ namespace Moreland.CSharp.Util.Test.Results
             var (_, _, _, cause) = result;
 
             Assert.That(cause, Is.EqualTo(result.Cause));
+        }
+
+        [Test]
+        public void Selector_ReturnsSuccess_WhenOk()
+        {
+            DateTime selectedValue = DateTime.Now;
+            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
+            selector.Invoke(_value).Returns(selectedValue);
+
+            var actual = _testHelper.Select(_ok, selector);
+
+            Assert.That(actual.Success, Is.True);
+        }
+
+        [Test]
+        public void Selector_ReturnsResultOfSelector_WhenOk()
+        {
+            DateTime selectedValue = DateTime.Now;
+            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
+            selector.Invoke(_value).Returns(selectedValue);
+
+            var actual = _testHelper.Select(_ok, selector);
+
+            Assert.That(actual.Value, Is.EqualTo(selectedValue));
+        }
+
+        [Test]
+        public void Selector_ReturnsSuccess_WhenOkWithMessage()
+        {
+            DateTime selectedValue = DateTime.Now;
+            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
+            selector.Invoke(_value).Returns(selectedValue);
+
+            var actual = _testHelper.Select(_okWithMessage, selector);
+
+            Assert.That(actual.Success, Is.True);
+        }
+
+        [Test]
+        public void Selector_ReturnsResultOfSelector_WhenOkWithMessage()
+        {
+            DateTime selectedValue = DateTime.Now;
+            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
+            selector.Invoke(_value).Returns(selectedValue);
+
+            var actual = _testHelper.Select(_okWithMessage, selector);
+
+            Assert.That(actual.Value, Is.EqualTo(selectedValue));
         }
 
         [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]

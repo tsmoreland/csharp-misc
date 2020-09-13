@@ -67,8 +67,24 @@ namespace Moreland.CSharp.Util.Test.Results
         {
             if (!(genericFirst is CommandResult<T> first) || !(genericSecond is CommandResult<T> second))
                 throw new InvalidOperationException("Unexpected type");
-
             return first != second;
+        }
+
+        public IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, TMapped> genericSelector)
+        {
+            if (!(genericResult is CommandResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+            return result.Select(genericSelector);
+        }
+
+        public IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, IValueResult<TMapped>> genericSelector)
+        {
+            if (!(genericResult is CommandResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+            return result.Select(Selector);
+
+            CommandResult<TMapped> Selector(T value) => 
+                (CommandResult<TMapped>)genericSelector(value);
         }
     }
 }
