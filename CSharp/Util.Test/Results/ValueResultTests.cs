@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Moreland.CSharp.Util.Properties;
 using Moreland.CSharp.Util.Results;
 using NSubstitute;
@@ -17,9 +18,15 @@ namespace Moreland.CSharp.Util.Test.Results
         private IValueResult<T> _okWithMessage;
         private IValueResult<T> _failed;
         private IValueResult<T> _failedWithCause;
+        private readonly DateTime _selectedValue;
+        private readonly Func<T, DateTime> _selector;
 
         protected ValueResultTests(Func<T> builder, IValueResultTestHelper<T> testHelper)
         {
+            _selectedValue = DateTime.Now;
+            _selector = Substitute.For<Func<T, DateTime>>();
+            _selector.Invoke(_value).Returns(_selectedValue);
+
             _builder = builder;
             _testHelper = testHelper;
             _ok = _testHelper.FailedBuilder("invalid");
@@ -342,14 +349,24 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(cause, Is.EqualTo(result.Cause));
         }
 
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void Select_ThrowsArgumentNullException_WhenSelectorIsNull(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            IValueResult<T> result = BuildResultForDeconstruct(resultType, _value, includeMessage, includeException);
+
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                _ = _testHelper.Select(result, (Func<T, List<int>>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+        }
+
         [Test]
         public void Selector_ReturnsSuccess_WhenOk()
         {
-            DateTime selectedValue = DateTime.Now;
-            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
-            selector.Invoke(_value).Returns(selectedValue);
-
-            var actual = _testHelper.Select(_ok, selector);
+            var actual = _testHelper.Select(_ok, _selector);
 
             Assert.That(actual.Success, Is.True);
         }
@@ -357,23 +374,15 @@ namespace Moreland.CSharp.Util.Test.Results
         [Test]
         public void Selector_ReturnsResultOfSelector_WhenOk()
         {
-            DateTime selectedValue = DateTime.Now;
-            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
-            selector.Invoke(_value).Returns(selectedValue);
+            var actual = _testHelper.Select(_ok, _selector);
 
-            var actual = _testHelper.Select(_ok, selector);
-
-            Assert.That(actual.Value, Is.EqualTo(selectedValue));
+            Assert.That(actual.Value, Is.EqualTo(_selectedValue));
         }
 
         [Test]
         public void Selector_ReturnsSuccess_WhenOkWithMessage()
         {
-            DateTime selectedValue = DateTime.Now;
-            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
-            selector.Invoke(_value).Returns(selectedValue);
-
-            var actual = _testHelper.Select(_okWithMessage, selector);
+            var actual = _testHelper.Select(_okWithMessage, _selector);
 
             Assert.That(actual.Success, Is.True);
         }
@@ -381,13 +390,37 @@ namespace Moreland.CSharp.Util.Test.Results
         [Test]
         public void Selector_ReturnsResultOfSelector_WhenOkWithMessage()
         {
-            DateTime selectedValue = DateTime.Now;
-            Func<T, DateTime> selector = Substitute.For<Func<T, DateTime>>();
-            selector.Invoke(_value).Returns(selectedValue);
+            var actual = _testHelper.Select(_okWithMessage, _selector);
 
-            var actual = _testHelper.Select(_okWithMessage, selector);
+            Assert.That(actual.Value, Is.EqualTo(_selectedValue));
+        }
 
-            Assert.That(actual.Value, Is.EqualTo(selectedValue));
+        [Test]
+        public void Selector_ReturnsSuccessFalse_WhenFailed()
+        {
+            var actual = _testHelper.Select(_failed, _selector);
+            Assert.That(actual.Success, Is.False);
+        }
+
+        [Test]
+        public void Selector_ReturnsNullCause_WhenFailed()
+        {
+            var actual = _testHelper.Select(_failed, _selector);
+            Assert.That(actual.Cause, Is.Null);
+        }
+
+        [Test]
+        public void Selector_ReturnsSuccessFalse_WhenFailedWithCause()
+        {
+            var actual = _testHelper.Select(_failedWithCause, _selector);
+            Assert.That(_testHelper.ObjectEquals(_failedWithCause, actual), Is.True);
+        }
+
+        [Test]
+        public void Selector_ReturnsNonNullCause_WhenFailedWithCause()
+        {
+            var actual = _testHelper.Select(_failedWithCause, _selector);
+            Assert.That(actual.Cause, Is.Not.Null);
         }
 
         [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
