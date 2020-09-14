@@ -698,6 +698,30 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
+        public void ExplicitOperator_ReturnsValue_WhenOk()
+        {
+            var actual = _testHelper.ExplicitValue(_ok);
+            Assert.That(actual, Is.EqualTo(_value));
+        }
+        [Test]
+        public void ExplicitOperator_ReturnsValue_WhenOkWithMessage()
+        {
+            var actual = _testHelper.ExplicitValue(_okWithMessage);
+            Assert.That(actual, Is.EqualTo(_value));
+        }
+
+        [Test]
+        public void ExplicitOperator_ThrowsInvalidOperationException_WhenFailed()
+        {
+            Assert.Throws<InvalidOperationException>(() => _testHelper.ExplicitValue(_failed));
+        }
+        [Test]
+        public void ExplicitOperator_ThrowsInvalidOperationException_WhenFailedWithCause()
+        {
+            Assert.Throws<InvalidOperationException>(() => _testHelper.ExplicitValue(_failedWithCause));
+        }
+
+        [Test]
         public void GetHashCode_ReturnsNonZero_WhenOk()
         {
             int hashCode = _ok.GetHashCode();
