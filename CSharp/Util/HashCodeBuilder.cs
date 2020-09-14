@@ -31,7 +31,7 @@ namespace Moreland.CSharp.Util
     /// </remarks>
 #endif
     [DebuggerDisplay("{_piecewiseCode}")]
-    public sealed class HashCodeBuilder : IEquatable<HashCodeBuilder>, IComparable<HashCodeBuilder>
+    public sealed class HashCodeBuilder : IEquatable<HashCodeBuilder> 
     {
         #region Public
 
@@ -59,32 +59,12 @@ namespace Moreland.CSharp.Util
         /// </summary>
         public static bool operator!=(HashCodeBuilder? leftHandSide, HashCodeBuilder? rightHandSide) => 
             !(leftHandSide == rightHandSide);
-        /// <summary>
-        /// returns <c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>
-        /// </summary>
-        public static bool operator <(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null!) ? !ReferenceEquals(right, null!) : left.CompareTo(right) < 0;
-        /// <summary>
-        /// returns <c>true</c> if <paramref name="left"/> is less or equal tothan <paramref name="right"/>
-        /// </summary>
-        public static bool operator <=(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null!) || left.CompareTo(right) <= 0;
-        /// <summary>
-        /// returns <c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>
-        /// </summary>
-        public static bool operator >(HashCodeBuilder left, HashCodeBuilder right) =>
-            !ReferenceEquals(left, null!) && left.CompareTo(right) > 0;
-        /// <summary>
-        /// returns <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>
-        /// </summary>
-        public static bool operator >=(HashCodeBuilder left, HashCodeBuilder right) =>
-            ReferenceEquals(left, null!) ? ReferenceEquals(right, null!) : left.CompareTo(right) >= 0;
 
         #endregion
         #region Private
         private readonly int _piecewiseCode;
 
-        private HashCodeBuilder(params object?[] objects) : this(CalculateHashCode(0, objects))
+        private HashCodeBuilder(params object?[] objects) : this(CalculateHashCode(17, objects))
         {
         }
         private HashCodeBuilder(int piecewiseHashCodeBuilder)
@@ -95,16 +75,6 @@ namespace Moreland.CSharp.Util
             objects.Aggregate(initialValue, (current, @object) => (current * 397) ^ (@object?.GetHashCode() ?? 0));
         #endregion
 
-        #region IComparable{HashCodeBuilder}
-        /// <summary>
-        /// <inheritdoc cref="IComparable{HashCodeBuilder}.CompareTo"/>
-        /// </summary>
-        public int CompareTo(HashCodeBuilder? other) =>
-            other != null
-            ? _piecewiseCode.CompareTo(other._piecewiseCode) 
-            : 1; // 1 is based on the decompiled version of System.String's response to the equivalent criteria
-
-        #endregion
         #region IEquatable{HashCodeBuilder}
         /// <summary>
         /// <inheritdoc cref="IEquatable{HashCodeBuilder}.Equals(HashCodeBuilder)"/>

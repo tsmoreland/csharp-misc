@@ -63,9 +63,9 @@ namespace Moreland.CSharp.Util.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Value not available when query has failed.
         /// </summary>
-        internal static string InvalidQueryResultValueAccess {
+        internal static string InvalidResultValueAccess {
             get {
-                return ResourceManager.GetString("InvalidQueryResultValueAccess", resourceCulture);
+                return ResourceManager.GetString("InvalidResultValueAccess", resourceCulture);
             }
         }
         

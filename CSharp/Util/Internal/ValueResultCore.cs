@@ -29,21 +29,25 @@ namespace Moreland.CSharp.Util.Internal
         public bool Success => Result.Success;
         public string Message => Result.Message;
         public Exception? Cause => Result.Cause;
-        public static bool operator==(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
-        public static bool operator!=(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator==(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => 
+            leftHandSide.Equals(rightHandSide);
+        public static bool operator!=(ValueResultCore<TValue> leftHandSide, ValueResultCore<TValue> rightHandSide) => 
+            !(leftHandSide == rightHandSide);
 
         private ResultCore Result { get; } 
 
         #region IEquatable{QueryResult{TValue}}
+
         public bool Equals(ValueResultCore<TValue> other) =>
-            Value?.Equals(other.Value) == true &&
+            (ReferenceEquals(Value, other.Value) || Value?.Equals(other.Value) == true) && 
             Result.Equals(other.Result);
+
         #endregion
         #region ValueType
 
         public override bool Equals(object? obj) => obj is ValueResultCore<TValue> rightHandSide && Equals(rightHandSide);
         public override int GetHashCode() =>
-            HashProxy.Combine(Value, Success, Message, Cause);
+            HashProxy.Combine(Value, Success, Cause);
 
         #endregion
     }

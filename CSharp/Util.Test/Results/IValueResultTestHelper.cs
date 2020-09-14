@@ -11,21 +11,26 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-
 using System;
+using Moreland.CSharp.Util.Results;
 
-namespace Moreland.CSharp.Util.Test.Old.Extensions
+namespace Moreland.CSharp.Util.Test.Results
 {
-    public interface INullableExtentensionTestContext
+    public interface IValueResultTestHelper<T>
     {
-        INullableExtentensionTestContext ActUsingOrElse();
-        INullableExtentensionTestContext ActUsingOrElseGet();
+        IValueResult<T> OkBuilder(T value);
+        IValueResult<T> OkWithMessageBuilder(T value, string message);
+        IValueResult<T> FailedBuilder(string message);
+        IValueResult<T> FailedWithCauseBuilder(string message, Exception? cause);
 
-        void ActAndAssertThrowUsingOrElseGet<TException>() where TException : Exception; 
-        INullableExtentensionTestContext ActUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
-        void ActAndAssertThrowUsingOrElseThrow<TException>(Func<Exception> supplier) where TException : Exception;
+        IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, TMapped> genericSelector);
+        IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, IValueResult<TMapped>> genericSelector);
 
-        void AssertHasValue(bool expected);
-        void AssertCorrectResult();
+        bool ImplicitBool(IValueResult<T> genericResult);
+        T ExplicitValue(IValueResult<T> genericResult);
+        bool ObjectEquals(IValueResult<T> genericFirst, object? second);
+        bool EquatableEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
+        bool OperatorEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
+        bool OperatorNotEquals(IValueResult<T> genericFirst, IValueResult<T> genericSecond);
     }
 }

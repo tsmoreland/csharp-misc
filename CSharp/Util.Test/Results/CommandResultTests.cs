@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using Moreland.CSharp.Util.Results;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
@@ -44,6 +45,13 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Failed_ThrowsArgumentNullException_WhenMessageIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed(null!));
+            Assert.That(ex.ParamName, Is.EqualTo("message"));
+        }
+
+        [Test]
+        public void FailedWithCause_ThrowsArgumentNullException_WhenMessageIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = CommandResult.Failed(null!, _cause));
             Assert.That(ex.ParamName, Is.EqualTo("message"));
         }
 
@@ -341,5 +349,39 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 _ => throw new InvalidOperationException("Invalid test case"),
             };
+    }
+
+    [TestFixture]
+    public sealed class ValueTypeCommandResultTests : ValueResultTests<int>
+    {
+        public ValueTypeCommandResultTests()
+            : base(
+                () => BuildRandomInt32(),
+                new CommandResultTestHelper<int>())
+        {
+        }
+
+    }
+
+    [TestFixture]
+    public sealed class EquatableReferenceTypeCommandResultTests : ValueResultTests<string>
+    {
+        public EquatableReferenceTypeCommandResultTests()
+            : base(
+                () => BuildRandomString(),
+                new CommandResultTestHelper<string>())
+        {
+        }
+    }
+
+    [TestFixture]
+    public sealed class ReferenceTypeCommandResultTests : ValueResultTests<List<string>>
+    {
+        public ReferenceTypeCommandResultTests()
+            : base(
+                () => BuildRandomListOfString(),
+                new CommandResultTestHelper<List<string>>())
+        {
+        }
     }
 }

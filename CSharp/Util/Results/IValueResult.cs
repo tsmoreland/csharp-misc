@@ -33,17 +33,17 @@ namespace Moreland.CSharp.Util.Results
         TValue Value { get; }
 
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value);
+        void Deconstruct(out bool success, out Maybe<TValue> value);
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value, out string message);
+        void Deconstruct(out bool success, out Maybe<TValue> value, out string message);
         /// <summary>Deconstructs the components of <see cref="IValueResult{TValue}"/> into seperate variables</summary>
-        void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause);
+        void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause);
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
         TValue ValueOr(TValue other);
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        TValue ValueOr(Func<TValue> other);
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        TValue ValueOr(Func<TValue> supplier);
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>

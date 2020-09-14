@@ -30,11 +30,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Builds a successful <see cref="CommandResult{TValue}"/> with value 
         /// </summary>
-        public static CommandResult<TValue> Ok<TValue>(TValue value) => new CommandResult<TValue>(value, true, string.Empty, null);
+        public static CommandResult<TValue> Ok<TValue>(TValue value) => 
+            new CommandResult<TValue>(value, true, string.Empty, null);
         /// <summary>
         /// Builds a successful <see cref="CommandResult{TValue}"/> with value and optional message
         /// </summary>
-        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => new CommandResult<TValue>(value, true, message ?? string.Empty, null);
+        public static CommandResult<TValue> Ok<TValue>(TValue value, string message) => 
+            new CommandResult<TValue>(value, true, message ?? string.Empty, null);
         /// <summary>
         /// Builds a successful <see cref="CommandResult"/> 
         /// </summary>
@@ -42,7 +44,8 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Builds a successful <see cref="CommandResult"/> with optional message
         /// </summary>
-        public static CommandResult Ok(string message) => new CommandResult(true, message ?? string.Empty, null);
+        public static CommandResult Ok(string message) => 
+            new CommandResult(true, message ?? string.Empty, null);
 
         /// <summary>
         /// Builds a <see cref="CommandResult"/> with a failed result
@@ -143,7 +146,10 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Resulting Value of the Query</summary>
         /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(ProjectResources.InvalidQueryResultValueAccess);
+        public TValue Value => Success 
+            ? ValueResult.Value 
+            : throw new InvalidOperationException(ProjectResources.InvalidResultValueAccess);
+
         /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
         /// <summary>Optional message; should be non-empty of failure but may have a value on success</summary>
@@ -172,26 +178,27 @@ namespace Moreland.CSharp.Util.Results
         /// </summary>
         /// <exception cref="InvalidOperationException">if <see cref="Success"/> is not <c>true</c></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
-        public static explicit operator TValue(CommandResult<TValue> result) => result.Value;
+        public static explicit operator TValue(CommandResult<TValue> result) => 
+            result.Value;
 
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value)
+        public void Deconstruct(out bool success, out Maybe<TValue> value)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
         }
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
         }
         /// <summary>Deconstructs the components of <see cref="CommandResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
             cause = Cause;
         }
@@ -199,41 +206,37 @@ namespace Moreland.CSharp.Util.Results
         /// If a value is present, apply the provided Optional-bearing mapping function to it, 
         /// return that result, otherwise return an empty Optional.
         /// </summary>
-        public CommandResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, CommandResult<TMappedValue>> mapper)
+        public CommandResult<TMappedValue> Select<TMappedValue>(Func<TValue, CommandResult<TMappedValue>> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
-            if (!Success)
-                return CommandResult.Failed<TMappedValue>(Message, Cause);
-            return mapper.Invoke(Value);
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+            return !Success 
+                ? CommandResult.Failed<TMappedValue>(Message, Cause) 
+                : selector.Invoke(Value);
         }
 
         /// <summary>If a value is present, apply the provided mapping function to it, and if the result is non-null, return a Maybe describing the result.</summary>
-        public CommandResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) => 
-            Map(selector);
-
-        /// <summary>If a value is present, apply the provided mapping function to it, and if the result is non-null, return a Maybe describing the result.</summary>
-        public CommandResult<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public CommandResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
-            if (!Success)
-                return CommandResult.Failed<TMappedValue>(Message, Cause);
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+            return !Success 
+                ? CommandResult.Failed<TMappedValue>(Message, Cause) 
+                : CommandResult.Ok(selector.Invoke(Value));
             // map type explicit to avoid any possible issues with TMappedValue being string
-            return CommandResult.Ok(mapper.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
         public TValue ValueOr(TValue other) => Success ? Value : other;
 
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue ValueOr(Func<TValue> other)
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public TValue ValueOr(Func<TValue> supplier)
         {
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-            return Success ? Value : other.Invoke();
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return Success ? Value : supplier.Invoke();
         }
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
@@ -243,9 +246,9 @@ namespace Moreland.CSharp.Util.Results
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
-            if (Success)
-                return Value;
-            throw exceptionSupplier.Invoke();
+            return Success 
+                ? Value 
+                : throw exceptionSupplier.Invoke();
         }
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <param name="exceptionSupplier">exception builder taking the message and optional Exception that caused the failiure</param>
@@ -255,31 +258,32 @@ namespace Moreland.CSharp.Util.Results
         {
             if (exceptionSupplier == null)
                 throw new ArgumentNullException(nameof(exceptionSupplier));
-            if (Success)
-                return Value;
-            throw exceptionSupplier.Invoke(Message, Cause);
+            return Success 
+                ? Value 
+                : throw exceptionSupplier.Invoke(Message, Cause);
         }
 
         /// <summary>
-        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </summary>
-        /// <param name="mapper">
+        /// <param name="exceptionSupplier">
         /// Func  given message and exception cause and returns a
         /// <see cref="CommandResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public CommandResult<TValue> OrElseFlatMap(Func<string, Exception?, CommandResult<TValue>> mapper)
+        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is <c>null</c></exception>
+        public CommandResult<TValue> ValueOrThrow(Func<string, Exception?, CommandResult<TValue>> exceptionSupplier)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
 
             return Success
                 ? this
-                : mapper.Invoke(Message, Cause);
+                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }
@@ -297,11 +301,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// <inheritdoc cref="Object.Equals(Object?)"/>
         /// </summary>
-        public override bool Equals(object? obj) => obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override bool Equals(object? obj) => 
+            obj is CommandResult<TValue> rightHandSide && Equals(rightHandSide);
         /// <summary>
         /// <inheritdoc cref="Object.GetHashCode"/>
         /// </summary>
-        public override int GetHashCode() => ValueResult.GetHashCode();
+        public override int GetHashCode() => 
+            ValueResult.GetHashCode();
 
         #endregion
     }

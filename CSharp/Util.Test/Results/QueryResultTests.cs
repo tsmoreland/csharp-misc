@@ -11,47 +11,44 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
+
     [TestFixture]
-    public sealed class ValueTypeCommandResultTests : CommandResultTests<int>
+    public sealed class ValueTypeQueryResultTests : ValueResultTests<int>
     {
-        public ValueTypeCommandResultTests()
-            : base(() => BuildRandomInt32())
+        public ValueTypeQueryResultTests()
+            : base(
+                () => BuildRandomInt32(),
+                new QueryResultTestHelper<int>())
+        {
+        }
+
+    }
+
+    [TestFixture]
+    public sealed class EquatableReferenceTypeQueryResultTests : ValueResultTests<string>
+    {
+        public EquatableReferenceTypeQueryResultTests()
+            : base(
+                () => BuildRandomString(),
+                new QueryResultTestHelper<string>())
         {
         }
     }
 
     [TestFixture]
-    public sealed class EquatableReferenceTypeCommandResultTests : CommandResultTests<string>
+    public sealed class ReferenceTypeQueryResultTests : ValueResultTests<List<string>>
     {
-        public EquatableReferenceTypeCommandResultTests()
-            : base(() => BuildRandomString())
+        public ReferenceTypeQueryResultTests()
+            : base(
+                () => BuildRandomListOfString(),
+                new QueryResultTestHelper<List<string>>())
         {
-        }
-    }
-
-    [TestFixture]
-    public sealed class ReferenceTypeCommandResultTests : CommandResultTests<List<string>>
-    {
-        public ReferenceTypeCommandResultTests()
-            : base(() => BuildRandomListOfString())
-        {
-        }
-    }
-
-    public abstract class CommandResultTests<T>
-    {
-        private readonly Func<T> _builder;
-
-        protected CommandResultTests(Func<T> builder)
-        {
-            _builder = builder;
         }
     }
 }

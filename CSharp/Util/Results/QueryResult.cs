@@ -26,11 +26,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Factory method for successful query with result <paramref name="value"/>
         /// </summary>
-        public static QueryResult<TValue> Ok<TValue>(TValue value) => new QueryResult<TValue>(value, true, string.Empty);
+        public static QueryResult<TValue> Ok<TValue>(TValue value) => 
+            new QueryResult<TValue>(value, true, string.Empty);
         /// <summary>
         /// Factory methods for successful query with result <paramref name="value"/> and <paramref name="message"/>
         /// </summary>
-        public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => new QueryResult<TValue>(value, true, message ?? string.Empty);
+        public static QueryResult<TValue> Ok<TValue>(TValue value, string message) => 
+            new QueryResult<TValue>(value, true, message ?? string.Empty);
         /// <summary>
         /// Factory method for Failed Query
         /// </summary>
@@ -38,7 +40,7 @@ namespace Moreland.CSharp.Util.Results
         /// <param name="message">message detailed while the query failed</param>
         /// <param name="cause">optional exception providing further details</param>
         public static QueryResult<TValue> Failed<TValue>(string message, Exception? cause = null) => 
-            new QueryResult<TValue>(default!, false, message, cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
+            new QueryResult<TValue>(default!, false, message ?? throw new ArgumentNullException(nameof(message)), cause); // allow default, which may be null in this case as it is a failure anyway and we shouldn't be accessing the value
     }
 
     /// <summary>Wrapper around the result of a query providing the value on success or a detailed reason or cause on failure</summary>
@@ -53,7 +55,10 @@ namespace Moreland.CSharp.Util.Results
 
         /// <summary>Resulting Value of the Query</summary>
         /// <exception cref="InvalidOperationException">thrown if <see cref="Success"/> is <c>false</c></exception>
-        public TValue Value => Success ? ValueResult.Value : throw new InvalidOperationException(ProjectResources.InvalidQueryResultValueAccess);
+        public TValue Value => Success 
+            ? ValueResult.Value 
+            : throw new InvalidOperationException(ProjectResources.InvalidResultValueAccess);
+
         /// <summary>The result of the operation</summary>
         public bool Success => ValueResult.Success;
         /// <summary>Optional message; should be non-null on failure but may contain a value on success</summary>
@@ -68,11 +73,15 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// Returns <c>true</c> if <paramref name="leftHandSide"/> is equal to <paramref name="rightHandSide"/>
         /// </summary>
-        public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => leftHandSide.Equals(rightHandSide);
+        public static bool operator ==(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => 
+            leftHandSide.Equals(rightHandSide);
+
         /// <summary>
         /// Returns <c>true</c> if <paramref name="leftHandSide"/> is not equal to <paramref name="rightHandSide"/>
         /// </summary>
-        public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => !(leftHandSide == rightHandSide);
+        public static bool operator !=(QueryResult<TValue> leftHandSide, QueryResult<TValue> rightHandSide) => 
+            !(leftHandSide == rightHandSide);
+
         /// <summary>
         /// Returns <see cref="ToBoolean"/>
         /// </summary>
@@ -85,71 +94,68 @@ namespace Moreland.CSharp.Util.Results
         public static explicit operator TValue(QueryResult<TValue> result) => result.Value;
 
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value)
+        public void Deconstruct(out bool success, out Maybe<TValue> value)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
         }
+
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
         }
         /// <summary>Deconstructs the components of <see cref="QueryResult{TValue}"/> into seperate variables</summary>
-        public void Deconstruct(out bool success, out TValue value, out string message, out Exception? cause)
+        public void Deconstruct(out bool success, out Maybe<TValue> value, out string message, out Exception? cause)
         {
             success = Success;
-            value = Value;
+            value = Success ? Maybe.Of(Value) : Maybe.Empty<TValue>();
             message = Message;
             cause = Cause;
         }
+
 
         /// <summary>
         /// If a value is present, apply the provided Optional-bearing mapping function to it, 
         /// return that result, otherwise return an empty Optional.
         /// </summary>
-        public QueryResult<TMappedValue> FlatMap<TMappedValue>(Func<TValue, QueryResult<TMappedValue>> mapper)
+        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, QueryResult<TMappedValue>> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
-            if (!Success)
-                return QueryResult.Failed<TMappedValue>(Message, Cause);
-            return mapper.Invoke(Value);
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+            return !Success 
+                ? QueryResult.Failed<TMappedValue>(Message, Cause) 
+                : selector.Invoke(Value);
         }
 
         /// <summary>
         /// If a value is present, apply the provided mapping function to it, 
         /// and if the result is non-null, return an Optional describing the result. 
         /// </summary>
-        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector) =>
-            Map(selector);
-
-        /// <summary>
-        /// If a value is present, apply the provided mapping function to it, 
-        /// and if the result is non-null, return an Optional describing the result. 
-        /// </summary>
-        public QueryResult<TMappedValue> Map<TMappedValue>(Func<TValue, TMappedValue> mapper)
+        public QueryResult<TMappedValue> Select<TMappedValue>(Func<TValue, TMappedValue> selector)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
-            if (!Success)
-                return QueryResult.Failed<TMappedValue>(Message, Cause);
-            return QueryResult.Ok(mapper.Invoke(Value));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+            return !Success 
+                ? QueryResult.Failed<TMappedValue>(Message, Cause) 
+                : QueryResult.Ok(selector.Invoke(Value));
         }
 
         /// <summary>Returns the value if present, otherwise returns <paramref name="other"/>.</summary>
         /// <remarks>slightly awkward name due to OrElse being reserved keyword (VB)</remarks>
-        public TValue ValueOr(TValue other) => Success ? Value : other;
+        public TValue ValueOr(TValue other) => Success 
+            ? Value 
+            : other;
 
-        /// <summary>Returns the value if present, otherwise invokes other and returns the result of that invocation.</summary>
-        /// <exception cref="ArgumentNullException">if <paramref name="other"/> is <c>null</c></exception>
-        public TValue ValueOr(Func<TValue> other)
+        /// <summary>Returns the value if present, otherwise invokes supplier and returns the result of that invocation.</summary>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public TValue ValueOr(Func<TValue> supplier)
         {
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-            return Success ? Value : other.Invoke();
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+            return Success ? Value : supplier.Invoke();
         }
 
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
@@ -177,25 +183,25 @@ namespace Moreland.CSharp.Util.Results
         }
 
         /// <summary>
-        /// Returns the current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </summary>
-        /// <param name="mapper">
+        /// <param name="exceptionSupplier">
         /// Functor given message and 
         /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
         /// </param>
         /// <returns>
-        /// current result if successful or uses <paramref name="mapper"/> to handle the error
+        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
         /// allow the result to be converted to an alternate successful result
         /// </returns>
-        public QueryResult<TValue> OrElseFlatMap(Func<string, Exception?, QueryResult<TValue>> mapper)
+        public QueryResult<TValue> ValueOrThrow(Func<string, Exception?, QueryResult<TValue>> exceptionSupplier)
         {
-            if (mapper == null)
-                throw new ArgumentNullException(nameof(mapper));
+            if (exceptionSupplier == null)
+                throw new ArgumentNullException(nameof(exceptionSupplier));
 
             return Success
                 ? this
-                : mapper.Invoke(Message, Cause);
+                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }
@@ -213,11 +219,13 @@ namespace Moreland.CSharp.Util.Results
         /// <summary>
         /// <inheritdoc cref="ValueType.Equals(object?)"/>
         /// </summary>
-        public override bool Equals(object? obj) => obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
+        public override bool Equals(object? obj) => 
+            obj is QueryResult<TValue> rightHandSide && Equals(rightHandSide);
         /// <summary>
         /// <inheritdoc cref="ValueType.GetHashCode"/>
         /// </summary>
-        public override int GetHashCode() => ValueResult.GetHashCode();
+        public override int GetHashCode() => 
+            ValueResult.GetHashCode();
 
         #endregion
     }
