@@ -492,6 +492,14 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(actual, Is.EqualTo(_value));
         }
 
+        [Test]
+        public void ValueOr_Converted_ReturnsValue_WhenOk()
+        {
+            var actual = _testHelper.ValueOrSupplied(_ok, _message, _cause, _elseValue);
+            Assert.That(actual.Value, Is.EqualTo(_value));
+        }
+
+
         [TestCase(false)]
         [TestCase(true)]
         public void ValueOr_ReturnsValue_WhenOkWithMessage(bool useSupplierOverride)
@@ -500,6 +508,13 @@ namespace Moreland.CSharp.Util.Test.Results
                 ? _okWithMessage.ValueOr(() => _elseValue) 
                 : _okWithMessage.ValueOr(_elseValue);
             Assert.That(actual, Is.EqualTo(_value));
+        }
+
+        [Test]
+        public void ValueOr_Converted_ReturnsValue_WhenOkWithMessage()
+        {
+            var actual = _testHelper.ValueOrSupplied(_okWithMessage, _message, _cause, _elseValue);
+            Assert.That(actual.Value, Is.EqualTo(_value));
         }
 
         [TestCase(false)]
@@ -512,6 +527,13 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(actual, Is.EqualTo(_elseValue));
         }
 
+        [Test]
+        public void ValueOr_Converted_ReturnsOrValue_WhenFailed()
+        {
+            var actual = _testHelper.ValueOrSupplied(_failed, _message, null, _elseValue);
+            Assert.That(actual.Value, Is.EqualTo(_elseValue));
+        }
+
         [TestCase(false)]
         [TestCase(true)]
         public void ValueOr_ReturnsOrValue_WhenFailedWithCause(bool useSupplierOverride)
@@ -520,6 +542,60 @@ namespace Moreland.CSharp.Util.Test.Results
                 ? _failedWithCause.ValueOr(() => _elseValue) 
                 : _failedWithCause.ValueOr(_elseValue);
             Assert.That(actual, Is.EqualTo(_elseValue));
+        }
+
+        [Test]
+        public void ValueOr_Converted_ReturnsOrValue_WhenFailedWithCause()
+        {
+            var actual = _testHelper.ValueOrSupplied(_failedWithCause, _message, _cause, _elseValue);
+            Assert.That(actual.Value, Is.EqualTo(_elseValue));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValueOrThrow_ReturnsValue_WhenOk(bool includeMessage)
+        {
+            var exception = new Exception(Guid.NewGuid().ToString());
+            var actual = includeMessage
+                ? _ok.ValueOrThrow((msg, cause) => exception)
+                : _ok.ValueOrThrow(() => exception);
+
+            Assert.That(actual, Is.EqualTo(_value));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValueOrThrow_ReturnsValue_WhenOkWithMessage(bool includeMessage)
+        {
+            var exception = new Exception(Guid.NewGuid().ToString());
+            var actual = includeMessage
+                ? _okWithMessage.ValueOrThrow((msg, cause) => exception)
+                : _okWithMessage.ValueOrThrow(() => exception);
+
+            Assert.That(actual, Is.EqualTo(_value));
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValueOrThrow_ThrowsSuppliedException_WhenFailed(bool includeMessage)
+        {
+            var exception = new Exception(Guid.NewGuid().ToString());
+            var actual = includeMessage 
+                ? Assert.Throws<Exception>(() => _ = _failed.ValueOrThrow((msg, cause) => exception)) 
+                : Assert.Throws<Exception>(() => _ = _failed.ValueOrThrow(() => exception));
+            Assert.That(actual, Is.EqualTo(exception));
+
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValueOrThrow_ThrowsSuppliedException_WhenFailedWithCause(bool includeMessage)
+        {
+            var exception = new Exception(Guid.NewGuid().ToString());
+            var actual = includeMessage 
+                ? Assert.Throws<Exception>(() => _ = _failedWithCause.ValueOrThrow((msg, cause) => exception)) 
+                : Assert.Throws<Exception>(() => _ = _failedWithCause.ValueOrThrow(() => exception));
+            Assert.That(actual, Is.EqualTo(exception));
         }
 
         [TestCase(ResultType.Successful, false, false)]

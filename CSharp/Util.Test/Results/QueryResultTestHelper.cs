@@ -13,6 +13,7 @@
 
 using System;
 using Moreland.CSharp.Util.Results;
+using NSubstitute;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
@@ -99,6 +100,17 @@ namespace Moreland.CSharp.Util.Test.Results
 
             QueryResult<TMapped> Selector(T value) => 
                 (QueryResult<TMapped>)genericSelector(value);
+        }
+
+        public IValueResult<T> ValueOrSupplied(IValueResult<T> genericResult, string messsage, Exception? cause, T @else)
+        {
+            if (!(genericResult is QueryResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+
+            var supplier = Substitute.For<Func<string, Exception?, QueryResult<T>>>();
+            supplier.Invoke(messsage, cause).Returns(QueryResult.Ok(@else));
+
+            return result.ValueOr(supplier);
         }
     }
 }
