@@ -14,24 +14,24 @@
 using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
-namespace System.Linq
+namespace Moreland.CSharp.Extensions
 {
     /// <summary>
     /// <see cref="IList{T}"/> extension methods
     /// </summary>
-    public static class List
+    public static class ListExtensions
     {
         /// <summary>
         /// Returns new list containing <paramref name="items"/>
         /// </summary>
-        public static IList<T> Of<T>(params T[] items) => new List<T>(items);
+        public static List<T> Of<T>(params T[] items) => new List<T>(items);
         /// <summary>
         /// Returns new list containing <paramref name="items"/>
         /// </summary>
-        public static IList<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
+        public static List<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
         /// <summary>
         /// Returns new empty list
         /// </summary>
-        public static IList<T> Empty<T>() => new List<T>();
+        public static List<T> Empty<T>() => new List<T>();
     }
 }
