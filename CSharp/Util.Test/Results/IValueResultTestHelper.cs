@@ -30,6 +30,7 @@ namespace Moreland.CSharp.Util.Test.Results
         IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, TMapped> genericSelector);
         IValueResult<TMapped> Select<TMapped>(IValueResult<T> genericResult, Func<T, IValueResult<TMapped>> genericSelector);
         IValueResult<T> ValueOrSupplied(IValueResult<T> genericResult, string messsage, Exception? cause, T @else);
+        void ValueOrNullSupplier(IValueResult<T> genericResult);
 
         bool ImplicitBool(IValueResult<T> genericResult);
         T ExplicitValue(IValueResult<T> genericResult);

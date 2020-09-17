@@ -112,5 +112,13 @@ namespace Moreland.CSharp.Util.Test.Results
 
             return result.ValueOr(supplier);
         }
+        public void ValueOrNullSupplier(IValueResult<T> genericResult)
+        {
+            if (!(genericResult is QueryResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+
+            Func<string, Exception?, QueryResult<T>> supplier = null!;
+            _ = result.ValueOr(supplier);
+        }
     }
 }

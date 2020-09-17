@@ -80,6 +80,12 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
+        public void Success_ReturnsFalse_WhenUnknownError()
+        {
+            Assert.That(CommandResult.UnknownError.Success, Is.False);
+        }
+
+        [Test]
         public void Message_ReturnsEmpty_WhenOk()
         {
             Assert.That(_ok.Message, Is.Empty);
@@ -107,6 +113,12 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Message_ReturnsMessage_WhenFailedWithCause()
         {
             Assert.That(_failedWithCause.Message, Is.EqualTo(_message));
+        }
+
+        [Test]
+        public void Message_IsEmpty_WhenOkWithNullMessage()
+        {
+            Assert.That(CommandResult.Ok(null!).Message, Is.EqualTo(string.Empty));
         }
 
         [Test]
@@ -340,6 +352,15 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(cause, Is.EqualTo(result.Cause));
         }
 
+        [Test]
+        public void GetHashCode_ReturnsDifferentValues_WhenComparingSuccessAndFailure()
+        {
+            var successCode = CommandResult.Ok(_message).GetHashCode();
+            var failureCode = CommandResult.Failed(_message).GetHashCode();
+
+            Assert.That(successCode, Is.Not.EqualTo(failureCode));
+        }
+
         private CommandResult BuildResultForDeconstruct(ResultType resultType, bool includeMessage, bool includeException) =>
             resultType switch
             {
@@ -349,6 +370,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 ResultType.Failure when includeException => CommandResult.Failed(_message, _cause),
                 _ => throw new InvalidOperationException("Invalid test case"),
             };
+
     }
 
     [TestFixture]
@@ -384,4 +406,5 @@ namespace Moreland.CSharp.Util.Test.Results
         {
         }
     }
+
 }

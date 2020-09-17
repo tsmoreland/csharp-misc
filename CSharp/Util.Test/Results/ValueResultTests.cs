@@ -133,6 +133,12 @@ namespace Moreland.CSharp.Util.Test.Results
         }
 
         [Test]
+        public void Message_ReturnsEmpty_WhenOkWithNullMessage()
+        {
+            Assert.That(_testHelper.OkWithMessageBuilder(_value, null!).Message, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
         public void Message_ReturnsMessage_WhenFailed()
         {
             Assert.That(_failed.Message, Is.EqualTo(_message));
@@ -551,6 +557,24 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(actual.Value, Is.EqualTo(_elseValue));
         }
 
+        [Test]
+        public void ValueOr_Converted_ThrowsArgumentNullException_WhenSupplierIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _testHelper.ValueOrNullSupplier(_ok));
+            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+        }
+
+        [TestCase(ResultType.Successful, false, false)]
+        [TestCase(ResultType.Successful, true, false)]
+        [TestCase(ResultType.Failure, true, false)]
+        [TestCase(ResultType.Failure, true, true)]
+        public void ValueOr_ThrowsArgumentNullException_WhenSupplierIsNull(ResultType resultType, bool includeMessage, bool includeException)
+        {
+            var result = BuildValueResult(resultType, _value, includeMessage, includeException);
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = result.ValueOr((Func<T>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void ValueOrThrow_ReturnsValue_WhenOk(bool includeMessage)
@@ -598,15 +622,14 @@ namespace Moreland.CSharp.Util.Test.Results
             Assert.That(actual, Is.EqualTo(exception));
         }
 
-        [TestCase(ResultType.Successful, false, false)]
-        [TestCase(ResultType.Successful, true, false)]
-        [TestCase(ResultType.Failure, true, false)]
-        [TestCase(ResultType.Failure, true, true)]
-        public void ValueOr_ThrowsArgumentNullException_WhenSupplierIsNull(ResultType resultType, bool includeMessage, bool includeException)
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValueOrThrow_ThrowsArgumentNullException_WhenExceptionSupplierIsNull(bool includeMessage)
         {
-            var result = BuildValueResult(resultType, _value, includeMessage, includeException);
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = result.ValueOr((Func<T>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            var ex = includeMessage 
+                ? Assert.Throws<ArgumentNullException>(() => _ = _failedWithCause.ValueOrThrow((Func<string, Exception?, Exception>)null!))
+                : Assert.Throws<ArgumentNullException>(() => _ = _failedWithCause.ValueOrThrow((Func<Exception>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("exceptionSupplier"));
         }
 
         [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
