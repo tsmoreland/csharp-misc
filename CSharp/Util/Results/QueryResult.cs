@@ -158,6 +158,28 @@ namespace Moreland.CSharp.Util.Results
             return Success ? Value : supplier.Invoke();
         }
 
+        /// <summary>
+        /// Returns the current result if successful or uses <paramref name="supplier"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </summary>
+        /// <param name="supplier">
+        /// Functor given message and 
+        /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
+        /// </param>
+        /// <returns>
+        /// current result if successful or uses <paramref name="supplier"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </returns>
+        public QueryResult<TValue> ValueOr(Func<string, Exception?, QueryResult<TValue>> supplier)
+        {
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+
+            return Success
+                ? this
+                : supplier.Invoke(Message, Cause);
+        }
+
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
         /// <exception cref="Exception">if <see cref="Success"/> is false then result of <paramref name="exceptionSupplier"/> is thrown</exception>
@@ -180,28 +202,6 @@ namespace Moreland.CSharp.Util.Results
             if (Success)
                 return Value;
             throw exceptionSupplier.Invoke(Message, Cause);
-        }
-
-        /// <summary>
-        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
-        /// allow the result to be converted to an alternate successful result
-        /// </summary>
-        /// <param name="exceptionSupplier">
-        /// Functor given message and 
-        /// exception cause and returns a <see cref="QueryResult{TValue}"/> to an alternate result
-        /// </param>
-        /// <returns>
-        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
-        /// allow the result to be converted to an alternate successful result
-        /// </returns>
-        public QueryResult<TValue> ValueOrThrow(Func<string, Exception?, QueryResult<TValue>> exceptionSupplier)
-        {
-            if (exceptionSupplier == null)
-                throw new ArgumentNullException(nameof(exceptionSupplier));
-
-            return Success
-                ? this
-                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }

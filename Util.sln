@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Util.Test.Old", "CSharp\Util.Test.Old\Util.Test.Old.csproj", "{501A1FEF-4AA6-4EF3-8CEA-2F193FBAC884}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Util.Test", "CSharp\Util.Test\Util.Test.csproj", "{FC3CBDFD-C599-4B05-982F-39343C03BD6C}"
 EndProject
 Global
@@ -24,10 +22,6 @@ Global
 		{8A1707AE-7045-41BA-B5B8-1B94FA6E52F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A1707AE-7045-41BA-B5B8-1B94FA6E52F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A1707AE-7045-41BA-B5B8-1B94FA6E52F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{501A1FEF-4AA6-4EF3-8CEA-2F193FBAC884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{501A1FEF-4AA6-4EF3-8CEA-2F193FBAC884}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{501A1FEF-4AA6-4EF3-8CEA-2F193FBAC884}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{501A1FEF-4AA6-4EF3-8CEA-2F193FBAC884}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FC3CBDFD-C599-4B05-982F-39343C03BD6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FC3CBDFD-C599-4B05-982F-39343C03BD6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC3CBDFD-C599-4B05-982F-39343C03BD6C}.Release|Any CPU.ActiveCfg = Release|Any CPU

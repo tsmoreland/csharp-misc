@@ -13,6 +13,7 @@
 
 using System;
 using Moreland.CSharp.Util.Results;
+using NSubstitute;
 
 namespace Moreland.CSharp.Util.Test.Results
 {
@@ -35,13 +36,22 @@ namespace Moreland.CSharp.Util.Test.Results
 
         public IValueResult<T> OkBuilder(T value) =>
             QueryResult.Ok(value);
+        public IValueResult<TOther> OkBuilder<TOther>(TOther value) =>
+            QueryResult.Ok(value);
+        public IValueResult<TOther> OkWithMessageBuilder<TOther>(TOther value, string message) =>
+            QueryResult.Ok(value, message);
         public IValueResult<T> OkWithMessageBuilder(T value, string message) =>
             QueryResult.Ok(value, message);
 
+        public IValueResult<TOther> FailedBuilder<TOther>(string message) =>
+            QueryResult.Failed<TOther>(message);
         public IValueResult<T> FailedBuilder(string message) =>
             QueryResult.Failed<T>(message);
+        public IValueResult<TOther> FailedWithCauseBuilder<TOther>(string message, Exception? cause) =>
+            QueryResult.Failed<TOther>(message, cause);
         public IValueResult<T> FailedWithCauseBuilder(string message, Exception? cause) =>
             QueryResult.Failed<T>(message, cause);
+
 
         public bool ObjectEquals(IValueResult<T> genericFirst, object? second)
         {
@@ -84,10 +94,31 @@ namespace Moreland.CSharp.Util.Test.Results
         {
             if (!(genericResult is QueryResult<T> result))
                 throw new InvalidOperationException("Unexpected type");
-            return result.Select(Selector);
+            return genericSelector != null!
+                ? result.Select(Selector)
+                : result.Select((Func<T, QueryResult<TMapped>>)null!);
 
             QueryResult<TMapped> Selector(T value) => 
                 (QueryResult<TMapped>)genericSelector(value);
+        }
+
+        public IValueResult<T> ValueOrSupplied(IValueResult<T> genericResult, string messsage, Exception? cause, T @else)
+        {
+            if (!(genericResult is QueryResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+
+            var supplier = Substitute.For<Func<string, Exception?, QueryResult<T>>>();
+            supplier.Invoke(messsage, cause).Returns(QueryResult.Ok(@else));
+
+            return result.ValueOr(supplier);
+        }
+        public void ValueOrNullSupplier(IValueResult<T> genericResult)
+        {
+            if (!(genericResult is QueryResult<T> result))
+                throw new InvalidOperationException("Unexpected type");
+
+            Func<string, Exception?, QueryResult<T>> supplier = null!;
+            _ = result.ValueOr(supplier);
         }
     }
 }

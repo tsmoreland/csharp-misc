@@ -238,6 +238,29 @@ namespace Moreland.CSharp.Util.Results
                 throw new ArgumentNullException(nameof(supplier));
             return Success ? Value : supplier.Invoke();
         }
+
+        /// <summary>
+        /// Returns the current result if successful or uses <paramref name="supplier"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </summary>
+        /// <param name="supplier">
+        /// Func  given message and exception cause and returns a
+        /// <see cref="CommandResult{TValue}"/> to an alternate result
+        /// </param>
+        /// <returns>
+        /// current result if successful or uses <paramref name="supplier"/> to handle the error
+        /// allow the result to be converted to an alternate successful result
+        /// </returns>
+        /// <exception cref="ArgumentNullException">if <paramref name="supplier"/> is <c>null</c></exception>
+        public CommandResult<TValue> ValueOr(Func<string, Exception?, CommandResult<TValue>> supplier)
+        {
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier));
+
+            return Success
+                ? this
+                : supplier.Invoke(Message, Cause);
+        }
 	
         /// <summary>Returns the contained value, if present, otherwise throws an exception to be created by the provided supplier. </summary>
         /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is null</exception>
@@ -261,29 +284,6 @@ namespace Moreland.CSharp.Util.Results
             return Success 
                 ? Value 
                 : throw exceptionSupplier.Invoke(Message, Cause);
-        }
-
-        /// <summary>
-        /// Returns the current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
-        /// allow the result to be converted to an alternate successful result
-        /// </summary>
-        /// <param name="exceptionSupplier">
-        /// Func  given message and exception cause and returns a
-        /// <see cref="CommandResult{TValue}"/> to an alternate result
-        /// </param>
-        /// <returns>
-        /// current result if successful or uses <paramref name="exceptionSupplier"/> to handle the error
-        /// allow the result to be converted to an alternate successful result
-        /// </returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="exceptionSupplier"/> is <c>null</c></exception>
-        public CommandResult<TValue> ValueOrThrow(Func<string, Exception?, CommandResult<TValue>> exceptionSupplier)
-        {
-            if (exceptionSupplier == null)
-                throw new ArgumentNullException(nameof(exceptionSupplier));
-
-            return Success
-                ? this
-                : exceptionSupplier.Invoke(Message, Cause);
         }
 
         private ValueResultCore<TValue> ValueResult { get; }
