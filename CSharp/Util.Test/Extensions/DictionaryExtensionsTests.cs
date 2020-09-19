@@ -14,85 +14,106 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace Moreland.CSharp.Util.Test.Extensions
 {
-    public abstract class DictionaryExtensionsTests<TKey, TValue> where TKey : notnull
+    [TestFixture]
+    public sealed class DictionaryExtensionsTests
     {
-        private readonly Func<TKey> _keyBuilder;
-        private readonly Func<TValue> _valueBuilder;
-        private Dictionary<TKey, TValue> _dictionary;
-
-        protected DictionaryExtensionsTests(Func<TKey> keyBuilder, Func<TValue> valueBuilder)
-        {
-            _keyBuilder = keyBuilder;
-            _valueBuilder = valueBuilder;
-        }
+        private readonly Dictionary<int, int> _nullDictionary = null!;
+        private Dictionary<int, int> _first = null!;
+        private Dictionary<int, int> _second = null!;
+        private Dictionary<int, int> _mixOfFirstAndSecond = null!;
 
         [SetUp]
         public void Setup()
         {
-            _dictionary = Substitute.For<Dictionary<TKey, TValue>>();
+            _first = From((1, 1), (2, 2), (3, 3));
+            _second = From((4, 4), (5, 5), (6, 6));
+            _mixOfFirstAndSecond = From((1, 1), (2, 2), (5, 5), (6, 6));
         }
 
         [Test]
         public void Union_ThrowsArgumentNullException_WhenFirstIsNull()
         {
-            Dictionary<TKey, TValue> first = null!;
-            Dictionary<TKey, TValue> second = BuildDictionary();
-
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = first.Union(second));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.Union(_second, MergeByAddition));
             Assert.That(ex.ParamName, Is.EqualTo("first"));
         }
 
         [Test]
         public void Union_ThrowsArgumentNullException_WhenSecondIsNull()
         {
-            Dictionary<TKey, TValue> first = BuildDictionary();
-            Dictionary<TKey, TValue> second = null!;
-
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = first.Union(second));
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Union(_nullDictionary, MergeByAddition));
             Assert.That(ex.ParamName, Is.EqualTo("second"));
         }
 
-        private Dictionary<TKey, TValue> BuildDictionary()
+        [Test]
+        public void Union_ThrowsArgumentNullException_WhenMergeHandlerIsNull()
         {
-            return new Dictionary<TKey, TValue> 
-            { 
-                {_keyBuilder(), _valueBuilder() },
-                {_keyBuilder(), _valueBuilder() },
-                {_keyBuilder(), _valueBuilder() },
-            };
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Union(_second, null!));
+            Assert.That(ex.ParamName, Is.EqualTo("mergeHandler"));
         }
-    }
 
-    [TestFixture]
-    public sealed class ValueDictionaryExtensionsTests : DictionaryExtensionsTests<int, int>
-    {
-        public ValueDictionaryExtensionsTests()
-            : base(() => TestData.RandomValueFactory.BuildRandomInt32(), () => TestData.RandomValueFactory.BuildRandomInt32())
+        [Test]
+        public void UnionMergeUsingFirst_ThrowsArgumentNullException_WhenFirstIsNull()
         {
-            
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.UnionMergeUsingFirst(_second));
+            Assert.That(ex.ParamName, Is.EqualTo("first"));
         }
-    }
 
-    [TestFixture]
-    public sealed class EquatableReferenceDictionaryExtensionsTests : DictionaryExtensionsTests<int, string>
-    {
-       public EquatableReferenceDictionaryExtensionsTests()
-           : base(() => TestData.RandomValueFactory.BuildRandomInt32(), () => TestData.RandomValueFactory.BuildRandomString())
-       {
-       }
-    }
+        [Test]
+        public void UnionMergeUsingFirst_ThrowsArgumentNullException_WhenSecondIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.UnionMergeUsingFirst(_nullDictionary));
+            Assert.That(ex.ParamName, Is.EqualTo("second"));
+        }
 
-    [TestFixture]
-    public sealed class ReferenceDictionaryExtensionsTests : DictionaryExtensionsTests<string, List<string>>
-    {
-       public ReferenceDictionaryExtensionsTests()
-           : base(() =>TestData.RandomValueFactory.BuildRandomString(), () => TestData.RandomValueFactory.BuildRandomListOfString())
-       {
-       }
+        [Test]
+        public void UnionMergeUsingSecond_ThrowsArgumentNullException_WhenFirstIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.UnionMergeUsingSecond(_second));
+            Assert.That(ex.ParamName, Is.EqualTo("first"));
+        }
+
+        [Test]
+        public void UnionMergeUsingSecond_ThrowsArgumentNullException_WhenSecondIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.UnionMergeUsingSecond(_nullDictionary));
+            Assert.That(ex.ParamName, Is.EqualTo("second"));
+        }
+
+        [Test]
+        public void Intersect_ThrowsArgumentNullException_WhenFirstIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.Intersect(_second, MergeByAddition));
+            Assert.That(ex.ParamName, Is.EqualTo("first"));
+        }
+
+        [Test]
+        public void Intersect_ThrowsArgumentNullException_WhenSecondIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Intersect(_nullDictionary, MergeByAddition));
+            Assert.That(ex.ParamName, Is.EqualTo("second"));
+        }
+
+        [Test]
+        public void Intersect_ThrowsArgumentNullException_WhenMergeHandlerIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Intersect(_second, null!));
+            Assert.That(ex.ParamName, Is.EqualTo("mergeHandler"));
+        }
+
+
+
+        private static Dictionary<int, int> From(params (int key, int value)[] items)
+        {
+            var dictionary = new Dictionary<int, int>();
+            foreach (var (key, value) in items)
+                dictionary[key] = value;
+            return dictionary;
+        }
+
+        private static int MergeByAddition(int first, int second) => first + second;
     }
 }
