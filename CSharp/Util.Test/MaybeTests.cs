@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Moreland.CSharp.Util.Extensions;
+using Moreland.CSharp.Util.Collections;
 using NSubstitute;
 using NUnit.Framework;
 using static Moreland.CSharp.Util.Test.TestData.RandomValueFactory;
@@ -414,7 +414,7 @@ namespace Moreland.CSharp.Util.Test
         [Test]
         public void AsEnumerable_ReturnsEnumerableContainingValue_WhenHasvalue()
         {
-            var expected = ArrayExtensions.Of(_maybeWithValue.Value);
+            var expected = FluentArray.Of(_maybeWithValue.Value);
 
             var actual = _maybeWithValue.AsEnumerable();
 

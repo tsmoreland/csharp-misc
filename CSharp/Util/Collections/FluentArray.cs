@@ -11,27 +11,38 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Collections.Generic;
+#if !(NET40 || NET45)
+using System;
+#endif
 
-// ReSharper disable once CheckNamespace
-namespace Moreland.CSharp.Extensions
+namespace Moreland.CSharp.Util.Collections
 {
     /// <summary>
-    /// <see cref="IList{T}"/> extension methods
+    /// Fluent Api for Array
     /// </summary>
-    public static class ListExtensions
+    public static class FluentArray
     {
         /// <summary>
-        /// Returns new list containing <paramref name="items"/>
+        /// Returns an Empty array, same functionality as System.Array.Empty{T} available in NET461
+        /// but supported in NET40 and NET45
         /// </summary>
-        public static List<T> Of<T>(params T[] items) => new List<T>(items);
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public static TValue[] Empty<TValue>() =>
+#if NET40 || NET45
+            new TValue[0];
+#else
+            Array.Empty<TValue>();
+#endif
+
         /// <summary>
-        /// Returns new list containing <paramref name="items"/>
+        /// Constructs a new array from <paramref name="values"/>
         /// </summary>
-        public static List<T> Of<T>(IEnumerable<T> items) => new List<T>(items);
-        /// <summary>
-        /// Returns new empty list
-        /// </summary>
-        public static List<T> Empty<T>() => new List<T>();
+        /// <typeparam name="TValue">Element type of the array</typeparam>
+        /// <param name="values">values that make up the new array</param>
+        /// <returns><paramref name="values"/></returns>
+        /// <remarks>Provided for readability purposes as a simple way to construct an array</remarks>
+        public static TValue[] Of<TValue>(params TValue[] values) =>
+            values;
     }
 }

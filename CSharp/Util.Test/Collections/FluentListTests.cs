@@ -11,6 +11,43 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Moreland.CSharp.Util.Collections;
+using NUnit.Framework;
 
-[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100e1884052ee03ea02642cd11db0fa149d021720ee9dc376eb9ee59796b806e68f69e4a0c3eee08eb86ed8484ee29d7caf8df110a3cfbce2cf18c8e3212aa97440d2cd501e4018434e814d8b0b2a8cd17c38869eeb9363048c340a8bd2671a850689fed155bc835fd744560b7cc80d5538f87c4f8ced83d9e4c0d43acdcb1c949e")]
+namespace Moreland.CSharp.Util.Test.Collections
+{
+    [TestFixture]
+    public sealed class FluentListTests
+    {
+
+        [TestCase]
+        [TestCase(1)]
+        [TestCase(1, 2)]
+        public void Of_Params_ReturnsList_Always(params int[] items)
+        {
+            var list = FluentList.Of(items);
+
+            Assert.That(list, Is.EquivalentTo(items));
+        }
+
+        [TestCase]
+        [TestCase(1)]
+        [TestCase(1, 2)]
+        public void Of_IEnumerable_ReturnsList_Always(params int[] items)
+        {
+            IEnumerable<int> enumerable = new Collection<int>(items);
+            var list = FluentList.Of(enumerable);
+
+            Assert.That(list, Is.EquivalentTo(items));
+        }
+
+        [Test]
+        public void Empty_ReturnsEmptyList_Always()
+        {
+            var empty = FluentList.Empty<int>();
+            Assert.That(empty, Is.Empty);
+        }
+    }
+}

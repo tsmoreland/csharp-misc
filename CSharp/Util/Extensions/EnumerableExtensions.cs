@@ -13,7 +13,7 @@
 
 using System.Collections.Generic;
 using Moreland.CSharp.Util;
-using Moreland.CSharp.Util.Extensions;
+using Moreland.CSharp.Util.Collections;
 
 // ReSharper disable once CheckNamespace
 namespace System.Linq
@@ -25,23 +25,36 @@ namespace System.Linq
     {
         /// <summary>Returns the first item in the collection wrapped in a <see cref="Maybe{TValue}"/> or <see cref="Maybe.Empty{TValue}"/> if <paramref name="enumerable"/> is empty. </summary>
         /// <exception cref="NullReferenceException">if <paramref name="enumerable"/> is <c>null</c></exception>
-        public static Maybe<TValue> MaybeFirst<TValue>(this IEnumerable<TValue> enumerable) => enumerable
-            .Select(item => Maybe.Of(item))
+        public static Maybe<TValue> MaybeFirstOrEmpty<TValue>(this IEnumerable<TValue> enumerable) => enumerable
+            .Select(Maybe.Of)
             .DefaultIfEmpty(Maybe.Empty<TValue>())
             .FirstOrDefault();
 
+        /// <summary>
+        /// Returns the first item in the collection that satifies a condition wrapped in a
+        /// <see cref="Maybe{TValue}"/> or <see cref="Maybe.Empty{TValue}"/>
+        /// if <paramref name="enumerable"/> is empty or the condition is not met.
+        /// </summary>
+        /// <exception cref="NullReferenceException">if <paramref name="enumerable"/> is <c>null</c></exception>
+        public static Maybe<TValue> MaybeFirstOrEmpty<TValue>(this IEnumerable<TValue> enumerable,
+            Func<TValue, bool> predicate) => enumerable
+            .Select(Maybe.Of)
+            .DefaultIfEmpty(Maybe.Empty<TValue>())
+            .FirstOrDefault(maybeValue => maybeValue.HasValue && predicate(maybeValue.Value));
+
         /// <summary>Returns <paramref name="enumerable"/> as array of <typeparamref name="TValue"/> without building a new array if it already is one and an empty array if <paramref name="enumerable"/> is <c>null</c></summary>
-        public static TValue[] AsOrToArray<TValue>(this IEnumerable<TValue> enumerable) => enumerable is TValue[] array 
-            ? array 
-            : enumerable.ToArray() ?? ArrayExtensions.Empty<TValue>();
+        public static TValue[] AsOrToArray<TValue>(this IEnumerable<TValue> enumerable) => enumerable is TValue[] array
+            ? array
+            : enumerable.ToArray();
 
         /// <summary>
         /// Returns <paramref name="enumerable"/> as <see cref="IList{TValue}"/> of <typeparamref name="TValue"/> without building a new list if it already is one 
         /// and an empty list if <paramref name="enumerable"/> is <c>null</c>
         /// </summary>
-        public static IList<TValue> AsOrToList<TValue>(this IEnumerable<TValue> enumerable) => enumerable is IList<TValue> list
-            ? list
-            : enumerable.ToList() ?? new List<TValue>();
+        public static List<TValue> AsOrToList<TValue>(this IEnumerable<TValue> enumerable) =>
+            enumerable is List<TValue> list
+                ? list
+                : enumerable.ToList(); 
 
         /// <summary>
         /// Performs the specified action on each item of the <see cref="IEnumerable{T}"/>

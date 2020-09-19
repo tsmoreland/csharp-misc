@@ -14,12 +14,9 @@
 using System;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using Moreland.CSharp.Util.Extensions;
 using NSubstitute;
-using CollectionExtensions = System.Linq.CollectionExtensions;
-using Moreland.CSharp.Extensions;
+using Moreland.CSharp.Util.Collections;
 
 namespace Moreland.CSharp.Util.Test.Extensions
 {
@@ -49,9 +46,62 @@ namespace Moreland.CSharp.Util.Test.Extensions
         [Test]
         public void AddRange_IEnumerable_ThrowsArgumentNullException_WhenCollectionIsNull()
         {
-            IEnumerable<T> enumerable = ListExtensions.Of(_builder(), _builder());
+            IEnumerable<T> enumerable = FluentList.Of(_builder(), _builder());
             var ex = Assert.Throws<ArgumentNullException>(() => ((ICollection<T>)null!).AddRange(enumerable));
             Assert.That(ex.ParamName, Is.EqualTo("collection"));
+        }
+
+        [Test]
+        public void AddRange_IEnumerable_ThrowsArgumentNullException_WhenItemsIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _collection.AddRange((IEnumerable<T>)null!));
+            Assert.That(ex.ParamName, Is.EqualTo("items"));
+        }
+
+        [Test]
+        public void AddRange_Params_CallsAdd_ForAllGivenItems()
+        {
+            var item1 = _builder();
+            var item2 = _builder();
+            var item3 = _builder();
+
+            _collection.AddRange(item1, item2, item3);
+
+            _collection.Received(1).Add(item1);
+            _collection.Received(1).Add(item2);
+            _collection.Received(1).Add(item3);
+        }
+
+        [Test]
+        public void AddRange_Params_DoesNotCallAdd_WhenNotGivenItems()
+        {
+            _collection.AddRange();
+
+            _collection.Received(0).Add(Arg.Any<T>());
+        }
+
+        [Test]
+        public void AddRange_IEnumerable_CallsAdd_ForAllGivenItems()
+        {
+            var item1 = _builder();
+            var item2 = _builder();
+            var item3 = _builder();
+            IEnumerable<T> enumerable = FluentList.Of(item1, item2, item3);
+
+            _collection.AddRange(enumerable);
+
+            _collection.Received(1).Add(item1);
+            _collection.Received(1).Add(item2);
+            _collection.Received(1).Add(item3);
+        }
+
+        [Test]
+        public void AddRange_IEnumerable_DoesNotCallAdd_WhenNotGivenItems()
+        {
+            IEnumerable<T> enumerable = FluentList.Of<T>();
+            _collection.AddRange(enumerable);
+
+            _collection.Received(0).Add(Arg.Any<T>());
         }
     }
 
@@ -63,6 +113,23 @@ namespace Moreland.CSharp.Util.Test.Extensions
         {
             
         }
+    }
 
+    [TestFixture]
+    public sealed class EquatableReferenceCollectionExtensionsTests : CollectionExtensionsTests<string>
+    {
+       public EquatableReferenceCollectionExtensionsTests()
+           : base(() => TestData.RandomValueFactory.BuildRandomString())
+       {
+       }
+    }
+
+    [TestFixture]
+    public sealed class ReferenceCollectionExtensionsTests : CollectionExtensionsTests<List<string>>
+    {
+       public ReferenceCollectionExtensionsTests()
+           : base(() => TestData.RandomValueFactory.BuildRandomListOfString())
+       {
+       }
     }
 }

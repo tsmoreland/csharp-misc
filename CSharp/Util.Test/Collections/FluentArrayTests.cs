@@ -13,16 +13,16 @@
 
 using System;
 using System.Collections.Generic;
-using Moreland.CSharp.Util.Extensions;
+using Moreland.CSharp.Util.Collections;
 using Moreland.CSharp.Util.Test.TestData;
 using NUnit.Framework;
 
-namespace Moreland.CSharp.Util.Test.Extensions
+namespace Moreland.CSharp.Util.Test.Collections
 {
     [TestFixture]
-    public sealed class ValueTypeArrayExtensionsTests : ArrayExtensionsTests<int>
+    public sealed class ValueTypeFluentArrayTests : FluentArrayTests<int>
     {
-        public ValueTypeArrayExtensionsTests()
+        public ValueTypeFluentArrayTests()
             : base(() => RandomValueFactory.BuildRandomInt32())
         {
             
@@ -30,20 +30,20 @@ namespace Moreland.CSharp.Util.Test.Extensions
     }
 
     [TestFixture]
-    public sealed class ReferenceTypeArrayExtensionsTests : ArrayExtensionsTests<List<string>>
+    public sealed class ReferenceTypeFluentArrayTests : FluentArrayTests<List<string>>
     {
-        public ReferenceTypeArrayExtensionsTests()
+        public ReferenceTypeFluentArrayTests()
             : base(() => RandomValueFactory.BuildRandomListOfString())
         {
             
         }
     }
 
-    public abstract class ArrayExtensionsTests<T>
+    public abstract class FluentArrayTests<T>
     {
         private readonly Func<T> _builder;
 
-        protected ArrayExtensionsTests(Func<T> builder)
+        protected FluentArrayTests(Func<T> builder)
         {
             _builder = builder;
         }
@@ -51,7 +51,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
         [Test]
         public void Empty_ReturnsZeroLengthArray_Always()
         {
-            var actual = ArrayExtensions.Empty<T>();
+            var actual = FluentArray.Empty<T>();
             Assert.That(actual.Length, Is.EqualTo(0));
         }
 
@@ -62,7 +62,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             var value2 = _builder();
             var value3 = _builder();
 
-            var actual = ArrayExtensions.Of(value1, value2, value3);
+            var actual = FluentArray.Of(value1, value2, value3);
 
             Assert.That(actual, Is.EquivalentTo(new[] {value1, value2, value3}));
         }
