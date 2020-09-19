@@ -14,6 +14,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Moreland.CSharp.Extensions;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Moreland.CSharp.Util.Test.Extensions
@@ -24,14 +26,12 @@ namespace Moreland.CSharp.Util.Test.Extensions
         private readonly Dictionary<int, int> _nullDictionary = null!;
         private Dictionary<int, int> _first = null!;
         private Dictionary<int, int> _second = null!;
-        private Dictionary<int, int> _mixOfFirstAndSecond = null!;
 
         [SetUp]
         public void Setup()
         {
             _first = From((1, 1), (2, 2), (3, 3));
             _second = From((4, 4), (5, 5), (6, 6));
-            _mixOfFirstAndSecond = From((1, 1), (2, 2), (5, 5), (6, 6));
         }
 
         [Test]
@@ -104,7 +104,50 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Assert.That(ex.ParamName, Is.EqualTo("mergeHandler"));
         }
 
+        [Test]
+        public void Union_MergesUsingHandler_WhenDuplicateKeysPresent()
+        {
+            Func<int, int, int> mergeHandler = Substitute.For<Func<int, int, int>>();
+            MergeHandler<int> handler = new MergeHandler<int>(mergeHandler);
+            var other = _first.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            other.Remove(other.Keys.First());
+            other[15] = 15;
+ 
+            _ = _first.Union(other, handler);
 
+            mergeHandler.Received(_first.Count - 1).Invoke(Arg.Any<int>(), Arg.Any<int>());
+        }
+
+        [Test]
+        public void UnionMergeUsesFirst_SelectsValueFromFirst_WhenDuplicateKeysFound()
+        {
+            var firstDoubled = _first.ToDictionary(kvp => kvp.Key, kvp => kvp.Value * 2);
+
+            var merged = firstDoubled.UnionMergeUsingFirst(_first);
+
+            Assert.That(merged, Is.EquivalentTo(firstDoubled));
+        }
+
+        [Test]
+        public void UnionMergeUsesSecond_SelectsValueFromSecond_WhenDuplicateKeysFound()
+        {
+            var firstDoubled = _first.ToDictionary(kvp => kvp.Key, kvp => kvp.Value * 2);
+
+            var merged = firstDoubled.UnionMergeUsingSecond(_first);
+
+            Assert.That(merged, Is.EquivalentTo(_first));
+        }
+
+        [Test]
+        public void Intersect_MergesUsingHandler_WhenDuplicateKeysPresent()
+        {
+            Func<int, int, int> mergeHandler = Substitute.For<Func<int, int, int>>();
+            MergeHandler<int> handler = new MergeHandler<int>(mergeHandler);
+
+            _ = _first.Intersect(_first, handler);
+
+            mergeHandler.Received(_first.Count).Invoke(Arg.Any<int>(), Arg.Any<int>());
+        }
 
         private static Dictionary<int, int> From(params (int key, int value)[] items)
         {
