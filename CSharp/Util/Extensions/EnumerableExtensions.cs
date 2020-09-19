@@ -13,7 +13,7 @@
 
 using System.Collections.Generic;
 using Moreland.CSharp.Util;
-using Moreland.CSharp.Util.Extensions;
+using Moreland.CSharp.Util.Collections;
 
 // ReSharper disable once CheckNamespace
 namespace System.Linq
@@ -33,7 +33,7 @@ namespace System.Linq
         /// <summary>Returns <paramref name="enumerable"/> as array of <typeparamref name="TValue"/> without building a new array if it already is one and an empty array if <paramref name="enumerable"/> is <c>null</c></summary>
         public static TValue[] AsOrToArray<TValue>(this IEnumerable<TValue> enumerable) => enumerable is TValue[] array 
             ? array 
-            : enumerable.ToArray() ?? ArrayExtensions.Empty<TValue>();
+            : enumerable.ToArray() ?? FluentArray.Empty<TValue>();
 
         /// <summary>
         /// Returns <paramref name="enumerable"/> as <see cref="IList{TValue}"/> of <typeparamref name="TValue"/> without building a new list if it already is one 

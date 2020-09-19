@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Moreland.CSharp.Util.Extensions;
+using Moreland.CSharp.Util.Collections;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util
@@ -180,7 +180,7 @@ namespace Moreland.CSharp.Util
         /// otherwise an empty <see cref="IEnumerable{TValue}"/>
         /// </summary>
         public IEnumerable<TValue> AsEnumerable() => HasValue
-            ? ArrayExtensions.Of(Value)
+            ? FluentArray.Of(Value)
             : Enumerable.Empty<TValue>();
 
         /// <summary>

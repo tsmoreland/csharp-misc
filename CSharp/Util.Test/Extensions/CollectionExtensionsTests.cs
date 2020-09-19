@@ -16,7 +16,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
-using Moreland.CSharp.Extensions;
+using Moreland.CSharp.Util.Collections;
 
 namespace Moreland.CSharp.Util.Test.Extensions
 {
@@ -46,7 +46,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
         [Test]
         public void AddRange_IEnumerable_ThrowsArgumentNullException_WhenCollectionIsNull()
         {
-            IEnumerable<T> enumerable = ListExtensions.Of(_builder(), _builder());
+            IEnumerable<T> enumerable = FluentList.Of(_builder(), _builder());
             var ex = Assert.Throws<ArgumentNullException>(() => ((ICollection<T>)null!).AddRange(enumerable));
             Assert.That(ex.ParamName, Is.EqualTo("collection"));
         }
@@ -86,7 +86,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             var item1 = _builder();
             var item2 = _builder();
             var item3 = _builder();
-            IEnumerable<T> enumerable = ListExtensions.Of(item1, item2, item3);
+            IEnumerable<T> enumerable = FluentList.Of(item1, item2, item3);
 
             _collection.AddRange(enumerable);
 
@@ -98,7 +98,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
         [Test]
         public void AddRange_IEnumerable_DoesNotCallAdd_WhenNotGivenItems()
         {
-            IEnumerable<T> enumerable = ListExtensions.Of<T>();
+            IEnumerable<T> enumerable = FluentList.Of<T>();
             _collection.AddRange(enumerable);
 
             _collection.Received(0).Add(Arg.Any<T>());
