@@ -13,5 +13,4 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test")]
-[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test.Old")]
+[assembly: InternalsVisibleTo("Moreland.CSharp.Util.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100e1884052ee03ea02642cd11db0fa149d021720ee9dc376eb9ee59796b806e68f69e4a0c3eee08eb86ed8484ee29d7caf8df110a3cfbce2cf18c8e3212aa97440d2cd501e4018434e814d8b0b2a8cd17c38869eeb9363048c340a8bd2671a850689fed155bc835fd744560b7cc80d5538f87c4f8ced83d9e4c0d43acdcb1c949e")]

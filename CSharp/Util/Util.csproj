@@ -27,24 +27,28 @@
     <Copyright>Copyright © 2020 Terry Moreland</Copyright>
     <PackageProjectUrl>https://github.com/tsmoreland/Util</PackageProjectUrl>
     <PackageTags>CQS, CQRS, Utility, Optional, Extension</PackageTags>
-    <CodeAnalysisRuleSet>..\..\.sonarlint\moreland-csharp-utilcsharp.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>$(Configuration)\$(TargetFramework)\$(Platform)\Moreland.CSharp.Util.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>../../.sonarlint\moreland-csharp-utilcsharp.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>$(Configuration)\$(TargetFramework)/$(Platform)/Moreland.CSharp.Util.xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../../util.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Debug\**" />
-    <None Remove="Release\**" />
+    <None Remove="Debug/**" />
+    <None Remove="Release/**" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\moreland-csharp-util\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+    <AdditionalFiles Include="../../.sonarlint\moreland-csharp-util\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE">
+    <None Include="../../LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="../../util.snk" Link="util.snk" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
