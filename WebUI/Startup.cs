@@ -29,6 +29,9 @@ namespace WebUI
             services.AddControllersWithViews();
             services.AddIdentityCore<User>(options => { });
             services.AddScoped<IUserStore<User>, UserStore>();
+            services
+                .AddAuthentication()
+                .AddCookie("cookies", options => options.LoginPath = "/Home/Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +48,8 @@ namespace WebUI
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
             app.UseStaticFiles();
 
             app.UseRouting();

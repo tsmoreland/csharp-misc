@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityDomain;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -68,8 +71,44 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return View();
+
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                var identity = new ClaimsIdentity("cookies");
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
+
+                await HttpContext.SignInAsync("cookies", new ClaimsPrincipal(identity));
+                return RedirectToAction(nameof(Index));
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid username or password");
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Profile()
+        {
+            // not implemented yet
             return View();
         }
 
