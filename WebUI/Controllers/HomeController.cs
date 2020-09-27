@@ -14,10 +14,10 @@ namespace WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<IdentityUser> userManager, ILogger<HomeController> logger)
+        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -49,7 +49,7 @@ namespace WebUI.Controllers
                 return Redirect(nameof(RegisterSuccess));
             }
 
-            user = new IdentityUser
+            user = new User
             {
                 Id =  Guid.NewGuid().ToString(),
                 UserName =  model.UserName,
