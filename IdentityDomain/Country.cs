@@ -11,17 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.ComponentModel.DataAnnotations;
-
-namespace WebUI.Models
+namespace IdentityDomain
 {
-    public sealed class LoginModel
+    public class Country
     {
-        [Required]
-        public string UserName { get; set; }
-        [Required]
-
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

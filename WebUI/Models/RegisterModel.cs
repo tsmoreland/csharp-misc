@@ -18,7 +18,7 @@ namespace WebUI.Models
     public sealed class RegisterModel
     {
         [Required]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [DataType(DataType.Password)]
         public string Password { get; set; }

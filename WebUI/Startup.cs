@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityDomain;
-using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,10 +22,28 @@ namespace WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddIdentityCore<User>(options => { });
-            services.AddScoped<IUserStore<User>, UserStore>();
+
+            var migrationAssembly = GetType().Assembly.GetName().Name;
+
+            // SQLite connection strings:
+            // - default: Data Source=<filename>;Cache=Shared
+            // - encrypted: Data Source=<filename>;Password=<encryption key>
+            // - Read-only: Data Source=<filename>;Mode=ReadOnly
+            // - In-memory: Data Source=:memory:
+            // - Shared in-memory: Data Source=Sharable;Mode=Memory;Cache=Shared
+            // reference: https://docs.microsoft.com/en-us/dotnet/standard/data/sqlite/connection-strings
+            const string connectionString = "Data Source=identityDemo.db;Cache=Shared";
             services
-                .AddAuthentication()
+                .AddDbContext<IdentityDbContext>(options => 
+                    options.UseSqlite(
+                        connectionString, 
+                        sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
+
+            services.AddIdentityCore<IdentityUser>(options => { });
+            services.AddScoped<IUserStore<IdentityUser>, UserOnlyStore<IdentityUser, IdentityDbContext>>();
+
+            services
+                .AddAuthentication("cookies")
                 .AddCookie("cookies", options => options.LoginPath = "/Home/Login");
         }
 

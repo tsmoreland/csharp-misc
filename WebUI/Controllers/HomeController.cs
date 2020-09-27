@@ -14,10 +14,10 @@ namespace WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(UserManager<IdentityUser> userManager, ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,26 +42,28 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user == null)
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null)
             {
-                _logger.LogError($"{model.Username} already exists, returning success to user without taking action");
+                _logger.LogError($"{model.UserName} already exists, returning success to user without taking action");
                 return Redirect(nameof(RegisterSuccess));
             }
 
-            user = new User
+            user = new IdentityUser
             {
                 Id =  Guid.NewGuid().ToString(),
-                Username =  model.Username,
+                UserName =  model.UserName,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                // ... profit? ...
+                return Redirect(nameof(RegisterSuccess));
             }
 
-            return Redirect(nameof(RegisterSuccess));
+
+
+            return View();
         }
 
         [HttpGet]
@@ -83,12 +85,12 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByNameAsync(model.Username);
+            var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var identity = new ClaimsIdentity("cookies");
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
 
                 await HttpContext.SignInAsync("cookies", new ClaimsPrincipal(identity));
                 return RedirectToAction(nameof(Index));

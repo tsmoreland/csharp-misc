@@ -11,13 +11,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Microsoft.AspNetCore.Identity;
+
 namespace IdentityDomain
 {
-    public class User
+    public class User : IdentityUser
     {
-        public string Id { get; set; }
-        public string Username { get; set; }
-        public string NormalizedUsername { get; set; }
-        public string PasswordHash { get; set; }
+        /// <remarks>
+        /// There's no benefit to this vs. claims it's just an example of how it could be done
+        /// Simple things like this would be better handled by claims
+        /// </remarks>
+        public string Role { get; set; } = "basic-user";
+
+        public string CountryId { get; set; }
     }
 }
