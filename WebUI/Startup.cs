@@ -1,3 +1,5 @@
+using IdentityDomain;
+using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -34,13 +36,13 @@ namespace WebUI
             // reference: https://docs.microsoft.com/en-us/dotnet/standard/data/sqlite/connection-strings
             const string connectionString = "Data Source=identityDemo.db;Cache=Shared";
             services
-                .AddDbContext<IdentityDbContext>(options => 
+                .AddDbContext<DemoDbContext>(options => 
                     options.UseSqlite(
                         connectionString, 
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentityCore<IdentityUser>(options => { });
-            services.AddScoped<IUserStore<IdentityUser>, UserOnlyStore<IdentityUser, IdentityDbContext>>();
+            services.AddIdentityCore<User>(options => { });
+            services.AddScoped<IUserStore<User>, UserOnlyStore<User, DemoDbContext>>();
 
             services
                 .AddAuthentication("cookies")
