@@ -41,8 +41,8 @@ namespace WebUI
                         connectionString, 
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentityCore<User>(options => { });
-            services.AddScoped<IUserStore<User>, UserOnlyStore<User, DemoDbContext>>();
+            services.AddIdentity<User, IdentityRole>(options => { })
+                .AddEntityFrameworkStores<DemoDbContext>();
 
             services
                 .AddAuthentication("cookies")
