@@ -132,8 +132,9 @@ namespace WebUI.Controllers
             return View();
         }
 
+
         [HttpGet]
-        public IActionResult Privacy()
+        public IActionResult ForgotPassword()
         {
             return View();
         }
@@ -143,6 +144,12 @@ namespace WebUI.Controllers
         public IActionResult Profile()
         {
             // not implemented yet
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Privacy()
+        {
             return View();
         }
 
