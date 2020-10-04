@@ -88,11 +88,11 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var identity = new ClaimsIdentity("cookies");
+                var identity = new ClaimsIdentity("Identity.Application");
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
                 identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
 
-                await HttpContext.SignInAsync("cookies", new ClaimsPrincipal(identity));
+                await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(identity));
                 return RedirectToAction(nameof(Index));
             }
 
