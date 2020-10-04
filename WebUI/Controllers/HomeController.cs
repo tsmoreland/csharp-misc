@@ -74,6 +74,7 @@ namespace WebUI.Controllers
             {
                 Id =  Guid.NewGuid().ToString(),
                 UserName =  model.UserName,
+                Email = model.Email,
                 Locale = "en-CA",
                 CountryId = "CA", // Hack until we have a country manager to import this, or better yet let it be configured on the registration page - that or allow it to be optional
             };
@@ -137,6 +138,61 @@ namespace WebUI.Controllers
         public IActionResult ForgotPassword()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+                return View();
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                // redirect to e-mail sent page
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
+                _logger.LogDebug($"ToDo: send the '{resetUrl}' to {user.Email}");
+            }
+            else
+            {
+                _logger.LogDebug($"ToDo: send message to {model.Email} informing them that they do not have an account");
+            }
+
+            // not convinced of this, thinking this should redirect to success page
+            return View("ResetPasswordRequestSuccess");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            return View(new ResetPasswordModel {Token = token, Email = email});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Request");
+                return View(); // add extension method to sanitize output of ModelState errors
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return View();
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return View();
+            }
+
+            return View("ResetPasswordSuccess");
         }
 
         [HttpGet]

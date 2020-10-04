@@ -11,25 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+
 using System.ComponentModel.DataAnnotations;
 
 namespace WebUI.Models
 {
-    public sealed class RegisterModel
+    public sealed class ForgotPasswordModel 
     {
-        [Required]
-        public string UserName { get; set; }
-
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-
-        [Compare(nameof(Password))]
-        [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }
-
     }
 }

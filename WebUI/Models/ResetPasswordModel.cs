@@ -15,19 +15,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebUI.Models
 {
-    public sealed class RegisterModel
+    public sealed class ResetPasswordModel
     {
-        [Required]
-        public string UserName { get; set; }
+        [Required] 
+        public string Token { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Compare(nameof(Password))]
+        [Compare("Password")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 

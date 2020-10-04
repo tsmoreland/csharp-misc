@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Builder;
@@ -54,10 +55,16 @@ namespace WebUI
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
             services.AddIdentity<DemoUser, IdentityRole>(options => { })
-                .AddEntityFrameworkStores<DemoDbContext>();
+                .AddEntityFrameworkStores<DemoDbContext>()
+                .AddDefaultTokenProviders(); // for things like forgot password tokens
+
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
+
+            // intented for password reset, time is arbitrary (as in I just chose a random one without much consideration for usability)
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+                options.TokenLifespan = TimeSpan.FromMinutes(30)); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
