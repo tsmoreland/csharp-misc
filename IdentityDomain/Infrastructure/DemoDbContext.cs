@@ -13,10 +13,11 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IdentityDomain.Infrastructure
 {
-    public sealed class DemoDbContext : IdentityDbContext<User>
+    public sealed class DemoDbContext : IdentityDbContext<DemoUser>
     {
         public DemoDbContext(DbContextOptions options)
             : base(options)
@@ -24,21 +25,17 @@ namespace IdentityDomain.Infrastructure
             
         }
 
-        /// <inheritdoc cref="IdentityDbContext{User}.OnModelCreating"/>
+        /// <inheritdoc cref="IdentityDbContext{DemoUser}.OnModelCreating"/>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<User>(user => user.HasIndex(u => u.Role).IsUnique(false));
+            builder.Entity<DemoUser>(DemoUserBuilder);
 
-            builder.Entity<Country>(country =>
+            static void DemoUserBuilder(EntityTypeBuilder<DemoUser> userBuilder)
             {
-                country.ToTable("Countries");
-                country.HasKey(c => c.Id);
-
-                country.HasMany<User>().WithOne().HasForeignKey(u => u.CountryId).IsRequired(false);
-            });
-
+                // ... nothing to add over default... for now
+            }
         }
     }
 }

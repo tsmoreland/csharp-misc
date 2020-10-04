@@ -15,14 +15,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IdentityDomain
 {
-    public class User : IdentityUser
+    public class DemoUser : IdentityUser
     {
-        /// <remarks>
-        /// There's no benefit to this vs. claims it's just an example of how it could be done
-        /// Simple things like this would be better handled by claims
-        /// </remarks>
-        public string Role { get; set; } = "basic-user";
+        public string Locale { get; set; } = string.Empty;
 
-        public string CountryId { get; set; }
+        public string CountryId { get; set; } = string.Empty;
     }
 }

@@ -27,13 +27,13 @@ namespace WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IUserClaimsPrincipalFactory<User> _userClaimsPrincipalFactory;
+        private readonly UserManager<DemoUser> _userManager;
+        private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
-            UserManager<User> userManager, 
-            IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory,
+            UserManager<DemoUser> userManager, 
+            IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
             ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -67,10 +67,12 @@ namespace WebUI.Controllers
                 return Redirect(nameof(RegisterSuccess));
             }
 
-            user = new User
+            user = new DemoUser
             {
                 Id =  Guid.NewGuid().ToString(),
                 UserName =  model.UserName,
+                Locale = "en-CA",
+                CountryId = "CA", // Hack until we have a country manager to import this, or better yet let it be configured on the registration page - that or allow it to be optional
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
