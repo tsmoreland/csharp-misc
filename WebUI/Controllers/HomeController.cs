@@ -13,10 +13,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityDomain;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -80,20 +78,30 @@ namespace WebUI.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                return Redirect(nameof(RegisterSuccess));
-            }
+            if (!result.Succeeded) 
+                return View();
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
+                Request.Scheme);
+            _logger.LogDebug($"Todo: send {confirmEmailUrl} to {user.Email}");
 
-
-            return View();
+            return Redirect(nameof(RegisterSuccess));
         }
 
         [HttpGet]
         public IActionResult RegisterSuccess()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return (user != null && (await _userManager.ConfirmEmailAsync(user, token)).Succeeded)
+                ? View("EmailConfirmed")
+                : View("Error");
         }
 
         [HttpGet]
@@ -108,6 +116,16 @@ namespace WebUI.Controllers
         {
             if (!ModelState.IsValid)
                 return View();
+
+
+#           if USING_USER_MANAGER
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+            {
+                ModelState.AddModelError(string.Empty, "E-mail is not confirmed");
+                return View()e
+            }
+#           endif
 
             // if customization is required consider moving to userManager instead of signInManager
             // while it is good signInManager can obscure a lot of the details which may be needed for more complex
@@ -133,12 +151,8 @@ namespace WebUI.Controllers
             return View();
         }
 
-
         [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+        public IActionResult ForgotPassword() => View();
 
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
@@ -164,10 +178,8 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetPassword(string token, string email)
-        {
-            return View(new ResetPasswordModel {Token = token, Email = email});
-        }
+        public IActionResult ResetPassword(string token, string email) =>
+            View(new ResetPasswordModel {Token = token, Email = email});
 
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
@@ -197,23 +209,18 @@ namespace WebUI.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult Profile()
+        public IActionResult Profile() 
         {
             // not implemented yet
             return View();
         }
 
         [HttpGet]
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [HttpGet]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error() =>
+            View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

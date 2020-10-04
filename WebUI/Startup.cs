@@ -54,9 +54,21 @@ namespace WebUI
                         connectionString, 
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentity<DemoUser, IdentityRole>(options => { })
+            // look up how to handle fata protection keys, in ase this api was spread across multiple nodes
+            // each node would need to use the same key
+            services.AddIdentity<DemoUser, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireLowercase = true; // default, just stateing it explicitly
+                    options.Password.RequireUppercase = true; // default, just stateing it explicitly
+                    options.Password.RequireNonAlphanumeric = true; // default, just stateing it explicitly
+                    options.Password.RequireDigit = true; // default, just stateing it explicitly
+                    options.SignIn.RequireConfirmedEmail = true; // default, just stateing it explicitly
+                    options.Tokens.EmailConfirmationTokenProvider = "demoEmailConfirmation";
+                })
                 .AddEntityFrameworkStores<DemoDbContext>()
-                .AddDefaultTokenProviders(); // for things like forgot password tokens
+                .AddDefaultTokenProviders() // for things like forgot password tokens
+                .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailConfirmation");
 
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
@@ -65,6 +77,9 @@ namespace WebUI
             // intented for password reset, time is arbitrary (as in I just chose a random one without much consideration for usability)
             services.Configure<DataProtectionTokenProviderOptions>(options =>
                 options.TokenLifespan = TimeSpan.FromMinutes(30)); 
+            services.Configure<EmailConfirmationTokenProviderOptions>(options =>
+                options.TokenLifespan = TimeSpan.FromDays(2)); 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
