@@ -15,11 +15,16 @@ namespace WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly IUserClaimsPrincipalFactory<User> _userClaimsPrincipalFactory;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(
+            UserManager<User> userManager, 
+            IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory,
+            ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -88,11 +93,8 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var identity = new ClaimsIdentity("Identity.Application");
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-
-                await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(identity));
+                var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                await HttpContext.SignInAsync("Identity.Application", principal);
                 return RedirectToAction(nameof(Index));
             }
 
