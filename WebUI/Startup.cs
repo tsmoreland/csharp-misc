@@ -53,8 +53,9 @@ namespace WebUI
                         connectionString, 
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentity<User, IdentityRole>(options => { })
+            services.AddIdentity<DemoUser, IdentityRole>(options => { })
                 .AddEntityFrameworkStores<DemoDbContext>();
+            services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
         }
