@@ -44,9 +44,7 @@ namespace WebUI
             services.AddIdentity<User, IdentityRole>(options => { })
                 .AddEntityFrameworkStores<DemoDbContext>();
 
-            services
-                .AddAuthentication("cookies")
-                .AddCookie("cookies", options => options.LoginPath = "/Home/Login");
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
