@@ -29,15 +29,18 @@ namespace WebUI.Controllers
     {
         private readonly UserManager<DemoUser> _userManager;
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
+        private readonly SignInManager<DemoUser> _signInManager;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
             UserManager<DemoUser> userManager, 
             IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
+            SignInManager<DemoUser> signInManager,
             ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
+            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -105,15 +108,27 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            // if customization is required consider moving to userManager instead of signInManager
+            // while it is good signInManager can obscure a lot of the details which may be needed for more complex
+            // systems
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
+            if (result.Succeeded)
             {
-                var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-                await HttpContext.SignInAsync("Identity.Application", principal);
                 return RedirectToAction(nameof(Index));
+            } 
+            else if (result.RequiresTwoFactor)
+            {
+                // ...return as error, showing this way to highlight the options ...
+            }
+            else if (result.IsLockedOut)
+            {
+                // ...return as error, showing this way to highlight the options ...
+            }
+            else if (result.IsNotAllowed)
+            {
+                // ...return as error, showing this way to highlight the options ...
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid username or password");
             return View();
         }
 
