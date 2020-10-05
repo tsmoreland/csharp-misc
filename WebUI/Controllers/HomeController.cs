@@ -15,6 +15,9 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using IdentityDomain;
+#if USING_USER_MANAGER
+using Microsoft.AspNetCore.Authentication;
+#endif
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +29,9 @@ namespace WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<DemoUser> _userManager;
+#       if USING_USER_MANAGER
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
+#       endif
         private readonly SignInManager<DemoUser> _signInManager;
         private readonly ILogger<HomeController> _logger;
 
@@ -37,7 +42,9 @@ namespace WebUI.Controllers
             ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+#           if USING_USER_MANAGER
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
+#            endif
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -120,11 +127,15 @@ namespace WebUI.Controllers
 
 #           if USING_USER_MANAGER
             var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || !(await _userManager.CheckPasswordAsync(user, model.Password)))
             {
-                ModelState.AddModelError(string.Empty, "E-mail is not confirmed");
-                return View()e
+                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                return View();
             }
+
+            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+            await HttpContext.SignInAsync("Identity.Application", principal);
+            return RedirectToAction(nameof(Index));
 #           endif
 
             // if customization is required consider moving to userManager instead of signInManager
