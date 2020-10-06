@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ScottBrady91.AspNetCore.Identity;
 
 namespace WebUI
 {
@@ -63,13 +64,18 @@ namespace WebUI
                     options.Password.RequireUppercase = true; // default, just stateing it explicitly
                     options.Password.RequireNonAlphanumeric = true; // default, just stateing it explicitly
                     options.Password.RequireDigit = true; // default, just stateing it explicitly
+
                     options.SignIn.RequireConfirmedEmail = true; // default, just stateing it explicitly
+
+                    options.User.RequireUniqueEmail = true;
+
                     options.Tokens.EmailConfirmationTokenProvider = "demoEmailConfirmation";
                 })
                 .AddEntityFrameworkStores<DemoDbContext>()
                 .AddDefaultTokenProviders() // for things like forgot password tokens
-                .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailConfirmation");
-
+                .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailConfirmation")
+                .AddPasswordValidator<DemoPasswordValidator<DemoUser>>();
+            //services.AddScoped<IPasswordHasher<DemoUser>, BCryptPasswordHasher<DemoUser>>();
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
@@ -78,8 +84,8 @@ namespace WebUI
             services.Configure<DataProtectionTokenProviderOptions>(options =>
                 options.TokenLifespan = TimeSpan.FromMinutes(30)); 
             services.Configure<EmailConfirmationTokenProviderOptions>(options =>
-                options.TokenLifespan = TimeSpan.FromDays(2)); 
-
+                options.TokenLifespan = TimeSpan.FromDays(2));
+            services.Configure<PasswordHasherOptions>(options => options.IterationCount = 100_000);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

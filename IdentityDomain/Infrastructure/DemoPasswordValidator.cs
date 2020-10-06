@@ -11,23 +11,36 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-
-using Microsoft.AspNetCore.DataProtection;
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace IdentityDomain.Infrastructure
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public sealed class EmailConfirmationTokenProvider<TUser> 
-        : DataProtectorTokenProvider<TUser>
-        where TUser : class
+    public sealed class DemoPasswordValidator<TUser> : IPasswordValidator<TUser> where TUser : class
     {
-        public EmailConfirmationTokenProvider(IDataProtectionProvider dataProtectorProvider,
-            IOptions<EmailConfirmationTokenProviderOptions> options, ILogger<EmailConfirmationTokenProvider<TUser>> logger)
-            : base(dataProtectorProvider, options, logger)
+        public DemoPasswordValidator()
         {
+        }
+
+        public async Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user, string password)
+        {
+            var errors = new List<IdentityError>();
+            var username = await manager.GetUserNameAsync(user) ?? string.Empty;
+            if (password.Contains(username, StringComparison.InvariantCultureIgnoreCase))
+                errors.Add(Error("Password cannot contain username"));
+
+            var reverseUsername = new string(username.ToCharArray().Reverse().ToArray());
+            if (password.Contains(reverseUsername, StringComparison.InvariantCultureIgnoreCase))
+                errors.Add(Error("Password cannot contain reversed username"));
+
+            return !errors.Any()
+                ? IdentityResult.Success
+                : IdentityResult.Failed(errors.ToArray());
+
+            static IdentityError Error(string description) => new IdentityError {Description = description};
         }
     }
 }
