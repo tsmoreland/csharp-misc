@@ -70,6 +70,11 @@ namespace WebUI
                     options.User.RequireUniqueEmail = true;
 
                     options.Tokens.EmailConfirmationTokenProvider = "demoEmailConfirmation";
+
+                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.MaxFailedAccessAttempts = 3;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+
                 })
                 .AddEntityFrameworkStores<DemoDbContext>()
                 .AddDefaultTokenProviders() // for things like forgot password tokens
