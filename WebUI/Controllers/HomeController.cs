@@ -11,11 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#define USING_USER_MANAGER
+
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using IdentityDomain;
 #if USING_USER_MANAGER
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 #endif
 using Microsoft.AspNetCore.Authorization;
@@ -153,7 +157,23 @@ namespace WebUI.Controllers
             }
 
             var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-            await HttpContext.SignInAsync("Identity.Application", principal);
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+            await _userManager.ResetAccessFailedCountAsync(user);
+
+            if (await _userManager.GetTwoFactorEnabledAsync(user))
+            {
+                var providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
+                if (providers.Contains("demoEmailProvider"))
+                {
+                    var token = _userManager.GenerateTwoFactorTokenAsync(user, "demoEmailProvider");
+                    _logger.LogDebug($"ToDo: send {token} to {user.Email}");
+
+                    await HttpContext.SignInAsync(IdentityConstants.TwoFactorRememberMeScheme, Store2FactorAuth(user.Id, "demoEmailProvider"));
+                    return RedirectToAction("TwoFactor");
+                }
+            }
+
             return RedirectToAction(nameof(Index));
 
             ViewResult FailWithMessage(string message)
@@ -161,14 +181,19 @@ namespace WebUI.Controllers
                 ModelState.AddModelError(string.Empty, message);
                 return View();
             }
-            await _userManager.ResetAccessFailedCountAsync(user);
-            return RedirectToAction(nameof(Index));
-
+            static ClaimsPrincipal Store2FactorAuth(string userId, string provider) =>
+                new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim("sub", userId),
+                    new Claim("amr", provider)
+                }, IdentityConstants.TwoFactorUserIdScheme));
 #           else
 
             // if customization is required consider moving to userManager instead of signInManager
             // while it is good signInManager can obscure a lot of the details which may be needed for more complex
             // systems
+
+
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
             if (result.Succeeded)
             {
@@ -248,6 +273,48 @@ namespace WebUI.Controllers
                 await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
 
             return View("ResetPasswordSuccess");
+        }
+
+        [HttpGet]
+        public IActionResult TwoFactor()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoFactor(TwoFactorModel model)
+        {
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
+            if (!result.Succeeded)
+                return Invalid("Invalid token");
+
+            if (!ModelState.IsValid)
+                return View();
+
+            var user = await _userManager.FindByIdAsync(result.Principal.FindFirstValue("sub"));
+            if (user == null)
+                return Invalid("Invalid request");
+
+            var isValid = await _userManager
+                .VerifyTwoFactorTokenAsync(user, result.Principal.FindFirstValue("amr"), model.Token);
+            if (!isValid)
+                return Invalid("Invalid token");
+
+            await CompleteSignInAsync();
+            return RedirectToAction(nameof(Index));
+
+            async Task CompleteSignInAsync()
+            {
+                await HttpContext.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
+                var  principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+            }
+
+            IActionResult Invalid(string message)
+            {
+                ModelState.AddModelError(string.Empty, message);
+                return View();
+            }
         }
 
         [HttpGet]

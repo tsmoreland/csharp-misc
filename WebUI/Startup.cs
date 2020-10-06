@@ -55,7 +55,7 @@ namespace WebUI
                         connectionString, 
                         sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
 
-            // look up how to handle fata protection keys, in ase this api was spread across multiple nodes
+            // look up how to handle data protection keys, for example an api spread across multiple nodes
             // each node would need to use the same key
             services.AddIdentity<DemoUser, IdentityRole>(options =>
                 {
@@ -69,7 +69,7 @@ namespace WebUI
 
                     options.User.RequireUniqueEmail = true;
 
-                    options.Tokens.EmailConfirmationTokenProvider = "demoEmailConfirmation";
+                    options.Tokens.EmailConfirmationTokenProvider = "demoEmailProvider";
 
                     options.Lockout.AllowedForNewUsers = true;
                     options.Lockout.MaxFailedAccessAttempts = 3;
@@ -78,7 +78,7 @@ namespace WebUI
                 })
                 .AddEntityFrameworkStores<DemoDbContext>()
                 .AddDefaultTokenProviders() // for things like forgot password tokens
-                .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailConfirmation")
+                .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailProvider")
                 .AddPasswordValidator<DemoPasswordValidator<DemoUser>>();
             //services.AddScoped<IPasswordHasher<DemoUser>, BCryptPasswordHasher<DemoUser>>();
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
@@ -90,7 +90,11 @@ namespace WebUI
                 options.TokenLifespan = TimeSpan.FromMinutes(30)); 
             services.Configure<EmailConfirmationTokenProviderOptions>(options =>
                 options.TokenLifespan = TimeSpan.FromDays(2));
-            services.Configure<PasswordHasherOptions>(options => options.IterationCount = 100_000);
+            services.Configure<PasswordHasherOptions>(options => 
+            { 
+                options.IterationCount = 100_000;
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3; // default made explicit
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
