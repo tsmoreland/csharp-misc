@@ -36,8 +36,10 @@ namespace WebUI.Controllers
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
-            UserManager<DemoUser> userManager, 
+            UserManager<DemoUser> userManager,
+#           if USING_USER_MANAGER
             IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
+#           endif
             SignInManager<DemoUser> signInManager,
             ILogger<HomeController> logger)
         {
@@ -84,9 +86,13 @@ namespace WebUI.Controllers
                 CountryId = "CA", // Hack until we have a country manager to import this, or better yet let it be configured on the registration page - that or allow it to be optional
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded) 
+            var result = await _userManager.CreateAsync(user, model.Password ?? string.Empty);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description); // should use Code to look up correct localized string
                 return View();
+            }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
@@ -127,16 +133,38 @@ namespace WebUI.Controllers
 
 #           if USING_USER_MANAGER
             var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || !(await _userManager.CheckPasswordAsync(user, model.Password)))
+            if (user == null)
+                return FailWithMessage("Invalid username or password");
+
+            if (await _userManager.IsLockedOutAsync(user))
+                return FailWithMessage("Invalid username or password");
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+                return FailWithMessage("Invalid username or password");
+
+            if (!(await _userManager.IsEmailConfirmedAsync(user)) || !(await _userManager.CheckPasswordAsync(user, model.Password)))
             {
-                ModelState.AddModelError(string.Empty, "Invalid username or password");
-                return View();
+                await _userManager.AccessFailedAsync(user);
+                if (await _userManager.IsLockedOutAsync(user))
+                {
+                    _logger.LogDebug("ToDo: send e-mail notifying the user that they are now locked out"); 
+                }
+                return FailWithMessage("Invalid username or password");
             }
 
             var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
             await HttpContext.SignInAsync("Identity.Application", principal);
             return RedirectToAction(nameof(Index));
-#           endif
+
+            ViewResult FailWithMessage(string message)
+            {
+                ModelState.AddModelError(string.Empty, message);
+                return View();
+            }
+            await _userManager.ResetAccessFailedCountAsync(user);
+            return RedirectToAction(nameof(Index));
+
+#           else
 
             // if customization is required consider moving to userManager instead of signInManager
             // while it is good signInManager can obscure a lot of the details which may be needed for more complex
@@ -160,6 +188,7 @@ namespace WebUI.Controllers
             }
 
             return View();
+#           endif
         }
 
         [HttpGet]
@@ -214,6 +243,9 @@ namespace WebUI.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 return View();
             }
+
+            if (await _userManager.IsLockedOutAsync(user))
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
 
             return View("ResetPasswordSuccess");
         }
