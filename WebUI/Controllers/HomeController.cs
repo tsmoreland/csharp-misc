@@ -162,13 +162,14 @@ namespace WebUI.Controllers
             if (await _userManager.GetTwoFactorEnabledAsync(user))
             {
                 var providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
+                if (providers.Contains(_userManager.Options.Tokens.AuthenticatorTokenProvider))
+                    return await RedirectToTwoFactor(_userManager.Options.Tokens.AuthenticatorTokenProvider);
+
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
                     _logger.LogDebug($"ToDo: send {token} to {user.Email}");
-
-                    await HttpContext.SignInAsync(IdentityConstants.TwoFactorRememberMeScheme, Store2FactorAuth(user.Id, "demoEmailProvider"));
-                    return RedirectToAction("TwoFactor");
+                    return await RedirectToTwoFactor("Email");
                 }
             }
             var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
@@ -181,6 +182,12 @@ namespace WebUI.Controllers
                     new Claim("sub", userId),
                     new Claim("amr", provider)
                 }, IdentityConstants.TwoFactorUserIdScheme));
+
+            async Task<IActionResult> RedirectToTwoFactor(string tokenProvider)
+            {
+                await HttpContext.SignInAsync(IdentityConstants.TwoFactorUserIdScheme, Store2FactorAuth(user.Id, tokenProvider));
+                return RedirectToAction("TwoFactor");
+            }
 #           else
 
             // if customization is required consider moving to userManager instead of signInManager
@@ -309,6 +316,57 @@ namespace WebUI.Controllers
                 var  principal = await _userClaimsPrincipalFactory.CreateAsync(user);
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> RegisterAuthenticator()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction(nameof(Login));
+            }
+
+            var authenticatorKey = await GetExistingOrNewAuthentictorKeyAsync();
+
+            return View(new RegisterAuthenticatorModel {AuthenticatorKey = authenticatorKey});
+
+            async Task<string> GetExistingOrNewAuthentictorKeyAsync()
+            {
+                var key = await _userManager.GetAuthenticatorKeyAsync(user);
+                if (key != null)
+                    return key;
+
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                return await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> RegisterAuthenticator(RegisterAuthenticatorModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction(nameof(Login));
+            }
+
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(user,
+                _userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
+
+            if (!isValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Code");
+                return View(model);
+            }
+
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            return View("RegisterAuthenticatorSuccess");
+
         }
 
         [HttpGet]
