@@ -21,7 +21,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ScottBrady91.AspNetCore.Identity;
 
 namespace WebUI
 {
@@ -80,7 +79,6 @@ namespace WebUI
                 .AddDefaultTokenProviders() // for things like forgot password tokens
                 .AddTokenProvider<EmailConfirmationTokenProvider<DemoUser>>("demoEmailProvider")
                 .AddPasswordValidator<DemoPasswordValidator<DemoUser>>();
-            //services.AddScoped<IPasswordHasher<DemoUser>, BCryptPasswordHasher<DemoUser>>();
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
@@ -95,6 +93,18 @@ namespace WebUI
                 options.IterationCount = 100_000;
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3; // default made explicit
             });
+
+            var clientId = Configuration["Google:ClientId"];
+            var clientSecret = Configuration["Google:ClientSecret"];
+            services
+                .AddAuthentication()
+                .AddGoogle("google", options =>
+                {
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
