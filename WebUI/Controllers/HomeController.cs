@@ -11,12 +11,16 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+//#define USING_SIGN_IN_MANAGER
+
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityDomain;
-#if USING_USER_MANAGER
 using Microsoft.AspNetCore.Authentication;
+#if !USING_SIGN_IN_MANAGER
+using System.Collections.Generic;
 #endif
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,25 +33,25 @@ namespace WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<DemoUser> _userManager;
-#       if USING_USER_MANAGER
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
-#       endif
+#       if USING_SIGN_IN_MANAGER
         private readonly SignInManager<DemoUser> _signInManager;
+#       endif
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
             UserManager<DemoUser> userManager,
-#           if USING_USER_MANAGER
             IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
-#           endif
+#           if USING_SIGN_IN_MANAGER
             SignInManager<DemoUser> signInManager,
+#           endif
             ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-#           if USING_USER_MANAGER
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
-#            endif
+#           if USING_SIGN_IN_MANAGER
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+#           endif
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -131,7 +135,7 @@ namespace WebUI.Controllers
                 return View();
 
 
-#           if USING_USER_MANAGER
+#           if !USING_SIGN_IN_MANAGER
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
                 return FailWithMessage("Invalid username or password");
@@ -152,23 +156,50 @@ namespace WebUI.Controllers
                 return FailWithMessage("Invalid username or password");
             }
 
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-            await HttpContext.SignInAsync("Identity.Application", principal);
-            return RedirectToAction(nameof(Index));
 
-            ViewResult FailWithMessage(string message)
-            {
-                ModelState.AddModelError(string.Empty, message);
-                return View();
-            }
             await _userManager.ResetAccessFailedCountAsync(user);
+
+            if (await _userManager.GetTwoFactorEnabledAsync(user))
+            {
+                var providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
+                if (providers.Contains(_userManager.Options.Tokens.AuthenticatorTokenProvider))
+                    return await RedirectToTwoFactor(_userManager.Options.Tokens.AuthenticatorTokenProvider);
+
+                if (providers.Contains("Email"))
+                {
+                    var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                    _logger.LogDebug($"ToDo: send {token} to {user.Email}");
+                    return await RedirectToTwoFactor("Email");
+                }
+            }
+            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
             return RedirectToAction(nameof(Index));
 
+            static ClaimsPrincipal Store2FactorAuth(string userId, string provider) =>
+                new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim("sub", userId),
+                    new Claim("amr", provider)
+                }, IdentityConstants.TwoFactorUserIdScheme));
+
+            async Task<IActionResult> RedirectToTwoFactor(string tokenProvider)
+            {
+                await HttpContext.SignInAsync(IdentityConstants.TwoFactorUserIdScheme, Store2FactorAuth(user.Id, tokenProvider));
+                return RedirectToAction("TwoFactor");
+            }
 #           else
 
             // if customization is required consider moving to userManager instead of signInManager
             // while it is good signInManager can obscure a lot of the details which may be needed for more complex
             // systems
+
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+                return FailWithMessage("Invalid username or password");
+
+            // TODO: determine how to setup 2FA using signInManager
+
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
             if (result.Succeeded)
             {
@@ -189,6 +220,7 @@ namespace WebUI.Controllers
 
             return View();
 #           endif
+
         }
 
         [HttpGet]
@@ -251,6 +283,93 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        public IActionResult TwoFactor()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoFactor(TwoFactorModel model)
+        {
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
+            if (!result.Succeeded)
+                return FailWithMessage("Invalid token");
+
+            if (!ModelState.IsValid)
+                return View();
+
+            var user = await _userManager.FindByIdAsync(result.Principal.FindFirstValue("sub"));
+            if (user == null)
+                return FailWithMessage("Invalid request");
+
+            var isValid = await _userManager
+                .VerifyTwoFactorTokenAsync(user, result.Principal.FindFirstValue("amr"), model.Token);
+            if (!isValid)
+                return FailWithMessage("Invalid token");
+
+            await CompleteSignInAsync();
+            return RedirectToAction(nameof(Index));
+
+            async Task CompleteSignInAsync()
+            {
+                await HttpContext.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
+                var  principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> RegisterAuthenticator()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction(nameof(Login));
+            }
+
+            var authenticatorKey = await GetExistingOrNewAuthentictorKeyAsync();
+
+            return View(new RegisterAuthenticatorModel {AuthenticatorKey = authenticatorKey});
+
+            async Task<string> GetExistingOrNewAuthentictorKeyAsync()
+            {
+                var key = await _userManager.GetAuthenticatorKeyAsync(user);
+                if (key != null)
+                    return key;
+
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                return await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> RegisterAuthenticator(RegisterAuthenticatorModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction(nameof(Login));
+            }
+
+            var isValid = await _userManager.VerifyTwoFactorTokenAsync(user,
+                _userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
+
+            if (!isValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Code");
+                return View(model);
+            }
+
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            return View("RegisterAuthenticatorSuccess");
+
+        }
+
+        [HttpGet]
         [Authorize]
         public IActionResult Profile() 
         {
@@ -265,5 +384,11 @@ namespace WebUI.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() =>
             View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+        private ViewResult FailWithMessage(string message)
+        {
+            ModelState.AddModelError(string.Empty, message);
+            return View();
+        }
     }
 }
