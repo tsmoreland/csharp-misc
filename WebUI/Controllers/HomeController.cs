@@ -370,6 +370,60 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        public IActionResult ExternalLogin(string provider)
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(ExternalLoginCallback)),
+                Items = {{"scheme", provider}}
+            };
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback()
+        {
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            var externalUserId = result.Principal.FindFirstValue("sub")
+                                 ?? result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)
+                                 ?? string.Empty; // alternately throw exception because it's invalid
+            var provider = result.Properties.Items["scheme"] ?? string.Empty;
+
+            if (string.IsNullOrEmpty(externalUserId))
+                return View("Error");
+
+            var user = await _userManager.FindByLoginAsync(provider, externalUserId);
+            if (user != null)
+                return await CompleteSignin();
+
+            var email = result.Principal.FindFirstValue("email") ??
+                        result.Principal.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+                return View(nameof(Error));
+
+            user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new DemoUser {UserName = email, Email = email};
+                await _userManager.CreateAsync(user);
+            }
+            await _userManager.AddLoginAsync(user,
+                new UserLoginInfo(provider, externalUserId, provider));
+
+
+            return await CompleteSignin();
+
+            async Task<IActionResult> CompleteSignin()
+            {
+                await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+
+        [HttpGet]
         [Authorize]
         public IActionResult Profile() 
         {
