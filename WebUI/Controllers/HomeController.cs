@@ -47,6 +47,8 @@ namespace WebUI.Controllers
 #           endif
             ILogger<HomeController> logger)
         {
+            SignInManager<DemoUser> s;
+
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
 #           if USING_SIGN_IN_MANAGER
@@ -420,6 +422,17 @@ namespace WebUI.Controllers
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
+
+            return RedirectToAction(nameof(Index));
         }
 
 
