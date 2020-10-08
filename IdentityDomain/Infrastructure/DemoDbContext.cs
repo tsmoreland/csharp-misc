@@ -31,11 +31,18 @@ namespace IdentityDomain.Infrastructure
             base.OnModelCreating(builder);
 
             builder.Entity<DemoUser>(DemoUserBuilder);
+            builder.Entity<Country>().HasData(
+                new Country { Id = "NUL", Name = "None" },
+                new Country { Id = "CAN", Name = "Canada" },
+                new Country { Id = "GBR", Name = "United Kingdom" },
+                new Country { Id = "USA", Name = "United States" }
+            );
 
             static void DemoUserBuilder(EntityTypeBuilder<DemoUser> userBuilder)
             {
-                // ... nothing to add over default... for now
+                userBuilder.Property(u => u.CountryId).IsRequired();
             }
         }
+
     }
 }

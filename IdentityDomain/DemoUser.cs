@@ -19,6 +19,7 @@ namespace IdentityDomain
     {
         public string Locale { get; set; } = string.Empty;
 
-        public string CountryId { get; set; } = string.Empty;
+        public string CountryId { get; set; } = Country.None.Id;
+        public Country Country { get; set; } = Country.None;
     }
 }

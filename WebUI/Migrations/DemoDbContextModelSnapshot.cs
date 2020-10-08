@@ -16,6 +16,42 @@ namespace WebUI.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.8");
 
+            modelBuilder.Entity("IdentityDomain.Country", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Country");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "NUL",
+                            Name = "None"
+                        },
+                        new
+                        {
+                            Id = "CAN",
+                            Name = "Canada"
+                        },
+                        new
+                        {
+                            Id = "GBR",
+                            Name = "United Kingdom"
+                        },
+                        new
+                        {
+                            Id = "USA",
+                            Name = "United States"
+                        });
+                });
+
             modelBuilder.Entity("IdentityDomain.DemoUser", b =>
                 {
                     b.Property<string>("Id")
@@ -77,6 +113,8 @@ namespace WebUI.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -214,6 +252,15 @@ namespace WebUI.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("IdentityDomain.DemoUser", b =>
+                {
+                    b.HasOne("IdentityDomain.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

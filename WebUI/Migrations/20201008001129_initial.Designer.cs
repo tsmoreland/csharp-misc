@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebUI.Migrations
 {
     [DbContext(typeof(DemoDbContext))]
-    [Migration("20201004013244_initial")]
+    [Migration("20201008001129_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,6 +17,42 @@ namespace WebUI.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.8");
+
+            modelBuilder.Entity("IdentityDomain.Country", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Country");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "NUL",
+                            Name = "None"
+                        },
+                        new
+                        {
+                            Id = "CAN",
+                            Name = "Canada"
+                        },
+                        new
+                        {
+                            Id = "GBR",
+                            Name = "United Kingdom"
+                        },
+                        new
+                        {
+                            Id = "USA",
+                            Name = "United States"
+                        });
+                });
 
             modelBuilder.Entity("IdentityDomain.DemoUser", b =>
                 {
@@ -79,6 +115,8 @@ namespace WebUI.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -216,6 +254,15 @@ namespace WebUI.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("IdentityDomain.DemoUser", b =>
+                {
+                    b.HasOne("IdentityDomain.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
