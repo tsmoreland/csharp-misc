@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -29,17 +30,26 @@ namespace IdentityDomain.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            const string schema = "demo";
 
-            builder.Entity<DemoUser>(DemoUserBuilder);
+            builder.Entity<Country>().ToTable("Countries", schema);
             builder.Entity<Country>().HasData(
-                new Country { Id = "NUL", Name = "None" },
+                Country.None,
                 new Country { Id = "CAN", Name = "Canada" },
                 new Country { Id = "GBR", Name = "United Kingdom" },
                 new Country { Id = "USA", Name = "United States" }
             );
+            builder.Entity<DemoUser>(DemoUserBuilder);
+            builder.Entity<IdentityRole>().ToTable("Role", schema);
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims", schema);
+            builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles", schema);
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims", schema);
+            builder.Entity<IdentityUserLogin<string>>().ToTable("Logins", schema);
+            builder.Entity<IdentityUserToken<string>>().ToTable("Tokens", schema);
 
             static void DemoUserBuilder(EntityTypeBuilder<DemoUser> userBuilder)
             {
+                userBuilder.ToTable("DemoUsers", schema);
                 userBuilder.Property(u => u.CountryId).IsRequired();
             }
         }

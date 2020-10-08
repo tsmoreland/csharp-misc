@@ -47,12 +47,20 @@ namespace WebUI
             // - In-memory: Data Source=:memory:
             // - Shared in-memory: Data Source=Sharable;Mode=Memory;Cache=Shared
             // reference: https://docs.microsoft.com/en-us/dotnet/standard/data/sqlite/connection-strings
-            const string connectionString = "Data Source=identityDemo.db;Cache=Shared";
             services
-                .AddDbContext<DemoDbContext>(options => 
-                    options.UseSqlite(
-                        connectionString, 
-                        sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly)));
+                .AddDbContext<DemoDbContext>(options =>
+                {
+#if DEBUGGING_MIGRATIONS
+                    options.EnableSensitiveDataLogging();
+#endif
+#if USE_SQL_LITE
+                    const string connectionString = "Data Source=identityDemo.db;Cache=Shared";
+                    options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
+#else
+                    var connectionString = Configuration["IdentityConnectionString"];
+                    options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
+#endif
+                });
 
             // look up how to handle data protection keys, for example an api spread across multiple nodes
             // each node would need to use the same key
