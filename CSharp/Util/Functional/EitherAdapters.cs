@@ -35,10 +35,8 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> either,
             Func<TRight, TNewRight> selector)
         {
-            if (either == null!)
-                throw new ArgumentNullException(nameof(either));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
+            GuardAgainst.ArgumentBeingNull(either, nameof(either));
+            GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
 
             return either switch
             {
@@ -59,10 +57,8 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TRight, TRight> either,
             Func<TRight, Either<TLeft, TNewRight>> selector)
         {
-            if (either == null!)
-                throw new ArgumentNullException(nameof(either));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
+            GuardAgainst.ArgumentBeingNull(either, nameof(either));
+            GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
 
             return either switch
             {
@@ -82,10 +78,8 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TRight> Select<TLeft, TRight>(this Either<TLeft, TRight> either,
             Func<TRight, TLeft> selector)
         {
-            if (either == null!)
-                throw new ArgumentNullException(nameof(either));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
+            GuardAgainst.ArgumentBeingNull(either, nameof(either));
+            GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
 
             return either switch
             {
