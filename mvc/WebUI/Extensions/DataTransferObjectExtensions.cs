@@ -11,13 +11,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using Microsoft.AspNetCore.Mvc;
+using IdentityDomain;
+using IdentityDomain.Infrastructure;
+using WebUI.Models;
 
-namespace WebUI.Controllers
+namespace WebUI.Extensions
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DataController : ControllerBase
+    public static class DataTransferObjectExtensions
     {
+        public static CountryModel ToModel(this Country country)
+        {
+            GuardAgainst.ArgumentBeingNull(country);
+
+            return new CountryModel {Id = country.Id, Name = country.Name};
+        }
     }
 }

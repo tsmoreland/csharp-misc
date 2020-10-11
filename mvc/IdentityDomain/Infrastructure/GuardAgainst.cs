@@ -11,16 +11,18 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Diagnostics;
+using System;
+using System.Runtime.CompilerServices;
 
-namespace IdentityDomain
+namespace IdentityDomain.Infrastructure
 {
-    [DebuggerDisplay("{Id}")]
-    public class Country
+    public static class GuardAgainst
     {
-        public static Country None { get; } = new Country {Id = "NUL", Name = "None"};
-
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
+        public static void ArgumentBeingNull(object? argument,
+            [CallerArgumentExpression("argument")] string argumentName = "")
+        {
+            if (argument == null)
+                throw new ArgumentNullException(argumentName);
+        }
     }
 }

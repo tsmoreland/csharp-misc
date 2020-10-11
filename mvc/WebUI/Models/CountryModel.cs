@@ -11,15 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Diagnostics;
-
-namespace IdentityDomain
+namespace WebUI.Models
 {
-    [DebuggerDisplay("{Id}")]
-    public class Country
+    public class CountryModel
     {
-        public static Country None { get; } = new Country {Id = "NUL", Name = "None"};
-
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
     }

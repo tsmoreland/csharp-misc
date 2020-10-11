@@ -26,6 +26,8 @@ namespace IdentityDomain.Infrastructure
             
         }
 
+        public DbSet<Country> Countries { get; set; } = null!; 
+
         /// <inheritdoc cref="IdentityDbContext{DemoUser}.OnModelCreating"/>
         protected override void OnModelCreating(ModelBuilder builder)
         {
