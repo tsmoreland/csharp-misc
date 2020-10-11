@@ -12,6 +12,7 @@
 // 
 
 using System;
+using System.Text.Json;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +37,14 @@ namespace WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.AllowTrailingCommas = true;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+                });
 
             var migrationAssembly = GetType().Assembly.GetName().Name;
 
