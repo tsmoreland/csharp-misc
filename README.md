@@ -13,3 +13,8 @@ Utilty object library provided generic support types such as results, optionals,
 - ```Maybe<T>``` a C# equivalent of java.util.Optional<T>
 - NumericParser, class providing MaybeParse...() methods with the same similar 
 - HashCodeBuilder; builder which creates a HashCode for multiple values, similar to ```HasCode.Combine<T1>(T1 value)``` available in newer versions of .NET (dotnet standard 2.1+)
+
+## Acknowledgements
+
+Either class based primarily on examples given during https://app.pluralsight.com/library/courses/making-functional-csharp
+by [Zoran Horvat|http://twitter.com/zoranh75]
