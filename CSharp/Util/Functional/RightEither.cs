@@ -13,17 +13,11 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util.Functional
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TLeft"></typeparam>
-    /// <typeparam name="TRight"></typeparam>
-    /// <remarks>
-    /// based on examples from https://app.pluralsight.com/library/courses/making-functional-csharp
-    /// </remarks>
+    /// <inheritdoc/>
     public sealed class RightEither<TLeft, TRight> : Either<TLeft, TRight>
     {
         /// <summary>
@@ -51,6 +45,8 @@ namespace Moreland.CSharp.Util.Functional
         /// </exception>
         [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static Either class")]
         public static implicit operator TRight(RightEither<TLeft, TRight> either) =>
-            either.ToRightValue();
+            either
+                .ToRightValue()
+                .ValueOrThrow(() => new ArgumentException(ProjectResources.BadEitherAccessLeft));
     }
 }

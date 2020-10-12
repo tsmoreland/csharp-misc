@@ -13,6 +13,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util.Functional
@@ -23,71 +24,78 @@ namespace Moreland.CSharp.Util.Functional
     public static class Either
     {
         /// <summary>
-        /// 
+        /// Constructs an <see cref="Either{TLeft,TRight}"/> from <paramref name="value"/>
         /// </summary>
-        /// <typeparam name="TLeft"></typeparam>
-        /// <typeparam name="TRight"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="value"><typeparamref name="TLeft"/> value contained within <see cref="Either{TLeft,TRight}"/></param>
+        /// <returns>An <see cref="Either{TLeft,TRight}"/> constructed from <paramref name="value"/></returns>
         public static Either<TLeft, TRight> From<TLeft, TRight>(TLeft value) =>
             new LeftEither<TLeft, TRight>(value);
 
         /// <summary>
-        /// 
+        /// Constructs an <see cref="Either{TLeft,TRight}"/> from <paramref name="value"/>
         /// </summary>
-        /// <typeparam name="TLeft"></typeparam>
-        /// <typeparam name="TRight"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="value"><typeparamref name="TRight"/> value contained within <see cref="Either{TLeft,TRight}"/></param>
+        /// <returns>An <see cref="Either{TLeft,TRight}"/> constructed from <paramref name="value"/></returns>
         public static Either<TLeft, TRight> From<TLeft, TRight>(TRight value) =>
             new RightEither<TLeft, TRight>(value);
 
         /// <summary>
-        /// 
+        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
         /// </summary>
-        /// <param name="either"></param>
-        /// <returns></returns>
-        public static TLeft ToLeftValue<TLeft, TRight>(this Either<TLeft, TRight> either)
-        {
-            if (either is LeftEither<TLeft, TRight> left)
-                return left.Value;
-            throw new ArgumentException(ProjectResources.BadEitherAccessLeft, nameof(either));
-        }
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
+        /// <returns>
+        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
+        /// <see cref="Maybe.Empty{TLeft}"/>
+        /// </returns>
+        public static Maybe<TLeft> ToLeftValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
+            (source is LeftEither<TLeft, TRight> left)
+                ? Maybe.Of(left.Value)
+                : Maybe.Empty<TLeft>(); 
+
         /// <summary>
-        /// 
+        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
         /// </summary>
-        /// <param name="either"></param>
-        /// <returns></returns>
-        public static TRight ToRightValue<TLeft, TRight>(this Either<TLeft, TRight> either)
-        {
-            if (either is RightEither<TLeft, TRight> right)
-                return right.Value;
-            throw new ArgumentException(ProjectResources.BadEitherAccessRight, nameof(either));
-        }
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
+        /// <returns>
+        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
+        /// <see cref="Maybe.Empty{TRight}"/>
+        /// </returns>
+        public static Maybe<TRight> ToRightValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
+            (source is RightEither<TLeft, TRight> right)
+                ? Maybe.Of(right.Value)
+                : Maybe.Empty<TRight>();
     }
 
     /// <summary>
-    /// 
+    /// container storing one of two possible values
     /// </summary>
-    /// <typeparam name="TLeft"></typeparam>
-    /// <typeparam name="TRight"></typeparam>
+    /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+    /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
     /// <remarks>
     /// based on examples from https://app.pluralsight.com/library/courses/making-functional-csharp
     /// </remarks>
     public abstract class Either<TLeft, TRight>
     {
         /// <summary>
-        /// 
+        /// implicit conversion operator converting from <typeparamref name="TLeft"/>
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">value to contain</param>
         [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static class Either")]
         public static implicit operator Either<TLeft, TRight>(TLeft value) =>
             Either.From<TLeft, TRight>(value);
 
         /// <summary>
-        /// 
+        /// implicit conversion operator converting from <typeparamref name="TRight"/>
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">value to contain</param>
         [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static class Either")]
         public static implicit operator Either<TLeft, TRight>(TRight value) =>
             Either.From<TLeft, TRight>(value);
