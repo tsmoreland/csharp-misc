@@ -97,5 +97,50 @@ namespace Moreland.CSharp.Util.Functional
                 _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
             };
         }
+
+        /// <summary>
+        /// Reducers <paramref name="source"/> to <typeparamref name="TLeft"/> either
+        /// directly or using <paramref name="reducer"/>
+        /// </summary>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to reduce</param>
+        /// <param name="reducer">reduce function to convert <typeparamref name="TRight"/> to <typeparamref name="TLeft"/></param>
+        /// <returns><typeparamref name="TLeft"/></returns>
+        public static TLeft Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TRight, TLeft> reducer)
+        {
+            GuardAgainst.ArgumentBeingNull(source, nameof(source));
+            GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
+
+            return source switch
+            {
+                LeftEither<TLeft, TRight> left => left.Value,
+                RightEither<TLeft, TRight> right => reducer(right.Value),
+                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
+            };
+        }
+
+        /// <summary>
+        /// Reducers <paramref name="source"/> to <typeparamref name="TLeft"/> either
+        /// directly or using <paramref name="reducer"/>
+        /// </summary>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to reduce</param>
+        /// <param name="reducer">reduce function to convert <typeparamref name="TLeft"/> to <typeparamref name="TRight"/></param>
+        /// <returns><typeparamref name="TRight"/></returns>
+        public static TRight Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TLeft, TRight> reducer)
+        {
+            GuardAgainst.ArgumentBeingNull(source, nameof(source));
+            GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
+
+            return source switch
+            {
+                LeftEither<TLeft, TRight> left => reducer(left.Value),
+                RightEither<TLeft, TRight> right => right.Value,
+                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
+            };
+        }
+
     }
 }
