@@ -111,5 +111,6 @@ namespace Moreland.CSharp.Util.Test
             var maybeRight = _rightEither.ToRightValue();
             Assert.That(maybeRight.Value, Is.EqualTo(_rightValue));
         }
+
     }
 }

@@ -66,7 +66,7 @@ namespace Moreland.CSharp.Util.Functional
         /// <exception cref="ArgumentException">
         /// if <paramref name="source"/> is not a <see cref="LeftEither{TLeft,TRight}"/> or <see cref="RightEither{TLeft,TRight}"/>
         /// </exception>
-        public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TRight, TRight> source,
+        public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> source,
             Func<TRight, Either<TLeft, TNewRight>> selector)
         {
             GuardAgainst.ArgumentBeingNull(source, nameof(source));
@@ -76,33 +76,6 @@ namespace Moreland.CSharp.Util.Functional
             {
                 RightEither<TLeft, TRight> right => selector(right),
                 LeftEither<TLeft, TRight> left => Either.From<TLeft, TNewRight>(left),
-                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
-            };
-        }
-        /// <summary>
-        /// Projects source into a new value
-        /// </summary>
-        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <param name="source">source to invoke transform function on</param>
-        /// <param name="selector">transform function to apply</param>
-        /// <returns>An <see cref="Either{TLeft,TNewRight}"/> resulting from invoking the transform function </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> or <paramref name="selector"/> is <c>null</c>
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// if <paramref name="source"/> is not a <see cref="LeftEither{TLeft,TRight}"/> or <see cref="RightEither{TLeft,TRight}"/>
-        /// </exception>
-        public static Either<TLeft, TRight> Select<TLeft, TRight>(this Either<TLeft, TRight> source,
-            Func<TRight, TLeft> selector)
-        {
-            GuardAgainst.ArgumentBeingNull(source, nameof(source));
-            GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
-
-            return source switch
-            {
-                RightEither<TLeft, TRight> right => Either.From<TLeft, TRight>(selector(right)),
-                LeftEither<TLeft, TRight> left => Either.From<TLeft, TRight>(left),
                 _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
             };
         }
