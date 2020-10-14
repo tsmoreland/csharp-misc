@@ -12,7 +12,10 @@
 // 
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,24 +28,29 @@ namespace WebUI.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
-        private readonly DemoDbContext _db;
+        private readonly IDemoRepository _repository;
         private readonly ILogger<CountriesController> _logger;
 
-        public CountriesController(DemoDbContext db, ILogger<CountriesController> logger)
+        public CountriesController(IDemoRepository repository, ILogger<CountriesController> logger)
         {
-            _db = db ?? throw new ArgumentNullException(nameof(db));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _db.Countries.ToArrayAsync());
+        public async Task<IActionResult> GetAll()
+        {
+            var countries = new List<Country>();
+            await foreach (var country in _repository.GetAllCountriesAsync())
+                countries.Add(country);
+            return Ok(countries);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
             id = id?.ToUpperInvariant() ?? string.Empty;
-            var country = await _db.Countries.FirstOrDefaultAsync(c => c.Id == id);
+            var country = await _repository.FindByIdAsync(id, CancellationToken.None);
             return country != null
                 ? (IActionResult) Ok(country.ToModel())
                 : NotFound();

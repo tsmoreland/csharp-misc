@@ -69,6 +69,7 @@ namespace WebUI
                     options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
 #endif
                 });
+            services.AddScoped<IDemoRepository, DemoRepository>();
 
             // look up how to handle data protection keys, for example an api spread across multiple nodes
             // each node would need to use the same key
