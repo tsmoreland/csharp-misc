@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,24 @@ namespace IdentityDomain.Infrastructure
 
             if (!string.IsNullOrEmpty(user.Locale))
                 identity.AddClaim(new Claim("locale", user.Locale));
+            if (!string.IsNullOrEmpty(user.CountryId))
+                identity.AddClaim(new Claim("country", user.CountryId));
+
+            // random claims to increase size to see effect
+            identity.AddClaim(new Claim("DayOfTheWeek", DateTime.Now.DayOfWeek.ToString()));
+            identity.AddClaim(new Claim("DayOfYear", DateTime.Now.DayOfYear.ToString()));
+            identity.AddClaim(new Claim("Year", DateTime.Now.Year.ToString()));
+            identity.AddClaim(new Claim("Month", DateTime.Now.Month.ToString()));
+            identity.AddClaim(new Claim("A", "Alpha"));
+            identity.AddClaim(new Claim("B", "Bravo"));
+            identity.AddClaim(new Claim("C", "Charlie"));
+            identity.AddClaim(new Claim("D", "Delta"));
+            identity.AddClaim(new Claim("E", "Echo"));
+            identity.AddClaim(new Claim("F", "Foxtrot"));
+            identity.AddClaim(new Claim("G", "Golf"));
+            identity.AddClaim(new Claim("H", "Hotel"));
+            identity.AddClaim(new Claim("I", "India"));
+            identity.AddClaim(new Claim("J", "Juliet"));
             return identity;
         }
     }

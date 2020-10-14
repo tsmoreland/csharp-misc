@@ -31,7 +31,6 @@ namespace IdentityDomain.Infrastructure
 
         public async Task<Country?> FindByIdAsync(string id, CancellationToken cancellationToken) =>
             await _context.Countries
-                .DefaultIfEmpty((Country?) null!)
                 .SingleOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         public IAsyncEnumerable<Country> GetAllCountriesAsync() =>

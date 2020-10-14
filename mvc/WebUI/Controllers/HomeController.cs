@@ -16,8 +16,10 @@
 using System;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using IdentityDomain;
+using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 #if !USING_SIGN_IN_MANAGER
 using System.Collections.Generic;
@@ -34,9 +36,10 @@ namespace WebUI.Controllers
     {
         private readonly UserManager<DemoUser> _userManager;
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
-#       if USING_SIGN_IN_MANAGER
+        private readonly IDemoRepository _repository;
+#if USING_SIGN_IN_MANAGER
         private readonly SignInManager<DemoUser> _signInManager;
-#       endif
+#endif
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
@@ -45,15 +48,17 @@ namespace WebUI.Controllers
 #           if USING_SIGN_IN_MANAGER
             SignInManager<DemoUser> signInManager,
 #           endif
+            IDemoRepository repository,
             ILogger<HomeController> logger)
         {
             SignInManager<DemoUser> s;
 
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
-#           if USING_SIGN_IN_MANAGER
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+#if USING_SIGN_IN_MANAGER
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-#           endif
+#endif
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -89,8 +94,9 @@ namespace WebUI.Controllers
                 UserName =  model.UserName,
                 Email = model.Email,
                 Locale = "en-CA",
-                CountryId = "CA", // Hack until we have a country manager to import this, or better yet let it be configured on the registration page - that or allow it to be optional
+                Country = await _repository.FindByIdAsync("CAN", CancellationToken.None) ?? Country.None,
             };
+            user.CountryId = user.Country?.Id ?? Country.None.Id;
 
             var result = await _userManager.CreateAsync(user, model.Password ?? string.Empty);
             if (!result.Succeeded)
