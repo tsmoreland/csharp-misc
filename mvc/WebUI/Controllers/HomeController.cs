@@ -99,6 +99,7 @@ namespace WebUI.Controllers
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
             _logger.LogInformation($"Todo: send {confirmEmailUrl} to {user.Email}");
+            TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
         }
@@ -206,7 +207,6 @@ namespace WebUI.Controllers
                 _logger.LogInformation($"ToDo: send message to {model.Email} informing them that they do not have an account");
             }
 
-            // not convinced of this, thinking this should redirect to success page
             return View("ResetPasswordRequestSuccess");
         }
 
