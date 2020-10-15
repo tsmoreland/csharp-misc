@@ -1,4 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using IdentityDomain
+
+@inject SignInManager<DemoUser> SignInManager;
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +23,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (SignInManager.IsSignedIn(User))
                     {
                         <form method="post" asp-controller="Home" asp-action="Logout" class="nav-item">
                             <input type="submit" value="Logout" class="btn btn-link nav-link text-dark"/>
@@ -31,7 +36,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (!User.Identity.IsAuthenticated)
+                        @if (!SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Register">Register</a>
@@ -40,7 +45,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                             </li>
                         }
-                        @if (User.Identity.IsAuthenticated)
+                        @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Profile">Profile</a>

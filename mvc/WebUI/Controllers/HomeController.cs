@@ -11,8 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-//#define USING_SIGN_IN_MANAGER
-
 using System;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -21,9 +19,8 @@ using System.Threading.Tasks;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
-#if !USING_SIGN_IN_MANAGER
 using System.Collections.Generic;
-#endif
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,29 +33,21 @@ namespace WebUI.Controllers
     {
         private readonly UserManager<DemoUser> _userManager;
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
-        private readonly IDemoRepository _repository;
-#if USING_SIGN_IN_MANAGER
         private readonly SignInManager<DemoUser> _signInManager;
-#endif
+        private readonly IDemoRepository _repository;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
             UserManager<DemoUser> userManager,
             IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
-#           if USING_SIGN_IN_MANAGER
             SignInManager<DemoUser> signInManager,
-#           endif
             IDemoRepository repository,
             ILogger<HomeController> logger)
         {
-            SignInManager<DemoUser> s;
-
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-#if USING_SIGN_IN_MANAGER
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-#endif
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -96,7 +85,7 @@ namespace WebUI.Controllers
                 Locale = "en-CA",
                 Country = await _repository.FindByIdAsync("CAN", CancellationToken.None) ?? Country.None,
             };
-            user.CountryId = user.Country?.Id ?? Country.None.Id;
+            user.CountryId = user.Country.Id;
 
             var result = await _userManager.CreateAsync(user, model.Password ?? string.Empty);
             if (!result.Succeeded)
@@ -109,7 +98,7 @@ namespace WebUI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
-            _logger.LogDebug($"Todo: send {confirmEmailUrl} to {user.Email}");
+            _logger.LogInformation($"Todo: send {confirmEmailUrl} to {user.Email}");
 
             return Redirect(nameof(RegisterSuccess));
         }
@@ -126,7 +115,7 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             return (user != null && (await _userManager.ConfirmEmailAsync(user, token)).Succeeded)
                 ? View("EmailConfirmed")
-                : View("Error");
+                : View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
         }
 
         [HttpGet]
@@ -143,7 +132,6 @@ namespace WebUI.Controllers
                 return View();
 
 
-#           if !USING_SIGN_IN_MANAGER
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
                 return FailWithMessage("Invalid username or password");
@@ -158,9 +146,7 @@ namespace WebUI.Controllers
             {
                 await _userManager.AccessFailedAsync(user);
                 if (await _userManager.IsLockedOutAsync(user))
-                {
-                    _logger.LogDebug("ToDo: send e-mail notifying the user that they are now locked out"); 
-                }
+                    _logger.LogInformation("ToDo: send e-mail notifying the user that they are now locked out"); 
                 return FailWithMessage("Invalid username or password");
             }
 
@@ -176,7 +162,7 @@ namespace WebUI.Controllers
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    _logger.LogDebug($"ToDo: send {token} to {user.Email}");
+                    _logger.LogInformation($"ToDo: send {token} to {user.Email}");
                     return await RedirectToTwoFactor("Email");
                 }
             }
@@ -196,39 +182,6 @@ namespace WebUI.Controllers
                 await HttpContext.SignInAsync(IdentityConstants.TwoFactorUserIdScheme, Store2FactorAuth(user.Id, tokenProvider));
                 return RedirectToAction("TwoFactor");
             }
-#           else
-
-            // if customization is required consider moving to userManager instead of signInManager
-            // while it is good signInManager can obscure a lot of the details which may be needed for more complex
-            // systems
-
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user == null)
-                return FailWithMessage("Invalid username or password");
-
-            // TODO: determine how to setup 2FA using signInManager
-
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(Index));
-            } 
-            else if (result.RequiresTwoFactor)
-            {
-                // ...return as error, showing this way to highlight the options ...
-            }
-            else if (result.IsLockedOut)
-            {
-                // ...return as error, showing this way to highlight the options ...
-            }
-            else if (result.IsNotAllowed)
-            {
-                // ...return as error, showing this way to highlight the options ...
-            }
-
-            return View();
-#           endif
-
         }
 
         [HttpGet]
@@ -246,11 +199,11 @@ namespace WebUI.Controllers
                 // redirect to e-mail sent page
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
-                _logger.LogDebug($"ToDo: send the '{resetUrl}' to {user.Email}");
+                _logger.LogInformation($"ToDo: send the '{resetUrl}' to {user.Email}");
             }
             else
             {
-                _logger.LogDebug($"ToDo: send message to {model.Email} informing them that they do not have an account");
+                _logger.LogInformation($"ToDo: send message to {model.Email} informing them that they do not have an account");
             }
 
             // not convinced of this, thinking this should redirect to success page
@@ -378,8 +331,14 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public IActionResult ExternalLogin(string provider)
+        public async Task<IActionResult> ExternalLogin(string provider)
         {
+            var schemas = (await _signInManager.GetExternalAuthenticationSchemesAsync())
+                .ToArray();
+
+            if (schemas.All(schema => schema.Name != provider))
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
+
             var properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action(nameof(ExternalLoginCallback)),
@@ -398,7 +357,7 @@ namespace WebUI.Controllers
             var provider = result.Properties.Items["scheme"] ?? string.Empty;
 
             if (string.IsNullOrEmpty(externalUserId))
-                return View("Error");
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
 
             var user = await _userManager.FindByLoginAsync(provider, externalUserId);
             if (user != null)

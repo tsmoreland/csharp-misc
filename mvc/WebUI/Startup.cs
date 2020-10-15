@@ -62,10 +62,10 @@ namespace WebUI
                     options.EnableSensitiveDataLogging();
 #endif
 #if USE_SQL_LITE
-                    const string connectionString = "Data Source=identityDemo.db;Cache=Shared";
+                    var connectionString = Configuration.GetConnectionString("IdentityDemoSQLite");
                     options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
 #else
-                    var connectionString = Configuration["IdentityConnectionString"];
+                    var connectionString = Configuration.GetConnectionString("IdentityDemoSQLServer");
                     options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
 #endif
                 });
@@ -98,7 +98,12 @@ namespace WebUI
                 .AddPasswordValidator<DemoPasswordValidator<DemoUser>>();
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Home/Login";
+                options.LogoutPath = "/Home/Logout";
+                //options.SessionStore = ... if we wanted to use session id, then we'd need to implement a store, see https://github.com/aspnet/Security/blob/22d2fe99c6fd9806b36025399a217a3a8b4e50f4/samples/CookieSessionSample/MemoryCacheTicketStore.cs
+            });
 
             // intented for password reset, time is arbitrary (as in I just chose a random one without much consideration for usability)
             services.Configure<DataProtectionTokenProviderOptions>(options =>
@@ -111,17 +116,19 @@ namespace WebUI
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3; // default made explicit
             });
 
+            var authBuilder = services
+                .AddAuthentication();
             var clientId = Configuration["Google:ClientId"];
             var clientSecret = Configuration["Google:ClientSecret"];
-            services
-                .AddAuthentication()
-                .AddGoogle("google", options =>
+            if (!string.IsNullOrEmpty(clientSecret) && !string.IsNullOrEmpty(clientId))
+                authBuilder.AddGoogle("google", options =>
                 {
                     options.ClientId = clientId;
                     options.ClientSecret = clientSecret;
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                 });
 
+            services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
