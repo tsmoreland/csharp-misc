@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
@@ -29,7 +30,7 @@ namespace Moreland.CSharp.Util.Functional
         /// <param name="value"><typeparamref name="TLeft"/> value contained within <see cref="Either{TLeft,TRight}"/></param>
         /// <returns>An <see cref="Either{TLeft,TRight}"/> constructed from <paramref name="value"/></returns>
         public static Either<TLeft, TRight> From<TLeft, TRight>(TLeft value) =>
-            new LeftEither<TLeft, TRight>(value);
+            new Either<TLeft, TRight>(value);
 
         /// <summary>
         /// Constructs an <see cref="Either{TLeft,TRight}"/> from <paramref name="value"/>
@@ -39,7 +40,7 @@ namespace Moreland.CSharp.Util.Functional
         /// <param name="value"><typeparamref name="TRight"/> value contained within <see cref="Either{TLeft,TRight}"/></param>
         /// <returns>An <see cref="Either{TLeft,TRight}"/> constructed from <paramref name="value"/></returns>
         public static Either<TLeft, TRight> From<TLeft, TRight>(TRight value) =>
-            new RightEither<TLeft, TRight>(value);
+            new Either<TLeft, TRight>(value);
 
         /// <summary>
         /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
@@ -52,8 +53,8 @@ namespace Moreland.CSharp.Util.Functional
         /// <see cref="Maybe.Empty{TLeft}"/>
         /// </returns>
         public static Maybe<TLeft> ToLeftValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
-            (source is LeftEither<TLeft, TRight> left)
-                ? Maybe.Of(left.Value)
+            source.HasLeftValue
+                ? Maybe.Of(source.LeftValue)
                 : Maybe.Empty<TLeft>(); 
 
         /// <summary>
@@ -67,35 +68,104 @@ namespace Moreland.CSharp.Util.Functional
         /// <see cref="Maybe.Empty{TRight}"/>
         /// </returns>
         public static Maybe<TRight> ToRightValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
-            (source is RightEither<TLeft, TRight> right)
-                ? Maybe.Of(right.Value)
-                : Maybe.Empty<TRight>();
+            source.HasRightValue
+                ? Maybe.Of(source.RightValue)
+                : Maybe.Empty<TRight>(); 
     }
 
     /// <summary>
-    /// container storing one of two possible values
+    /// Value Object containing one of two possible values, either <typeparamref name="TLeft"/> or <typeparamref name="TRight"/>
     /// </summary>
-    /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-    /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-    /// <remarks>
-    /// based on examples from https://app.pluralsight.com/library/courses/making-functional-csharp
-    /// </remarks>
-    public abstract class Either<TLeft, TRight>
+    public readonly struct Either<TLeft, TRight> : IEquatable<Either<TLeft, TRight>>
     {
-        /// <summary>
-        /// implicit conversion operator converting from <typeparamref name="TLeft"/>
-        /// </summary>
-        /// <param name="value">value to contain</param>
-        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static class Either")]
-        public static implicit operator Either<TLeft, TRight>(TLeft value) =>
-            Either.From<TLeft, TRight>(value);
+        private readonly Maybe<TLeft> _left;
+        private readonly Maybe<TRight> _right;
 
         /// <summary>
-        /// implicit conversion operator converting from <typeparamref name="TRight"/>
+        /// Instantiates a new instance of the <see cref="Either{TLeft,TRight}"/> class.
         /// </summary>
-        /// <param name="value">value to contain</param>
+        /// <param name="value"><typeparamref name="TLeft"/> value</param>
+        public Either(TLeft value)
+        {
+            _left = Maybe.Of(value);
+            _right = Maybe.Empty<TRight>();
+        }
+        /// <summary>
+        /// Instantiates a new instance of the <see cref="Either{TLeft,TRight}"/> class.
+        /// </summary>
+        /// <param name="value"><typeparamref name="TRight"/> value</param>
+        public Either(TRight value)
+        {
+            _left = Maybe.Empty<TLeft>();
+            _right = Maybe.Of(value);
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if <see cref="Either{TLeft,TRight}"/> contains a <typeparamref name="TLeft"/> value.
+        /// </summary>
+        public bool HasLeftValue => _left.HasValue;
+
+        /// <summary>
+        /// Returns Left Value if present, otherwise throws exception
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// if this instance does not have a <typeparamref name="TLeft"/> value
+        /// </exception>
+        public TLeft LeftValue => _left.Value;
+
+        /// <summary>
+        /// Returns <c>true</c> if <see cref="Either{TLeft,TRight}"/> contains a <typeparamref name="TRight"/> value.
+        /// </summary>
+        public bool HasRightValue => _right.HasValue;
+
+        /// <summary>
+        /// Returns Left Value if present, otherwise throws exception
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// if this instance does not have a <typeparamref name="TRight"/> value
+        /// </exception>
+        public TRight RightValue => _right.Value;
+
+        /// <summary>
+        /// Implicitly constructs instance of <see cref="Either{TLeft,TRight}"/> from <paramref name="value"/>
+        /// </summary>
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static class Either")]
+        public static implicit operator Either<TLeft, TRight>(TLeft value) =>
+            new Either<TLeft, TRight>(value);
+
+        /// <summary>
+        /// Implicitly constructs instance of <see cref="Either{TLeft,TRight}"/> from <paramref name="value"/>
+        /// </summary>
         [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by static class Either")]
         public static implicit operator Either<TLeft, TRight>(TRight value) =>
-            Either.From<TLeft, TRight>(value);
+            new Either<TLeft, TRight>(value);
+
+        /// <summary>
+        /// Indicates whether <paramref name="first"/> and <paramref name="second"/> are equal
+        /// </summary>
+        public static bool operator ==(Either<TLeft, TRight> first, Either<TLeft, TRight> second) =>
+            first.Equals(second);
+
+        /// <summary>
+        /// Indicates whether <paramref name="first"/> and <paramref name="second"/> are not equal
+        /// </summary>
+        public static bool operator !=(Either<TLeft, TRight> first, Either<TLeft, TRight> second) =>
+            !(first == second);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) =>
+            obj is Either<TLeft, TRight> either && Equals(either);
+
+        /// <inheritdoc/>
+#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
+        public bool Equals(Either<TLeft, TRight> other) =>
+#else
+        public bool Equals([AllowNull] Either<TLeft, TRight> other) =>
+#endif
+            other != null! && _left.Equals(other._left) && _right.Equals(other._right);
+
+        /// <inheritdoc />
+        public override int GetHashCode() =>
+            HashCodeBuilder.Create(_left, _right).ToHashCode();
     }
 }

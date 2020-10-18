@@ -35,44 +35,30 @@ namespace Moreland.CSharp.Util.Test
         }
 
         [Test]
-        public void ImplicitLeftValue_ReturnsLeftValue_WhenHasLeftValue()
+        public void LeftValue_ReturnsValue_WhenHasLeftValue()
         {
-            Guid actual = (_leftEither as LeftEither<Guid, string>)!;
-            Assert.That(actual, Is.EqualTo(_leftValue));
-        }
-        [Test]
-        public void Value_ReturnsLeftValue_WhenHasLeftValue()
-        {
-            Guid actual = (_leftEither as LeftEither<Guid, string>)!.Value;
+            Guid actual = _leftEither.LeftValue;
             Assert.That(actual, Is.EqualTo(_leftValue));
         }
 
         [Test]
-        public void ImplicitRightValue_ReturnsRightValue_WhenHasRightValue()
+        public void RightValue_ReturnsValue_WhenHasRightValue()
         {
-            string actual = (_rightEither as RightEither<Guid, string>)!;
-
+            string actual = _rightEither.RightValue;
             Assert.That(actual, Is.EqualTo(_rightValue));
         }
 
         [Test]
-        public void Value_ReturnsRightValue_WhenHasRightValue()
-        {
-            string actual = (_rightEither as RightEither<Guid, string>)!.Value;
-            Assert.That(actual, Is.EqualTo(_rightValue));
-        }
-
-        [Test]
-        public void ImplicitOperator_ReturnsLeftEither_FromLeftValue()
+        public void ImplicitOperator_ReturnsEitherContainingLeftValue_FromLeftValue()
         {
             Either<Guid, string> either = _leftValue;
-            Assert.That(either, Is.InstanceOf<LeftEither<Guid, string>>());
+            Assert.That(either.HasLeftValue, Is.True);
         }
         [Test]
-        public void ImplicitOperator_ReturnsRightEither_FromRightValue()
+        public void ImplicitOperator_ReturnsEitherContainingRightValue_FromRightValue()
         {
             Either<Guid, string> either = _rightValue;
-            Assert.That(either, Is.InstanceOf<RightEither<Guid, string>>());
+            Assert.That(either.HasRightValue, Is.True);
         }
 
         [Test]

@@ -35,6 +35,7 @@ namespace Moreland.CSharp.Util.Test
             _rightEither = _rightValue;
         }
 
+        /*
         [Test]
         public void Select_NewRight_ThrowsArgumentNullException_WhenSourceIsNull()
         {
@@ -92,5 +93,6 @@ namespace Moreland.CSharp.Util.Test
 
         private static int SelectNewRight(string value) => value.Length;
         private static Either<Guid, int> SelectEither(string value) => SelectNewRight(value);
+        */
     }
 }
