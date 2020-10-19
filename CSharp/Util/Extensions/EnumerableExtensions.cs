@@ -13,7 +13,6 @@
 
 using System.Collections.Generic;
 using Moreland.CSharp.Util;
-using Moreland.CSharp.Util.Collections;
 
 // ReSharper disable once CheckNamespace
 namespace System.Linq

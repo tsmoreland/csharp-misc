@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -41,6 +42,7 @@ namespace Moreland.CSharp.Util.Test.TestData
         public static double BuildRandomDouble(params double[] exclusions) =>
             Build(buffer => BitConverter.ToDouble(buffer, 0), exclusions);
 
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Catching what is thrown, can't be any more specific")]
         public static decimal BuildRandomDecimal(params decimal[] exclusions)
         {
             decimal value;
