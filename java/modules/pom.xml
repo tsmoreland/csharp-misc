@@ -44,7 +44,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>moreland.samples.modules</groupId>
+            <groupId>moreland.samples.modules.math</groupId>
             <artifactId>math</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>

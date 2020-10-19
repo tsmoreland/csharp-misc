@@ -13,7 +13,6 @@
 
 package moreland.sample.modules.math;
 
-import moreland.sample.modules.math.integer.IntegerCalculator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +24,7 @@ public class IntegerCalculatorTest {
 
     @BeforeAll
     void beforeEach() {
-        calculator = new IntegerCalculator();
+        calculator = CalculatorFactory.BuildIntegerCalculator();
     }
 
     @Test

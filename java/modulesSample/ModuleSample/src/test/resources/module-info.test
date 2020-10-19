@@ -1,7 +1,0 @@
-// Allow deep reflection for test discovery - repeat for each test library you need
---add-opens
-  foo/foo=org.junit.platform.commons
-
-// "requires org.junit.jupiter.api"
---add-reads
-  modules=org.junit.jupiter.api

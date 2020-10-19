@@ -1,3 +1,3 @@
 module modules {
-    requires transitive math;
+    requires transitive moreland.sample.modules.math;
 }
