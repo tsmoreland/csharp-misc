@@ -42,35 +42,6 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TRight> From<TLeft, TRight>(TRight value) =>
             new Either<TLeft, TRight>(value);
 
-        /// <summary>
-        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
-        /// </summary>
-        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
-        /// <returns>
-        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
-        /// <see cref="Maybe.Empty{TLeft}"/>
-        /// </returns>
-        public static Maybe<TLeft> ToLeftValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
-            source.HasLeftValue
-                ? Maybe.Of(source.LeftValue)
-                : Maybe.Empty<TLeft>(); 
-
-        /// <summary>
-        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
-        /// </summary>
-        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
-        /// <returns>
-        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
-        /// <see cref="Maybe.Empty{TRight}"/>
-        /// </returns>
-        public static Maybe<TRight> ToRightValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
-            source.HasRightValue
-                ? Maybe.Of(source.RightValue)
-                : Maybe.Empty<TRight>(); 
     }
 
     /// <summary>

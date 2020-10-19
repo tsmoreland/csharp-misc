@@ -24,6 +24,64 @@ namespace Moreland.CSharp.Util.Functional
     public static class EitherAdapters
     {
         /// <summary>
+        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
+        /// </summary>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
+        /// <returns>
+        /// Returns <see cref="Maybe{TLeft}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
+        /// <see cref="Maybe.Empty{TLeft}"/>
+        /// </returns>
+        public static Maybe<TLeft> ToLeftValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
+            source.HasLeftValue
+                ? Maybe.Of(source.LeftValue)
+                : Maybe.Empty<TLeft>(); 
+
+        /// <summary>
+        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>
+        /// </summary>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <param name="source">source to return <typeparamref name="TLeft"/> for</param>
+        /// <returns>
+        /// Returns <see cref="Maybe{TRight}"/> if <paramref name="source"/> contains <typeparamref name="TLeft"/>;
+        /// <see cref="Maybe.Empty{TRight}"/>
+        /// </returns>
+        public static Maybe<TRight> ToRightValue<TLeft, TRight>(this Either<TLeft, TRight> source) =>
+            source.HasRightValue
+                ? Maybe.Of(source.RightValue)
+                : Maybe.Empty<TRight>(); 
+
+        /// <summary>
+        /// Transform <see cref="Either{TLeft,TRight}"/> to <typeparamref name="TResult"/> 
+        /// </summary>
+        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
+        /// <typeparam name="TResult">transform result type</typeparam>
+        /// <param name="source">source to transform</param>
+        /// <param name="fromLeft">transform function if <paramref name="source"/> contains <typeparamref name="TLeft"/></param>
+        /// <param name="fromRight">transform function if <paramref name="source"/> contains <typeparamref name="TRight"/></param>
+        /// <returns><typeparamref name="TResult"/> resulting from <paramref name="fromLeft"/> or <paramref name="fromRight"/></returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/>, <paramref name="fromLeft"/> or <paramref name="fromRight"/> are <c>null</c>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// if <see cref="Either{TLeft,TRight}.IsEmpty"/> for <paramref name="source"/> returns true
+        /// </exception>
+        public static TResult Select<TLeft, TRight, TResult>(this Either<TLeft, TRight> source, Func<TLeft, TResult> fromLeft,
+            Func<TRight, TResult> fromRight)
+        {
+            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentBeingNull(fromLeft, nameof(fromLeft));
+            GuardAgainst.ArgumentBeingNull(fromRight, nameof(fromRight));
+
+            return source.HasLeftValue
+                ? fromLeft(source.LeftValue)
+                : fromRight(source.RightValue);
+        }
+
+        /// <summary>
         /// Projects source into a new form
         /// </summary>
         /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
@@ -41,7 +99,7 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> source,
             Func<TRight, TNewRight> selector)
         {
-            GuardAgainst.ArgumentIsEmpty(source);
+            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
             
             return source.HasLeftValue
@@ -67,17 +125,24 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> source,
             Func<TRight, Either<TLeft, TNewRight>> selector)
         {
-            GuardAgainst.ArgumentIsEmpty(source);
+            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
 
             return source.HasLeftValue
                 ? Either.From<TLeft, TNewRight>(source.LeftValue)
                 : selector(source.RightValue);
         }
-        /*
+
+        /// <inheritdoc cref="Reduce{TLeft,TRight}(Either{TLeft,TRight},Func{TRight,TLeft})"/>
+        public static TLeft ValueOr<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TRight, TLeft> reducer) =>
+            Reduce(source, reducer);
+
+        /// <inheritdoc cref="Reduce{TLeft,TRight}(Either{TLeft,TRight},Func{TLeft,TRight})"/>
+        public static TRight ValueOr<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TLeft, TRight> reducer) =>
+            Reduce(source, reducer);
 
         /// <summary>
-        /// Reducers <paramref name="source"/> to <typeparamref name="TLeft"/> either
+        /// Reduces <paramref name="source"/> to <typeparamref name="TLeft"/> either
         /// directly or using <paramref name="reducer"/>
         /// </summary>
         /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
@@ -89,23 +154,20 @@ namespace Moreland.CSharp.Util.Functional
         /// <paramref name="source"/> or <paramref name="reducer"/> is <c>null</c>
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// if <paramref name="source"/> is not a <see cref="LeftEither{TLeft,TRight}"/> or <see cref="RightEither{TLeft,TRight}"/>
+        /// if <see cref="Either{TLeft,TRight}.IsEmpty"/> for <paramref name="source"/> returns true
         /// </exception>
         public static TLeft Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TRight, TLeft> reducer)
         {
-            GuardAgainst.ArgumentBeingNull(source, nameof(source));
+            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
 
-            return source switch
-            {
-                LeftEither<TLeft, TRight> left => left.Value,
-                RightEither<TLeft, TRight> right => reducer(right.Value),
-                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
-            };
+            return source.HasLeftValue
+                ? source.LeftValue
+               : reducer(source.RightValue);
         }
 
         /// <summary>
-        /// Reducers <paramref name="source"/> to <typeparamref name="TLeft"/> either
+        /// Reduces <paramref name="source"/> to <typeparamref name="TLeft"/> either
         /// directly or using <paramref name="reducer"/>
         /// </summary>
         /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
@@ -117,51 +179,17 @@ namespace Moreland.CSharp.Util.Functional
         /// <paramref name="source"/> or <paramref name="reducer"/> is <c>null</c>
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// if <paramref name="source"/> is not a <see cref="LeftEither{TLeft,TRight}"/> or <see cref="RightEither{TLeft,TRight}"/>
+        /// if <see cref="Either{TLeft,TRight}.IsEmpty"/> for <paramref name="source"/> returns true
         /// </exception>
         public static TRight Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TLeft, TRight> reducer)
         {
-            GuardAgainst.ArgumentBeingNull(source, nameof(source));
+            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
 
-            return source switch
-            {
-                LeftEither<TLeft, TRight> left => reducer(left.Value),
-                RightEither<TLeft, TRight> right => right.Value,
-                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
-            };
+            return source.HasLeftValue
+                ? reducer(source.LeftValue)
+                : source.RightValue;
         }
 
-        /// <summary>
-        /// Transform <see cref="Either{TLeft,TRight}"/> to <typeparamref name="TResult"/> 
-        /// </summary>
-        /// <typeparam name="TLeft">Primary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <typeparam name="TRight">Secondary type of the <see cref="Either{TLeft,TRight}"/></typeparam>
-        /// <typeparam name="TResult">transform result type</typeparam>
-        /// <param name="source">source to transform</param>
-        /// <param name="fromLeft">transform function if <paramref name="source"/> contains <typeparamref name="TLeft"/></param>
-        /// <param name="fromRight">transform function if <paramref name="source"/> contains <typeparamref name="TRight"/></param>
-        /// <returns><typeparamref name="TResult"/> resulting from <paramref name="fromLeft"/> or <paramref name="fromRight"/></returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/>, <paramref name="fromLeft"/> or <paramref name="fromRight"/> are <c>null</c>
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// if <paramref name="source"/> is not a <see cref="LeftEither{TLeft,TRight}"/> or <see cref="RightEither{TLeft,TRight}"/>
-        /// </exception>
-        public static TResult Case<TLeft, TRight, TResult>(this Either<TLeft, TRight> source, Func<TLeft, TResult> fromLeft,
-            Func<TRight, TResult> fromRight)
-        {
-            GuardAgainst.ArgumentBeingNull(source, nameof(source));
-            GuardAgainst.ArgumentBeingNull(fromLeft, nameof(fromLeft));
-            GuardAgainst.ArgumentBeingNull(fromRight, nameof(fromRight));
-
-            return source switch
-            {
-                LeftEither<TLeft, TRight> left => fromLeft(left.Value),
-                RightEither<TLeft, TRight> right => fromRight(right.Value),
-                _ => throw new ArgumentException(ProjectResources.UnknownEitherAccess, nameof(source))
-            };
-        }
-        */
     }
 }

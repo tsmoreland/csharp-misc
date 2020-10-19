@@ -83,8 +83,6 @@ namespace Moreland.CSharp.Util
         /// <summary>
         /// Guard check ensuring argument is not Empty as determined by IsEmpty method
         /// </summary>
-        /// <typeparam name="TLeft">type parameter of Either</typeparam>
-        /// <typeparam name="TRight">type parameter of Either</typeparam>
         /// <param name="argument">value to check</param>
         /// <param name="parameterName">name of parameter being checked</param>
         /// <exception cref="ArgumentException">
