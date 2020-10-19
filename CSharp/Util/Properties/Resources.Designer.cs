@@ -61,6 +61,24 @@ namespace Moreland.CSharp.Util.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attempt to access left from right either.
+        /// </summary>
+        internal static string BadEitherAccessLeft {
+            get {
+                return ResourceManager.GetString("BadEitherAccessLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempt to access right from left either.
+        /// </summary>
+        internal static string BadEitherAccessRight {
+            get {
+                return ResourceManager.GetString("BadEitherAccessRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value not available when query has failed.
         /// </summary>
         internal static string InvalidResultValueAccess {
@@ -84,6 +102,15 @@ namespace Moreland.CSharp.Util.Properties {
         internal static string NullValue {
             get {
                 return ResourceManager.GetString("NullValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempt to access unsupported either type.
+        /// </summary>
+        internal static string UnknownEitherAccess {
+            get {
+                return ResourceManager.GetString("UnknownEitherAccess", resourceCulture);
             }
         }
     }
