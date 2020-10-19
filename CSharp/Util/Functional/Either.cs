@@ -13,7 +13,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
+
+#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETCOREAPP2_1
+using Moreland.CSharp.Util.Modernizer;
+#endif
 
 namespace Moreland.CSharp.Util.Functional
 {
@@ -139,11 +142,7 @@ namespace Moreland.CSharp.Util.Functional
             obj is Either<TLeft, TRight> either && Equals(either);
 
         /// <inheritdoc/>
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
-        public bool Equals(Either<TLeft, TRight> other) =>
-#else
         public bool Equals([AllowNull] Either<TLeft, TRight> other) =>
-#endif
             other != null! && _left.Equals(other._left) && _right.Equals(other._right);
 
         /// <summary>

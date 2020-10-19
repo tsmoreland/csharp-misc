@@ -13,12 +13,13 @@
 
 
 using System;
-using Moreland.CSharp.Util.Functional;
 #if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
-using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
+using Moreland.CSharp.Util.Modernizer;
 #else
 using System.Runtime.CompilerServices;
 #endif
+using Moreland.CSharp.Util.Functional;
+using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
 namespace Moreland.CSharp.Util
 {
@@ -35,8 +36,8 @@ namespace Moreland.CSharp.Util
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="argument"/> is null
         /// </exception>
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
-        public static void ArgumentBeingNull<T>(T? argument, string parameterName = "")
+        public static void ArgumentBeingNull<T>(T? argument, 
+            [CallerArgumentExpression("argument")] string parameterName = "")
             where T : class
         {
             if (string.IsNullOrEmpty(parameterName))
@@ -45,14 +46,6 @@ namespace Moreland.CSharp.Util
             if (argument == null)
                 throw new ArgumentNullException(parameterName);
         }
-#else
-        public static void ArgumentBeingNull<T>(T? argument, [CallerArgumentExpression("argument")] string parameterName = "")
-            where T : class
-        {
-            if (argument == null)
-                throw new ArgumentNullException(parameterName);
-        }
-#endif
 
         /// <summary>
         /// Guard check ensuring argument is not Empty as determined by IsEmpty method
@@ -64,21 +57,15 @@ namespace Moreland.CSharp.Util
         /// <exception cref="ArgumentException">
         /// if <paramref name="argument"/> is empty
         /// </exception>
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
-        public static void ArgumentIsEmpty<TLeft, TRight>(Either<TLeft, TRight> argument,
-            string parameterName = "")
-        {
-            if (argument.IsEmpty)
-                throw new ArgumentException(parameterName);
-        }
-#else
         public static void ArgumentIsEmpty<TLeft, TRight>(Either<TLeft, TRight> argument,
             [CallerArgumentExpression("argument")] string parameterName = "")
         {
+            if (string.IsNullOrEmpty(parameterName))
+                parameterName = ProjectResources.NullValue;
+
             if (argument.IsEmpty)
                 throw new ArgumentException(parameterName);
         }
-#endif
 
         /// <summary>
         /// Guard check ensuring argument is not Empty as determined by IsEmpty method
@@ -88,20 +75,14 @@ namespace Moreland.CSharp.Util
         /// <exception cref="ArgumentException">
         /// if <paramref name="argument"/> is empty
         /// </exception>
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP2_1
-        public static void ArgumentIsEmpty(string argument,
-            string parameterName = "")
-        {
-            if (string.IsNullOrEmpty(argument))
-                throw new ArgumentException(parameterName);
-        }
-#else
         public static void ArgumentIsEmpty(string argument,
             [CallerArgumentExpression("argument")] string parameterName = "")
         {
+            if (string.IsNullOrEmpty(parameterName))
+                parameterName = ProjectResources.NullValue;
+
             if (string.IsNullOrEmpty(argument))
                 throw new ArgumentException(parameterName);
         }
-#endif
     }
 }
