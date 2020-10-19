@@ -37,6 +37,7 @@ namespace Moreland.CSharp.Util.Modernizer
         /// Storage for parameter name set in constructor, in dotnet core 3.1+ this would store the
         /// name of the parameter source 
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string ParameterName { get; }
     }
 #endif
