@@ -64,7 +64,7 @@ namespace Moreland.CSharp.Util
                 parameterName = ProjectResources.NullValue;
 
             if (argument.IsEmpty)
-                throw new ArgumentException(parameterName);
+                throw new ArgumentException(ProjectResources.InvalidEither, parameterName);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Moreland.CSharp.Util
                 parameterName = ProjectResources.NullValue;
 
             if (string.IsNullOrEmpty(argument))
-                throw new ArgumentException(parameterName);
+                throw new ArgumentException(ProjectResources.EmptyNotAllowed, parameterName);
         }
     }
 }

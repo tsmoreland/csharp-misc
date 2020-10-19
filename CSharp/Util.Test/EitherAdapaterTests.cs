@@ -26,7 +26,7 @@ namespace Moreland.CSharp.Util.Test
         private Guid _leftValue = Guid.Empty;
         private string _rightValue = string.Empty;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             _leftValue = new Guid("B2D7D513-BBB0-4320-AFFF-B28B7BC2F640");
@@ -35,37 +35,76 @@ namespace Moreland.CSharp.Util.Test
             _rightEither = _rightValue;
         }
 
+        [Test]
+        public void ToLeftValue_ReturnsMaybeWithValue_WhenHasLeftValue()
+        {
+            var maybeLeft = _leftEither.ToLeftValue();
+            Assert.That(maybeLeft.HasValue, Is.True);
+        }
+        [Test]
+        public void ToLeftValue_ReturnsEmptyMaybe_WhenHasRightValue()
+        {
+            var maybeLeft = _rightEither.ToLeftValue();
+            Assert.That(maybeLeft.HasValue, Is.False);
+        }
+        [Test]
+        public void ToLeftValue_ReturnsLeftValue_WhenHasLeftValue()
+        {
+            var maybeLeft = _leftEither.ToLeftValue();
+            Assert.That(maybeLeft.Value, Is.EqualTo(_leftValue));
+        }
+        [Test]
+        public void ToRightValue_ReturnsMaybeWithValue_WhenHasRightValue()
+        {
+            var maybeRight = _rightEither.ToRightValue();
+            Assert.That(maybeRight.HasValue, Is.True);
+        }
+
+        [Test]
+        public void ToRightValue_ReturnsEmptyMaybe_WhenHasLeftValue()
+        {
+            var maybeRight = _leftEither.ToRightValue();
+            Assert.That(maybeRight.HasValue, Is.False);
+        }
+        [Test]
+        public void ToRightValue_ReturnsRightValue_WhenHasRightValue()
+        {
+            var maybeRight = _rightEither.ToRightValue();
+            Assert.That(maybeRight.Value, Is.EqualTo(_rightValue));
+        }
+
+        [Test]
+        public void Select_NewRight_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.Select(value => 0));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Select_Either_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.Select(s => Either.From<Guid, int>(0)));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Reduce_Left_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.Reduce(guid => string.Empty));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+        [Test]
+        public void Reduce_Right_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.Reduce(str => Guid.Empty));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
         /*
-        [Test]
-        public void Select_NewRight_ThrowsArgumentNullException_WhenSourceIsNull()
-        {
-            Either<Guid, string> source = null!;
-            var ex = Assert.Throws<ArgumentNullException>(() => source.Select(value => 0));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
-        }
-        [Test]
-        public void Select_Either_ThrowsArgumentNullException_WhenSourceIsNull()
-        {
-            Either<Guid, string> source = null!;
-            var ex = Assert.Throws<ArgumentNullException>(() => source.Select(s => Either.From<Guid, int>(0)));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
-        }
-
-        [Test]
-        public void Reduce_Left_ThrowsArgumentNullException_WhenSourceIsNull()
-        {
-            Either<Guid, string> source = null!;
-            var ex = Assert.Throws<ArgumentNullException>(() => source.Reduce(guid => string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
-        }
-        [Test]
-        public void Reduce_Right_ThrowsArgumentNullException_WhenSourceIsNull()
-        {
-            Either<Guid, string> source = null!;
-            var ex = Assert.Throws<ArgumentNullException>(() => source.Reduce(str => Guid.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
-        }
-
         [Test]
         public void Select_NewRight_ReturnsTransformedContainingLeft_WhenSourceHasLeftValue()
         {

@@ -14,6 +14,7 @@
 using System;
 using Moreland.CSharp.Util.Functional;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace Moreland.CSharp.Util.Test
 {
@@ -24,15 +25,34 @@ namespace Moreland.CSharp.Util.Test
         private Either<Guid, string> _rightEither = null!;
         private Guid _leftValue = Guid.Empty;
         private string _rightValue = string.Empty;
+        private Guid _alternateLeft = Guid.Empty;
+        private string _alternateRight = string.Empty;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             _leftValue = new Guid("B2D7D513-BBB0-4320-AFFF-B28B7BC2F640");
             _leftEither = _leftValue;
             _rightValue = "ARBITRARY VALUE";
             _rightEither = _rightValue;
+            _alternateLeft = new Guid("DA839174-9043-4F2F-B2E8-00B92F03CD55");
+            _alternateRight = _alternateLeft.ToString("N");
         }
+
+        [Test]
+        public void IsEmpty_ReturnsTrue_WhenEmptyConstructorUsed()
+        {
+            Either<Guid, string> @default = new Either<Guid, string>();
+            Assert.That(@default.IsEmpty, Is.True);
+        }
+
+        [Test]
+        public void IsEmpty_ReturnsFalse_WhenHasLeftValue() =>
+            Assert.That(_leftEither.IsEmpty, Is.False);
+
+        [Test]
+        public void IsEmpty_ReturnsFalse_WhenHasRightValue() =>
+            Assert.That(_rightEither.IsEmpty, Is.False);
 
         [Test]
         public void LeftValue_ReturnsValue_WhenHasLeftValue()
@@ -40,12 +60,67 @@ namespace Moreland.CSharp.Util.Test
             Guid actual = _leftEither.LeftValue;
             Assert.That(actual, Is.EqualTo(_leftValue));
         }
+        [Test]
+        public void LeftValue_ThrowsInvalidOperationException_WhenDoesNotHaveLeftValue()
+        {
+            Assert.Throws<InvalidOperationException>(() => _ = _rightEither.LeftValue);
+        }
 
         [Test]
         public void RightValue_ReturnsValue_WhenHasRightValue()
         {
             string actual = _rightEither.RightValue;
             Assert.That(actual, Is.EqualTo(_rightValue));
+        }
+
+        [Test]
+        public void RightValue_ThrowsInvalidOperationException_WhenDoesNotHaveRightValue()
+        {
+            Assert.Throws<InvalidOperationException>(() => _ = _leftEither.RightValue);
+        }
+
+        [Test]
+        public void HasLeftValue_ReturnsTrue_WhenEitherContainsTLeft() =>
+            Assert.That(_leftEither.HasLeftValue, Is.True);
+
+        [Test]
+        public void HasLeftValue_ReturnsFalse_WhenEitherContainsTRight() =>
+            Assert.That(_rightEither.HasLeftValue, Is.False);
+
+        [Test]
+        public void HasRightValue_ReturnsTrue_WhenEitherContainsTRight() =>
+            Assert.That(_rightEither.HasRightValue, Is.True);
+
+        [Test]
+        public void HasRightValue_ReturnsFalse_WhenEitherContainsTLeft() =>
+            Assert.That(_leftEither.HasRightValue, Is.False);
+
+        [Test]
+        public void LeftValueOrDefault_ReturnsLeftvalue_WhenHasLeftValue()
+        {
+            var actual = _leftEither.LeftValueOrDefault();
+            Assert.That(actual, Is.EqualTo(_leftValue));
+        }
+        [Test]
+        public void LeftValueOrDefault_ReturnsDefault_WhenNotHasLeftValue()
+        {
+            var expected = default(Guid);
+            var actual = _rightEither.LeftValueOrDefault();
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void RightValueOrDefault_ReturnsRightvalue_WhenHasRightValue()
+        {
+            var actual = _rightEither.RightValueOrDefault();
+            Assert.That(actual, Is.EqualTo(_rightValue));
+        }
+        [Test]
+        public void RightValueOrDefault_ReturnsDefault_WhenNotHasRightValue()
+        {
+            const string expected = default!;
+            var actual = _leftEither.RightValueOrDefault();
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
@@ -61,42 +136,68 @@ namespace Moreland.CSharp.Util.Test
             Assert.That(either.HasRightValue, Is.True);
         }
 
-        [Test]
-        public void ToLeftValue_ReturnsMaybeWithValue_WhenHasLeftValue()
+        public enum EitherValueType
         {
-            var maybeLeft = _leftEither.ToLeftValue();
-            Assert.That(maybeLeft.HasValue, Is.True);
-        }
-        [Test]
-        public void ToLeftValue_ReturnsEmptyMaybe_WhenHasRightValue()
-        {
-            var maybeLeft = _rightEither.ToLeftValue();
-            Assert.That(maybeLeft.HasValue, Is.False);
-        }
-        [Test]
-        public void ToLeftValue_ReturnsLeftValue_WhenHasLeftValue()
-        {
-            var maybeLeft = _leftEither.ToLeftValue();
-            Assert.That(maybeLeft.Value, Is.EqualTo(_leftValue));
-        }
-        [Test]
-        public void ToRightValue_ReturnsMaybeWithValue_WhenHasRightValue()
-        {
-            var maybeRight = _rightEither.ToRightValue();
-            Assert.That(maybeRight.HasValue, Is.True);
-        }
-        [Test]
-        public void ToRightValue_ReturnsEmptyMaybe_WhenHasLeftValue()
-        {
-            var maybeRight = _leftEither.ToRightValue();
-            Assert.That(maybeRight.HasValue, Is.False);
-        }
-        [Test]
-        public void ToRightValue_ReturnsRightValue_WhenHasRightValue()
-        {
-            var maybeRight = _rightEither.ToRightValue();
-            Assert.That(maybeRight.Value, Is.EqualTo(_rightValue));
+            Left, 
+            Right,
         }
 
-    }
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void OperatorEquals_ReturnsTrue_WhenContainsEqualValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            var second = GetEitherUsing(type);
+
+            Assert.That(first == second, Is.True);
+        }
+
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void OperatorEquals_ReturnsFalse_WhenContainsUnequalValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            var second = GetEitherUsing(type, _alternateLeft, _alternateRight);
+
+            Assert.That(first == second, Is.False);
+        }
+
+        [Test]
+        public void OperatorEquals_ReturnsFalse_WhenContainsDifferentTypes() =>
+            Assert.That(_leftEither == _rightEither, Is.False);
+
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void OperatorNotEquals_ReturnsFalse_WhenContainsEqualValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            var second = GetEitherUsing(type);
+
+            Assert.That(first != second, Is.False);
+        }
+
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void OperatorEquals_ReturnsTrue_WhenContainsUnequalValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            var second = GetEitherUsing(type, _alternateLeft, _alternateRight);
+
+            Assert.That(first != second, Is.True);
+        }
+
+        [Test]
+        public void OperatorEquals_ReturnsTrue_WhenContainsDifferentTypes() =>
+            Assert.That(_leftEither != _rightEither, Is.True);
+
+        private Either<Guid, string> GetEitherUsing(EitherValueType type) =>
+            GetEitherUsing(type, _leftValue, _rightValue);
+        private static Either<Guid, string> GetEitherUsing(EitherValueType type, Guid leftValue, string rightValue) =>
+            type switch
+            {
+                EitherValueType.Left => leftValue,
+                EitherValueType.Right => rightValue,
+                _ => throw new InvalidTestFixtureException("Unrecongized either value type")
+            };
+    };
 }
