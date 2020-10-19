@@ -11,15 +11,26 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.math;
+package moreland.sample.modules.math;
 
+import moreland.sample.modules.math.integer.IntegerCalculator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IntegerCalculatorTest {
 
+    private Calculator<Integer> calculator;
+
+    @BeforeAll
+    void beforeEach() {
+        calculator = new IntegerCalculator();
+    }
+
     @Test
     void add_returns3_whenAdding2and1() {
-        assertTrue(true);
+        var result = calculator.add(1, 2);
+        assertEquals(3, result);
     }
 }

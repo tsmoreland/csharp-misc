@@ -1,6 +1,6 @@
-package moreland.sample.math.integer;
+package moreland.sample.modules.math.integer;
 
-import moreland.sample.math.Calculator;
+import moreland.sample.modules.math.Calculator;
 
 public class IntegerCalculator implements Calculator<Integer> {
 

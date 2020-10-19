@@ -11,9 +11,9 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.math;
+package moreland.sample.modules.math;
 
-import moreland.sample.math.integer.IntegerCalculator;
+import moreland.sample.modules.math.integer.IntegerCalculator;
 
 public final class CalculatorFactory {
 

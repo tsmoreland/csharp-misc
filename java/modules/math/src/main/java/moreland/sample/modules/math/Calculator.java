@@ -1,4 +1,4 @@
-package moreland.sample.math;
+package moreland.sample.modules.math;
 
 public interface Calculator<T> {
     T add(T a, T b);
