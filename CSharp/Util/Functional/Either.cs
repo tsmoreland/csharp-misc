@@ -100,6 +100,17 @@ namespace Moreland.CSharp.Util.Functional
             _right = Maybe.Of(value);
         }
 
+        internal Maybe<TLeft> MaybeLeftValue => _left;
+        internal Maybe<TRight> MaybeRightValue => _right;
+
+        /// <summary>
+        /// Returns <c>true</c> if this instance contains no values,
+        /// this can happen if the parameterless constructor is used
+        /// and should be considered invalid.
+        /// </summary>
+        public bool IsEmpty => 
+            _left.IsEmpty && _right.IsEmpty;
+
         /// <summary>
         /// Returns <c>true</c> if <see cref="Either{TLeft,TRight}"/> contains a <typeparamref name="TLeft"/> value.
         /// </summary>
@@ -164,8 +175,37 @@ namespace Moreland.CSharp.Util.Functional
 #endif
             other != null! && _left.Equals(other._left) && _right.Equals(other._right);
 
+        /// <summary>
+        /// Returns <typeparamref name="TLeft"/> if present, otherwise default
+        /// </summary>
+        public TLeft LeftValueOrDefault() =>
+            _left.ValueOr(default(TLeft)!);
+
+        /// <summary>
+        /// Returns <typeparamref name="TLeft"/> if present, otherwise default
+        /// </summary>
+        public TRight RightValueOrDefault() =>
+            _right.ValueOr(default(TRight)!);
+
+        /// <summary>
+        /// Returns Maybe{TLeft} of the left value, this value will be
+        /// <see cref="Maybe.Empty{TLeft}()"/> if this instance contains
+        /// <typeparamref name="TRight"/>
+        /// </summary>
+        public static implicit operator Maybe<TLeft>(Either<TLeft, TRight> source) =>
+            source._left;
+
+        /// <summary>
+        /// Returns Maybe{TLeft} of the left value, this value will be
+        /// <see cref="Maybe.Empty{TLeft}()"/> if this instance contains
+        /// <typeparamref name="TRight"/>
+        /// </summary>
+        public Maybe<TLeft> FromEither() => 
+            _left;
+
         /// <inheritdoc />
         public override int GetHashCode() =>
             HashCodeBuilder.Create(_left, _right).ToHashCode();
+
     }
 }
