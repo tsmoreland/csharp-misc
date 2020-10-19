@@ -157,21 +157,22 @@ namespace Moreland.CSharp.Util.Functional
         public TRight RightValueOrDefault() =>
             _right.ValueOr(default(TRight)!);
 
+
         /// <summary>
-        /// Returns Maybe{TLeft} of the left value, this value will be
+        /// Returns <see cref="Maybe{TLeft}"/> containing the left value, this value will be
         /// <see cref="Maybe.Empty{TLeft}()"/> if this instance contains
-        /// <typeparamref name="TRight"/>
         /// </summary>
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Named Alternative in EitherAdapters")]
         public static implicit operator Maybe<TLeft>(Either<TLeft, TRight> source) =>
             source._left;
 
         /// <summary>
-        /// Returns Maybe{TLeft} of the left value, this value will be
-        /// <see cref="Maybe.Empty{TLeft}()"/> if this instance contains
-        /// <typeparamref name="TRight"/>
+        /// Returns <see cref="Maybe{TRight}"/> containing the right value, this value will be
+        /// <see cref="Maybe.Empty{TRight}()"/> if this instance contains
         /// </summary>
-        public Maybe<TLeft> FromEither() => 
-            _left;
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Named Alternative in EitherAdapters")]
+        public static implicit operator Maybe<TRight>(Either<TLeft, TRight> source) =>
+            source._right;
 
         /// <inheritdoc />
         public override int GetHashCode() =>

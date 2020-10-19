@@ -55,6 +55,31 @@ namespace Moreland.CSharp.Util.Test
             Assert.That(_rightEither.IsEmpty, Is.False);
 
         [Test]
+        public void MaybeLeft_ReturnsContents_WhenHasLeftValue()
+        {
+            var maybeLeft = _leftEither.MaybeLeftValue;
+            Assert.That(maybeLeft.HasValue, Is.True);
+        }
+        [Test]
+        public void MaybeLeft_ReturnsEmpty_WhenNotHasLeftValue()
+        {
+            var maybeRight = _leftEither.MaybeRightValue;
+            Assert.That(maybeRight.IsEmpty, Is.True);
+        }
+        [Test]
+        public void MaybeRight_ReturnsContents_WhenHasRightValue()
+        {
+            var maybeRight = _rightEither.MaybeRightValue;
+            Assert.That(maybeRight.HasValue, Is.True);
+        }
+        [Test]
+        public void MaybeRight_ReturnsEmpty_WhenNotHasRightValue()
+        {
+            var maybeLeft = _leftEither.MaybeRightValue;
+            Assert.That(maybeLeft.IsEmpty, Is.True);
+        }
+
+        [Test]
         public void LeftValue_ReturnsValue_WhenHasLeftValue()
         {
             Guid actual = _leftEither.LeftValue;
@@ -136,6 +161,33 @@ namespace Moreland.CSharp.Util.Test
             Assert.That(either.HasRightValue, Is.True);
         }
 
+        [Test]
+        public void ImplicitOperatorMaybeLeft_ReturnsMaybeLeftWithValue_WhenHasLeftValue()
+        {
+            Maybe<Guid> maybeLeft = _leftEither;
+            Assert.That(maybeLeft.HasValue, Is.True);
+        }
+
+        [Test]
+        public void ImplicitOperatorMaybeLeft_ReturnsEmpty_WhenNotHasLeftValue()
+        {
+            Maybe<Guid> maybeLeft = _rightEither;
+            Assert.That(maybeLeft.IsEmpty, Is.True);
+        }
+
+        [Test]
+        public void ImplicitOperatorMaybeRight_ReturnsMaybeRightWithValue_WhenHasRightValue()
+        {
+            Maybe<string> maybeRight = _rightEither;
+            Assert.That(maybeRight.HasValue, Is.True);
+        }
+        [Test]
+        public void ImplicitOperatorMaybeRight_ReturnsEmpty_WhenNotHasRightValue()
+        {
+            Maybe<string> maybeRight = _leftEither;
+            Assert.That(maybeRight.IsEmpty, Is.True);
+        }
+
         public enum EitherValueType
         {
             Left, 
@@ -178,7 +230,7 @@ namespace Moreland.CSharp.Util.Test
 
         [TestCase(EitherValueType.Left)]
         [TestCase(EitherValueType.Right)]
-        public void OperatorEquals_ReturnsTrue_WhenContainsUnequalValues(EitherValueType type)
+        public void OperatorNotEquals_ReturnsTrue_WhenContainsUnequalValues(EitherValueType type)
         {
             var first = GetEitherUsing(type);
             var second = GetEitherUsing(type, _alternateLeft, _alternateRight);
@@ -189,6 +241,50 @@ namespace Moreland.CSharp.Util.Test
         [Test]
         public void OperatorEquals_ReturnsTrue_WhenContainsDifferentTypes() =>
             Assert.That(_leftEither != _rightEither, Is.True);
+
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void ObjectEquals_ReturnsTrue_WhenContainsEqualValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            object second = GetEitherUsing(type);
+
+            Assert.That(first.Equals(second), Is.True);
+        }
+        [TestCase(EitherValueType.Left)]
+        [TestCase(EitherValueType.Right)]
+        public void ObjectEquals_ReturnsFalse_WhenContainsUnequalValues(EitherValueType type)
+        {
+            var first = GetEitherUsing(type);
+            object second = GetEitherUsing(type, _alternateLeft, _alternateRight);
+
+            Assert.That(first.Equals(second), Is.False);
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsDifferentValues_ForDifferentEitherValues()
+        {
+            int left = _leftEither.GetHashCode();
+            int right = _rightEither.GetHashCode();
+
+            Assert.That(left, Is.Not.EqualTo(right));
+        }
+
+        [Test]
+        public void GetHashCode_ReturnsSameValue_ForEqualEitherValues()
+        {
+            int first = Either.From<Guid, string>(_leftValue).GetHashCode();
+            int second = Either.From<Guid, string>(_leftValue).GetHashCode();
+
+            Assert.That(first, Is.EqualTo(second));
+        }
+
+        [Test]
+        public void ObjectEquals_ReturnsFalse_WhenContainsDifferentTypes()
+        {
+            object right = Either.From<Guid, string>(_rightValue);
+            Assert.That(_leftEither.Equals(right), Is.False);
+        }
 
         private Either<Guid, string> GetEitherUsing(EitherValueType type) =>
             GetEitherUsing(type, _leftValue, _rightValue);
