@@ -16,5 +16,5 @@ Utilty object library provided generic support types such as results, optionals,
 
 ## Acknowledgements
 
-Either class based primarily on examples given during https://app.pluralsight.com/library/courses/making-functional-csharp
-by [Zoran Horvat|http://twitter.com/zoranh75]
+Either class initially based primarily on examples given during [Marking Functional C#](https://app.pluralsight.com/library/courses/making-functional-csharp)
+by [Zoran Horvat](http://twitter.com/zoranh75)
