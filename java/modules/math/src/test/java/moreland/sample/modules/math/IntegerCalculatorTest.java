@@ -13,19 +13,21 @@
 
 package moreland.sample.modules.math;
 
-import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IntegerCalculatorTest {
 
-    private Calculator<Integer> calculator;
+    private final Calculator<Integer> calculator = CalculatorFactory.BuildIntegerCalculator();
 
-    @BeforeAll
+    /*
+    @BeforeEach
     void beforeEach() {
         calculator = CalculatorFactory.BuildIntegerCalculator();
     }
+    */
 
     @Test
     void add_returns3_whenAdding2and1() {
