@@ -23,12 +23,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <form method="post" asp-controller="Home" asp-action="Logout" class="nav-item">
-                            <input type="submit" value="Logout" class="btn btn-link nav-link text-dark"/>
-                        </form>
-                    }
+                    <form requires="SignInManager.IsSignedIn(User)" method="post" asp-controller="Home" asp-action="Logout" class="nav-item">
+                        <input type="submit" value="Logout" class="btn btn-link nav-link text-dark"/>
+                    </form>
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -36,24 +33,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (!SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Register">Register</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
-                            </li>
-                        }
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Profile">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="RegisterAuthenticator">Register Authenticator</a>
-                            </li>
-                        }
+                        <li requires="!SignInManager.IsSignedIn(User)" class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Register">Register</a>
+                        </li>
+                        <li requires="!SignInManager.IsSignedIn(User)" class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+                        </li>
+                        <li requires="SignInManager.IsSignedIn(User)" class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Profile">Profile</a>
+                        </li>
+                        <li requires="SignInManager.IsSignedIn(User)" class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="RegisterAuthenticator">Register Authenticator</a>
+                        </li>
                     </ul>
                 </div>
             </div>
