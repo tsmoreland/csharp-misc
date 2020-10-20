@@ -2,17 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!--
     <parent>
         <artifactId>modules</artifactId>
         <groupId>moreland.samples.modules</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    -->
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>moreland.samples.modules.math</groupId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <artifactId>math</artifactId>
 
@@ -36,19 +34,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
-                <!--
                 <configuration>
-                    <classpathDependencyScopeExclude>test</classpathDependencyScopeExclude>
                     <argLine>
-                        -add-modules moreland.sample.math,junit,hamcrest.core
-                        -add-reads moreland.sample.math=junit
-                        -add-opens moreland.sample.math/moreland.sample.math=junit
-                        -add-opens moreland.sample.math/moreland.sample.math.integer=junit
-                        -patch-module moreland.sample.math=target/test-classes
+                        --add-opens moreland.sample.modules.math/moreland.sample.modules.math=ALL-UNNAMED
+                        --add-opens moreland.sample.modules.math/moreland.sample.modules.math.integer=ALL-UNNAMED
                     </argLine>
-                    <classesDirectory>path/to/none</classesDirectory>
                 </configuration>
-                -->
             </plugin>
         </plugins>
     </build>
