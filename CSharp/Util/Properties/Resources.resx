@@ -123,6 +123,12 @@
   <data name="BadEitherAccessRight" xml:space="preserve">
     <value>Attempt to access right from left source</value>
   </data>
+  <data name="EmptyNotAllowed" xml:space="preserve">
+    <value>Value cannot be empty</value>
+  </data>
+  <data name="InvalidEither" xml:space="preserve">
+    <value>Either improply constructed, does not contain either left or right value</value>
+  </data>
   <data name="InvalidResultValueAccess" xml:space="preserve">
     <value>Value not available when query has failed</value>
   </data>
@@ -134,5 +140,8 @@
   </data>
   <data name="UnknownEitherAccess" xml:space="preserve">
     <value>Attempt to access unsupported source type</value>
+  </data>
+  <data name="UnknownParameterName" xml:space="preserve">
+    <value>(Unknown)</value>
   </data>
 </root>

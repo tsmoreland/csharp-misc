@@ -11,11 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETCOREAPP2_1
 using System;
 
 namespace Moreland.CSharp.Util.Modernizer
 {
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETCOREAPP2_1
     /// <summary>
     /// Dummy placeholder to allow code targetting older framework to continue to build
     /// </summary>
@@ -23,5 +23,5 @@ namespace Moreland.CSharp.Util.Modernizer
     public sealed class AllowNullAttribute : Attribute
     {
     }
-#endif
 }
+#endif

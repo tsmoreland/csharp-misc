@@ -69,10 +69,10 @@ namespace Moreland.CSharp.Util.Functional
         /// <exception cref="ArgumentException">
         /// if <see cref="Either{TLeft,TRight}.IsEmpty"/> for <paramref name="source"/> returns true
         /// </exception>
-        public static TResult Select<TLeft, TRight, TResult>(this Either<TLeft, TRight> source, Func<TLeft, TResult> fromLeft,
+        public static TResult Map<TLeft, TRight, TResult>(this Either<TLeft, TRight> source, Func<TLeft, TResult> fromLeft,
             Func<TRight, TResult> fromRight)
         {
-            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentIsNullOrEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(fromLeft, nameof(fromLeft));
             GuardAgainst.ArgumentBeingNull(fromRight, nameof(fromRight));
 
@@ -99,7 +99,7 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> source,
             Func<TRight, TNewRight> selector)
         {
-            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentIsNullOrEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
             
             return source.HasLeftValue
@@ -125,7 +125,7 @@ namespace Moreland.CSharp.Util.Functional
         public static Either<TLeft, TNewRight> Select<TLeft, TRight, TNewRight>(this Either<TLeft, TRight> source,
             Func<TRight, Either<TLeft, TNewRight>> selector)
         {
-            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentIsNullOrEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(selector, nameof(selector));
 
             return source.HasLeftValue
@@ -158,7 +158,7 @@ namespace Moreland.CSharp.Util.Functional
         /// </exception>
         public static TLeft Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TRight, TLeft> reducer)
         {
-            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentIsNullOrEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
 
             return source.HasLeftValue
@@ -183,7 +183,7 @@ namespace Moreland.CSharp.Util.Functional
         /// </exception>
         public static TRight Reduce<TLeft, TRight>(this Either<TLeft, TRight> source, Func<TLeft, TRight> reducer)
         {
-            GuardAgainst.ArgumentIsEmpty(source, nameof(source));
+            GuardAgainst.ArgumentIsNullOrEmpty(source, nameof(source));
             GuardAgainst.ArgumentBeingNull(reducer, nameof(reducer));
 
             return source.HasLeftValue
