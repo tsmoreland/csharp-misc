@@ -14,6 +14,7 @@
 
 using System;
 using Moreland.CSharp.Util.Functional;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Moreland.CSharp.Util.Test
@@ -74,11 +75,87 @@ namespace Moreland.CSharp.Util.Test
         }
 
         [Test]
+        public void Map_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => _ = source.Map(MapFromLeft, MapFromRight));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Map_ThrowsArgumentException_WhenSourceIsEmpty()
+        {
+            Either<Guid, string> source = new Either<Guid, string>();
+            var ex = Assert.Throws<ArgumentException>(() => _ = source.Map(MapFromLeft, MapFromRight));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Map_ThrowsArgumentNullException_WhenFromLeftIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _leftEither.Map(null!, MapFromRight));
+            Assert.That(ex.ParamName, Is.EqualTo("fromLeft"));
+        }
+
+        [Test]
+        public void Map_ThrowsArgumentNullException_WhenFromRightIsNull()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = _leftEither.Map(MapFromLeft, null!));
+            Assert.That(ex.ParamName, Is.EqualTo("fromRight"));
+        }
+
+        [Test]
+        public void Map_UsesFromLeft_WhenSourceHasLeft()
+        {
+            var fromLeft = Substitute.For<Func<Guid, int>>();
+            var fromRight = Substitute.For<Func<string, int>>();
+            fromLeft.Invoke(_leftValue).Returns(42);
+
+            _ = _leftEither.Map(fromLeft, fromRight);
+
+            fromLeft.ReceivedWithAnyArgs(1);
+        }
+
+        [Test]
+        public void Map_UsesFromRight_WhenSourceHasRight()
+        {
+            var fromLeft = Substitute.For<Func<Guid, int>>();
+            var fromRight = Substitute.For<Func<string, int>>();
+            fromRight.Invoke(_rightValue).Returns(42);
+
+            _ = _rightEither.Map(fromLeft, fromRight);
+
+            fromRight.ReceivedWithAnyArgs(1);
+        }
+
+        [Test]
         public void Select_NewRight_ThrowsArgumentException_WhenSourceIsNull()
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Select(value => 0));
             Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Select_NewRight_ThrowsArgumentException_WhenSelectoreIsNull()
+        {
+            Func<string, int> selector = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Select(selector));
+            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+        }
+
+        [Test]
+        public void Select_NewRight_ReturnsLeftValue_WhenSourceHasLeft()
+        {
+            var actual = _leftEither.Select(s => s.Length);
+            Assert.That(_leftEither.LeftValue, Is.EqualTo(actual.LeftValue));
+        }
+
+        [Test]
+        public void Select_NewRight_ReturnsNewRightValue_WhenSourceHasRight()
+        {
+            var actual = _rightEither.Select(s => s.Length);
+            Assert.That(_rightValue.Length, Is.EqualTo(actual.RightValue));
         }
 
         [Test]
@@ -90,48 +167,158 @@ namespace Moreland.CSharp.Util.Test
         }
 
         [Test]
-        public void Reduce_Left_ThrowsArgumentException_WhenSourceIsNull()
+        public void Select_Either_ThrowsArgumentException_WhenSelectoreIsNull()
         {
-            Either<Guid, string> source = null!;
-            var ex = Assert.Throws<ArgumentException>(() => source.Reduce(guid => string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Func<string, Either<Guid, int>> selector = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Select(selector));
+            Assert.That(ex.ParamName, Is.EqualTo("selector"));
         }
+
         [Test]
-        public void Reduce_Right_ThrowsArgumentException_WhenSourceIsNull()
+        public void Select_Either_ReturnsLeftValue_WhenSourceHasLeft()
+        {
+            var actual = _leftEither.Select(s => Either.From<Guid,int>(s.Length));
+            Assert.That(_leftEither.LeftValue, Is.EqualTo(actual.LeftValue));
+        }
+
+        [Test]
+        public void Select_Either_ReturnsRightValue_WhenSourceHasRight()
+        {
+            var actual = _rightEither.Select(s => Either.From<Guid,int>(s.Length));
+            Assert.That(_rightValue.Length, Is.EqualTo(actual.RightValue));
+        }
+
+        [Test]
+        public void Reduce_Left_ThrowsArgumentException_WhenSourceIsNull()
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Reduce(str => Guid.Empty));
             Assert.That(ex.ParamName, Is.EqualTo("source"));
         }
-
-        /*
         [Test]
-        public void Select_NewRight_ReturnsTransformedContainingLeft_WhenSourceHasLeftValue()
+        public void Reduce_Left_ThrowsArgumentNullException_WhenSelectorIsNull()
         {
-            var transformed = _leftEither.Select(SelectNewRight);
-            Assert.That(transformed, Is.InstanceOf<LeftEither<Guid, int>>());
-        }
-        [Test]
-        public void Select_NewRight_ReturnsTransformedContainingRight_WhenSourceHasRightValue()
-        {
-            var transformed = _rightEither.Select(SelectNewRight);
-            Assert.That(transformed, Is.InstanceOf<RightEither<Guid, int>>());
-        }
-        [Test]
-        public void Select_Either_ReturnsTransformedContainingLeft_WhenSourceHasLeftValue()
-        {
-            var transformed = _leftEither.Select(SelectEither);
-            Assert.That(transformed, Is.InstanceOf<LeftEither<Guid, int>>());
-        }
-        [Test]
-        public void Select_Either_ReturnsTransformedContainingRight_WhenSourceHasRightValue()
-        {
-            var transformed = _rightEither.Select(SelectEither);
-            Assert.That(transformed, Is.InstanceOf<RightEither<Guid, int>>());
+            Func<string, Guid> reducer = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Reduce(reducer));
+            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
         }
 
-        private static int SelectNewRight(string value) => value.Length;
-        private static Either<Guid, int> SelectEither(string value) => SelectNewRight(value);
-        */
+        [Test]
+        public void Reduce_Left_ReturnsLeftValue_WhenSourceHasLeftValue()
+        {
+            var actual = _leftEither.Reduce(s => new Guid("2CFE52C6-DD42-4D33-969D-0B88885B88B4"));
+
+            Assert.That(actual, Is.EqualTo(_leftEither.LeftValue));
+        }
+
+        [Test]
+        public void Reduce_Left_ReturnsReducerResult_WhenSourceHasRightValue()
+        {
+            var expected = new Guid("2CFE52C6-DD42-4D33-969D-0B88885B88B4");
+            var actual = _rightEither.Reduce(s => expected);
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Reduce_Right_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.Reduce(guid => string.Empty));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void Reduce_Right_ThrowsArgumentNullException_WhenSelectorIsNull()
+        {
+            Func<Guid, string> reducer = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Reduce(reducer));
+            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+        }
+
+        [Test]
+        public void Reduce_Right_ReturnsLeftValue_WhenSourceHasRightValue()
+        {
+            var actual = _rightEither.Reduce(guid => guid.ToString());
+
+            Assert.That(actual, Is.EqualTo(_rightEither.RightValue));
+        }
+
+        [Test]
+        public void Reduce_Right_ReturnsReducerResult_WhenSourceHasLeftValue()
+        {
+            var expected = _leftEither.LeftValue.ToString();
+            var actual = _leftEither.Reduce(guid => guid.ToString());
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ValueOr_Left_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.ValueOr(str => Guid.Empty));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+        [Test]
+        public void ValueOr_Left_ThrowsArgumentNullException_WhenSelectorIsNull()
+        {
+            Func<string, Guid> reducer = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.ValueOr(reducer));
+            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+        }
+
+        [Test]
+        public void ValueOr_Left_ReturnsLeftValue_WhenSourceHasLeftValue()
+        {
+            var actual = _leftEither.ValueOr(s => new Guid("2CFE52C6-DD42-4D33-969D-0B88885B88B4"));
+
+            Assert.That(actual, Is.EqualTo(_leftEither.LeftValue));
+        }
+
+        [Test]
+        public void ValueOr_Left_ReturnsValueOrrResult_WhenSourceHasRightValue()
+        {
+            var expected = new Guid("2CFE52C6-DD42-4D33-969D-0B88885B88B4");
+            var actual = _rightEither.ValueOr(s => expected);
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void ValueOr_Right_ThrowsArgumentException_WhenSourceIsNull()
+        {
+            Either<Guid, string> source = null!;
+            var ex = Assert.Throws<ArgumentException>(() => source.ValueOr(guid => string.Empty));
+            Assert.That(ex.ParamName, Is.EqualTo("source"));
+        }
+
+        [Test]
+        public void ValueOr_Right_ThrowsArgumentNullException_WhenSelectorIsNull()
+        {
+            Func<Guid, string> reducer = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.ValueOr(reducer));
+            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+        }
+
+        [Test]
+        public void ValueOr_Right_ReturnsLeftValue_WhenSourceHasRightValue()
+        {
+            var actual = _rightEither.ValueOr(guid => guid.ToString());
+
+            Assert.That(actual, Is.EqualTo(_rightEither.RightValue));
+        }
+
+        [Test]
+        public void ValueOr_Right_ReturnsValueOrrResult_WhenSourceHasLeftValue()
+        {
+            var expected = _leftEither.LeftValue.ToString();
+            var actual = _leftEither.ValueOr(guid => guid.ToString());
+
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        private static int MapFromLeft(Guid g) => g.ToString().Length;
+        private static int MapFromRight(string s) => s.Length;
     }
 }

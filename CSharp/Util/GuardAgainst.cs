@@ -57,13 +57,13 @@ namespace Moreland.CSharp.Util
         /// <exception cref="ArgumentException">
         /// if <paramref name="argument"/> is empty
         /// </exception>
-        public static void ArgumentIsEmpty<TLeft, TRight>(Either<TLeft, TRight> argument,
+        public static void ArgumentIsNullOrEmpty<TLeft, TRight>(Either<TLeft, TRight> argument,
             [CallerArgumentExpression("argument")] string parameterName = "")
         {
             if (string.IsNullOrEmpty(parameterName))
                 parameterName = ProjectResources.NullValue;
 
-            if (argument.IsEmpty)
+            if (argument == null! || argument.IsEmpty)
                 throw new ArgumentException(ProjectResources.InvalidEither, parameterName);
         }
 

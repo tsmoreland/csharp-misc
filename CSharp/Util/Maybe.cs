@@ -14,7 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !NET40
 using System.Threading.Tasks;
+#endif
 using Moreland.CSharp.Util.Collections;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
