@@ -131,5 +131,14 @@ namespace Moreland.CSharp.Util.Properties {
                 return ResourceManager.GetString("UnknownEitherAccess", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Unknown).
+        /// </summary>
+        internal static string UnknownParameterName {
+            get {
+                return ResourceManager.GetString("UnknownParameterName", resourceCulture);
+            }
+        }
     }
 }
