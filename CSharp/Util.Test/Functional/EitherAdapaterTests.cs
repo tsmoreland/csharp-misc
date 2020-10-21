@@ -17,7 +17,7 @@ using Moreland.CSharp.Util.Functional;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Functional
 {
     [TestFixture]
     public sealed class EitherAdapaterTests

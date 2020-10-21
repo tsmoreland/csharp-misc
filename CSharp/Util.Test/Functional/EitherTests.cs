@@ -16,7 +16,7 @@ using Moreland.CSharp.Util.Functional;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-namespace Moreland.CSharp.Util.Test
+namespace Moreland.CSharp.Util.Test.Functional
 {
     [TestFixture]
     public sealed class EitherTests
