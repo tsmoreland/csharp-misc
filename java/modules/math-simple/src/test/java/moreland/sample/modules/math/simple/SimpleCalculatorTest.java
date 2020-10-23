@@ -11,7 +11,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.modules.math;
+package moreland.sample.modules.math.simple;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +24,12 @@ public class SimpleCalculatorTest {
     @Test
     void add_returns3_whenAdding2and1() {
         var result = calculator.add(1, 2);
-        assertEquals(3, result);
+        assertEquals(3.0, result);
     }
 
     @Test
     void subtract_returns1_whenSubtracting1From2() {
         var result = calculator.subtract(2, 1);
-        assertEquals(1, result);
+        assertEquals(1.0, result);
     }
 }

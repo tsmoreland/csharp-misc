@@ -11,6 +11,7 @@
     <modules>
         <module>math</module>
         <module>math-simple</module>
+        <module>math-cli</module>
     </modules>
 
     <properties>
