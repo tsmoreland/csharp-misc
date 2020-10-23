@@ -11,9 +11,11 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.modules.math;
+package moreland.sample.modules.math.simple;
 
-public final class SimpleCalculator {
+import moreland.sample.modules.math.Calculator;
+
+public final class SimpleCalculator implements Calculator {
 
     /**
      * simple addition

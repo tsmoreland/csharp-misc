@@ -11,8 +11,38 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-module mathservice {
-    requires java.base;
+package moreland.sample.modules.math;
 
-    exports moreland.sample.modules.mathservice;
+/**
+ * simple calculator
+ */
+public interface Calculator {
+    /**
+     * simple addition
+     * @param a left hand side of addition
+     * @param b right hand side of addition
+     * @return sum of {@code a} and {@code b}
+     */
+    double add(double a, double b);
+    /**
+     * simple division
+     * @param a dividend
+     * @param b divisor
+     * @return result of {@code a} divided {@code b}
+     */
+    double divide(double a, double b);
+    /**
+     * simple multiplication
+     * @param a left hand side of multiplication
+     * @param b right hand side of multiplication
+     * @return sum of {@code a} and {@code b}
+     */
+    double multiply(double a, double b);
+    /**
+     * simple subtraction
+     * @param a left hand side of subtraction
+     * @param b right hand side of subtraction
+     * @return result of subtrating {@code b} from {@code a}
+     */
+    double subtract(double a, double b);
 }
