@@ -7,31 +7,12 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.modules.math;
+module mathservice {
+    requires java.base;
 
-//import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class IntegerCalculatorTest {
-
-    private final Calculator<Integer> calculator = CalculatorFactory.BuildIntegerCalculator();
-
-    /*
-    @BeforeEach
-    void beforeEach() {
-        calculator = CalculatorFactory.BuildIntegerCalculator();
-    }
-    */
-
-    @Test
-    void add_returns3_whenAdding2and1() {
-        var result = calculator.add(1, 2);
-        assertEquals(3, result);
-    }
+    exports moreland.sample.modules.mathservice;
 }
