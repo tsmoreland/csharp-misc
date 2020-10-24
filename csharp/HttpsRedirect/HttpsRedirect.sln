@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpsRedirectCore", "HttpsRedirectCore\HttpsRedirectCore.csproj", "{D328834B-3A5F-4638-9707-7C616119CF73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpsRedirectNet", "HttpsRedirectNet\HttpsRedirectNet.csproj", "{72A9270A-1CFD-4BE0-821C-6501BD49E431}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D328834B-3A5F-4638-9707-7C616119CF73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D328834B-3A5F-4638-9707-7C616119CF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D328834B-3A5F-4638-9707-7C616119CF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D328834B-3A5F-4638-9707-7C616119CF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A9270A-1CFD-4BE0-821C-6501BD49E431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A9270A-1CFD-4BE0-821C-6501BD49E431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A9270A-1CFD-4BE0-821C-6501BD49E431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A9270A-1CFD-4BE0-821C-6501BD49E431}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4AACBCD2-B198-42AE-9E2D-29FD3B766D21}
+	EndGlobalSection
+EndGlobal
