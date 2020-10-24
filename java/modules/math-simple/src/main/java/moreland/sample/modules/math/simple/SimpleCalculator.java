@@ -11,38 +11,52 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.modules.math;
+package moreland.sample.modules.math.simple;
 
-/**
- * simple calculator
- */
-public interface Calculator {
+import moreland.sample.modules.math.Calculator;
+
+public final class SimpleCalculator implements Calculator {
+
     /**
      * simple addition
      * @param a left hand side of addition
      * @param b right hand side of addition
      * @return sum of {@code a} and {@code b}
      */
-    double add(double a, double b);
+   public double add(double a, double b) {
+       return a + b;
+   }
+
     /**
      * simple division
      * @param a dividend
      * @param b divisor
      * @return result of {@code a} divided {@code b}
+     * @exception IllegalArgumentException when {@code  b} is 0
      */
-    double divide(double a, double b);
+    public double divide(double a, double b) {
+        if (b == 0) {
+            throw new IllegalArgumentException("cannot divide by 0");
+        }
+
+        return a / b;
+    }
     /**
      * simple multiplication
      * @param a left hand side of multiplication
      * @param b right hand side of multiplication
      * @return sum of {@code a} and {@code b}
      */
-    double multiply(double a, double b);
+    public double multiply(double a, double b) {
+        return a * b;
+    }
     /**
      * simple subtraction
      * @param a left hand side of subtraction
      * @param b right hand side of subtraction
      * @return result of subtrating {@code b} from {@code a}
      */
-    double subtract(double a, double b);
+    public double subtract(double a, double b) {
+        return a - b;
+    }
 }

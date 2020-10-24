@@ -7,17 +7,29 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.modules.math;
+package moreland.sample.modules.math.simple;
 
-import moreland.sample.modules.math.integer.IntegerCalculator;
+import org.junit.jupiter.api.Test;
 
-public final class CalculatorFactory {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    public static Calculator<Integer> BuildIntegerCalculator() {
-        return new IntegerCalculator();
+public class SimpleCalculatorTest {
+
+    private final SimpleCalculator calculator = new SimpleCalculator();
+
+    @Test
+    void add_returns3_whenAdding2and1() {
+        var result = calculator.add(1, 2);
+        assertEquals(3.0, result);
+    }
+
+    @Test
+    void subtract_returns1_whenSubtracting1From2() {
+        var result = calculator.subtract(2, 1);
+        assertEquals(1.0, result);
     }
 }
