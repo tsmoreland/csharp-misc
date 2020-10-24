@@ -11,12 +11,8 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-module moreland.sample.modules.math.simple {
+module moreland.sample.jna.interop.service {
     requires java.base;
-    requires moreland.sample.modules.math;
 
-    exports moreland.sample.modules.math.simple;
-
-    provides moreland.sample.modules.math.Calculator
-        with moreland.sample.modules.math.simple.SimpleCalculator;
+    exports moreland.sample.jna.interop.service;
 }

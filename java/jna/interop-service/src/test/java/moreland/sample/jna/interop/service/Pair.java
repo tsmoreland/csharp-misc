@@ -11,12 +11,13 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-module moreland.sample.modules.math.simple {
-    requires java.base;
-    requires moreland.sample.modules.math;
+package moreland.sample.jna.interop.service;
 
-    exports moreland.sample.modules.math.simple;
-
-    provides moreland.sample.modules.math.Calculator
-        with moreland.sample.modules.math.simple.SimpleCalculator;
+final class Pair<ITEM1, ITEM2> {
+    public final ITEM1 item1;
+    public final ITEM2 item2;
+    public Pair(ITEM1 item1, ITEM2 item2) {
+        this.item1 = item1;
+        this.item2 = item2;
+    }
 }
