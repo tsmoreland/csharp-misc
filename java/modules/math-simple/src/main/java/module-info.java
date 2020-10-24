@@ -17,4 +17,6 @@ module moreland.sample.modules.math.simple {
 
     exports moreland.sample.modules.math.simple;
 
+    provides moreland.sample.modules.math.Calculator
+        with moreland.sample.modules.math.simple.SimpleCalculator;
 }
