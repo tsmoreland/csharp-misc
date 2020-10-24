@@ -1,0 +1,26 @@
+HKCR
+{
+	ATLBearLib.Grizzly.1 = s 'Grizzly class'
+	{
+		CLSID = s '{97c0edc5-dd19-4a03-9b21-ba371ebbcc9e}'
+	}
+	ATLBearLib.Grizzly = s 'Grizzly class'
+	{		
+		CurVer = s 'ATLBearLib.Grizzly.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {97c0edc5-dd19-4a03-9b21-ba371ebbcc9e} = s 'Grizzly class'
+		{
+			ProgID = s 'ATLBearLib.Grizzly.1'
+			VersionIndependentProgID = s 'ATLBearLib.Grizzly'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			TypeLib = s '{3cbf3d3a-db02-4a72-8674-8088e52d0ba6}'
+			Version = s '1.0'
+		}
+	}
+}
