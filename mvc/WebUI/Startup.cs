@@ -12,16 +12,22 @@
 // 
 
 using System;
+using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 
 namespace WebUI
 {
@@ -129,6 +135,30 @@ namespace WebUI
                 });
 
             services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
+
+            services.AddMemoryCache();
+            services.AddSession();
+            services.AddMvc(config =>
+            {
+                config.CacheProfiles.Add("Default", new CacheProfile()
+                {
+                    Duration = 30,
+                    Location = ResponseCacheLocation.Any
+                });
+                config.CacheProfiles.Add("None", new CacheProfile()
+                {
+                    Location = ResponseCacheLocation.None,
+                    NoStore = true
+                });
+            });
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {"image/jpeg"});
+            });
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.AddRazorPages();            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -147,9 +177,23 @@ namespace WebUI
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+            app.UseResponseCompression();
             app.UseStaticFiles();
 
+            // UseCors must be called before response caching
             app.UseRouting();
+            app.UseResponseCaching();
+            app.Use(async (ctx, next) =>
+            {
+                ctx.Response.GetTypedHeaders().CacheControl =
+                    new CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromSeconds(10),
+                    };
+                ctx.Response.Headers[HeaderNames.Vary] = new [] {"Accept-Encoding", "User-Agent"};
+                await next();
+            });
 
             app.UseAuthorization();
 

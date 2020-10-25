@@ -403,6 +403,7 @@ namespace WebUI.Controllers
 
         [HttpGet]
         [Authorize]
+        [ResponseCache(CacheProfileName = "Default")]
         public IActionResult Profile() 
         {
             // not implemented yet

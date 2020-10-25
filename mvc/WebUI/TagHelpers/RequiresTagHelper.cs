@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace WebUI.TagHelpers
 {
     [HtmlTargetElement(Attributes = nameof(Requires))]
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class RequiresTagHelper : TagHelper
     {
         public bool Requires { get; set; }
