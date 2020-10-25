@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityDemo.Server", "IdentityDemo.Server\IdentityDemo.Server.csproj", "{CA63297C-C156-4EB9-BC14-2213EEAF2245}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityDemo.Server", "IdentityDemo.Server\IdentityDemo.Server.csproj", "{CA63297C-C156-4EB9-BC14-2213EEAF2245}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityDemo.App", "IdentityDemo.App\IdentityDemo.App.csproj", "{70D47B65-6A51-49A1-942E-6BDFFC9DF535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityDemo.App", "IdentityDemo.App\IdentityDemo.App.csproj", "{70D47B65-6A51-49A1-942E-6BDFFC9DF535}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
