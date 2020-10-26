@@ -16,7 +16,9 @@
     <CascadingAuthenticationState>
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
-                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+                    <NotAuthorized>Unauthorized access, please login to proceed</NotAuthorized>
+                </AuthorizeRouteView>
             </Found>
             <NotFound>
                 <LayoutView Layout="@typeof(MainLayout)">
