@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 //
 // Copyright © 2020 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
@@ -20,7 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using IdentityDemo.Server.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using IdentityDemo.App.Services;
 
 namespace IdentityDemo.Server
@@ -43,7 +39,7 @@ namespace IdentityDemo.Server
             services.AddSingleton<WeatherForecastService>();
 
             services
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddAuthentication("Identity.Application")
                 .AddCookie();
 
             services.AddScoped<ITokenProvider, TokenProvider>();

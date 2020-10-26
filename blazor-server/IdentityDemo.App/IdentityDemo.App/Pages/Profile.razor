@@ -12,7 +12,7 @@ else
     <ul class="list-group list-group-flush">
         @foreach (var claim in Claims)
         {
-            <li class="list-group-item">@claim.ValueType: @claim.Value</li>
+            <li class="list-group-item">@claim.Type: @claim.Value</li>
         }
     </ul>
 }
