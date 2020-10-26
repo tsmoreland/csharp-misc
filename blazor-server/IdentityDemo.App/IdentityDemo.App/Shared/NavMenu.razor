@@ -1,28 +1,25 @@
 ﻿@inject IdentityDemo.App.Services.ITokenProvider TokenProvider 
 
-<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">IdentityDemo.Server</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div id="sidebar-wrapper" class="bg-light">
+    <a class="navbar-brand" href="" >IdentityDemo.Server</a>
     <div class="menu list-group list-group-flush">
         <AuthorizeView>
             <Authorized>
-                <NavLink class="list-group-item list-group-item-action bg-dark" href="/" Match="NavLinkMatch.All">
+                <NavLink class="list-group-item list-group-item-action bg-light" href="/" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
+                <NavLink class="list-group-item list-group-item-action bg-light" href="Profile">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Profile
+                </NavLink>
                 <form action="/Logout" method="post">
-                    <button class="nav-link btn btn-link" type="submit">
+                    <button class="nav-link btn btn-link bg-light" type="submit">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Logout (@context.User.Identity.Name)
                     </button>
                     <input type="hidden" name="__RequestVerificationToken" value="@TokenProvider.XsrfToken" />
                 </form>
             </Authorized>
             <NotAuthorized>
-                <NavLink class="list-group-item list-group-item-action bg-dark" href="Login">
+                <NavLink class="list-group-item list-group-item-action bg-light" href="Login">
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Login
                 </NavLink>
             </NotAuthorized>
@@ -31,13 +28,3 @@
     </div>
 </div>
 
-@code {
-    private bool _collapseNavMenu = true;
-
-    private string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
-}

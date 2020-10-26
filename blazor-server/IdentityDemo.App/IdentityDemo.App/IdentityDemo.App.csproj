@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Components\" />
-    <Folder Include="Pages\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 

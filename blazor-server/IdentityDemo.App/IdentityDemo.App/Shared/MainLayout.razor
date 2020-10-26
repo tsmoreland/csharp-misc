@@ -1,15 +1,17 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidebar">
-    <NavMenu />
-</div>
-
-<div class="main">
-    <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-    </div>
-
-    <div class="content px-4">
-        @Body
+<div class="d-flex" id="wrapper">
+    <NavMenu/>
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <h3 class="title">Blazor-Server IdentityDemo</h3>
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            @Body
+        </div>
     </div>
 </div>

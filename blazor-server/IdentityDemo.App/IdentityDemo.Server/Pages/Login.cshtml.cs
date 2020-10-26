@@ -40,7 +40,7 @@ namespace IdentityDemo.Server.Pages
 
         public async Task<IActionResult> OnPost()
         {
-            if (!(Email == "admin@localhost" && Password == "password"))
+            if (!(Email == "admin@localhost" && Password == "admin"))
             {
                 return Page();
             }
