@@ -68,6 +68,9 @@ namespace Sample.Idp
                 Log.Debug("IdentityResources already populated");
             }
 
+            context.ApiResources
+                .AddRange(Config.ApiResources.Select(resource => resource.ToEntity()));
+
             if (!context.ApiResources.Any())
             {
                 Log.Debug("ApiScopes being populated");

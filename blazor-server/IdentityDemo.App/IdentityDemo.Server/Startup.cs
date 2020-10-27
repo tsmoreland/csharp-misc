@@ -18,6 +18,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using IdentityDemo.Server.Data;
 using IdentityDemo.App.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace IdentityDemo.Server
 {
@@ -39,8 +41,32 @@ namespace IdentityDemo.Server
             services.AddSingleton<WeatherForecastService>();
 
             services
-                .AddAuthentication("Identity.Application")
-                .AddCookie();
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+                {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    // these shhould really be shifted out either to appsettings or maybe environment variables
+                    options.Authority = "https://localhost:44377"; // Sample.Idp
+                    options.ResponseType = "code";
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                    // options.CallbackPath = ... not needed as this is stored in the Idp
+
+                    options.TokenValidationParameters.NameClaimType = "given_name"; // see profile page for options
+
+                    // these two should definately be out in environment
+                    options.ClientId = "identitydemoapp";
+                    options.ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A";
+                });
+
 
             services.AddScoped<ITokenProvider, TokenProvider>();
         }
