@@ -1,6 +1,6 @@
 using System;
 
-namespace IdentityDemo.Server.Data
+namespace IdentityDemo.Shared
 {
     public class WeatherForecast
     {

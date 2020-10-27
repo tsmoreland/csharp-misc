@@ -19,5 +19,9 @@
     <Folder Include="Components\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IdentityDemo.Shared\IdentityDemo.Shared.csproj" />
+  </ItemGroup>
+
 
 </Project>

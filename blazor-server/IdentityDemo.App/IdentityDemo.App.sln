@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityDemo.App", "Identit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Idp", "..\..\idp\Sample.Idp\Sample.Idp.csproj", "{CCFEBF6A-BD86-4053-9E84-AC8D9789E213}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityDemo.Api", "IdentityDemo.Api\IdentityDemo.Api.csproj", "{34F75806-0B76-49EF-B6F5-566E0258A4C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityDemo.Shared", "IdentityDemo.Shared\IdentityDemo.Shared.csproj", "{C5E3C46E-B60B-4CE9-99CB-8C08B203A85E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{CCFEBF6A-BD86-4053-9E84-AC8D9789E213}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCFEBF6A-BD86-4053-9E84-AC8D9789E213}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCFEBF6A-BD86-4053-9E84-AC8D9789E213}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34F75806-0B76-49EF-B6F5-566E0258A4C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34F75806-0B76-49EF-B6F5-566E0258A4C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34F75806-0B76-49EF-B6F5-566E0258A4C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34F75806-0B76-49EF-B6F5-566E0258A4C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5E3C46E-B60B-4CE9-99CB-8C08B203A85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5E3C46E-B60B-4CE9-99CB-8C08B203A85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5E3C46E-B60B-4CE9-99CB-8C08B203A85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5E3C46E-B60B-4CE9-99CB-8C08B203A85E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
