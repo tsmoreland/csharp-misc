@@ -12,6 +12,7 @@
 // 
 
 using System;
+using IdentityDemo.App.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +42,15 @@ namespace IdentityDemo.Server
 
             services.AddHttpClient<IWeatherForecastService, WeatherForecastService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44375"); // move to configuration file
+                client.BaseAddress = new Uri(Configuration.GetSection("IdentityDemoApiAddress").Value); 
             });
+            
+            var idpOptions = Configuration
+                .GetSection(IdentityProviderOptions.SectionName)
+                .Get<IdentityProviderOptions>();
+            var idpAuthenticationOptions = Configuration
+                .GetSection(IdentityProviderAuthenticationOptions.SectionName)
+                .Get<IdentityProviderAuthenticationOptions>();
 
             services
                 .AddAuthentication(options =>
@@ -54,23 +62,20 @@ namespace IdentityDemo.Server
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    // these shhould really be shifted out either to appsettings or maybe environment variables
-                    options.Authority = "https://localhost:44377"; // Sample.Idp
-                    options.ResponseType = "code";
-                    options.Scope.Add("openid");
-                    options.Scope.Add("profile");
-                    options.Scope.Add("email");
-                    options.Scope.Add("offline_access");
-                    options.Scope.Add("identitydemoapi");
-                    options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.Authority = idpOptions.Authority;
+                    options.ResponseType = idpAuthenticationOptions.ResponseType;
+                    foreach (var scope in idpAuthenticationOptions.ApiScopes)
+                        options.Scope.Add(scope);
+                    options.SaveTokens = idpAuthenticationOptions.SaveTokens;
+                    options.GetClaimsFromUserInfoEndpoint = idpAuthenticationOptions.GetClaimsFromUserInfoEndPoint;
                     // options.CallbackPath = ... not needed as this is stored in the Idp
 
-                    options.TokenValidationParameters.NameClaimType = "given_name"; // see profile page for options
+                    // see profile page for possible values
+                    options.TokenValidationParameters.NameClaimType = idpAuthenticationOptions.NameClaimType;
 
                     // these two should definately be out in environment
-                    options.ClientId = "identitydemoapp";
-                    options.ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A";
+                    options.ClientId = idpOptions.ClientId;
+                    options.ClientSecret = idpOptions.ClientSecret;
                 });
 
 

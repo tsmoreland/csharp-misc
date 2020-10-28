@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using IdentityDemo.Api.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +39,10 @@ namespace IdentityDemo.Api
                 .RequireAuthenticatedUser()
                 .Build();
 
+            var idpOptions = Configuration
+                .GetSection(IdentityProviderOptions.SectionName)
+                .Get<IdentityProviderOptions>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
@@ -61,19 +66,18 @@ namespace IdentityDemo.Api
                 .AddIdentityServerAuthentication(
                     options =>
                     {
-                        options.Authority = "https://localhost:44377"; // Sample.Idp, this should come from AppSettings
-                        options.ApiName = "identitydemoapi"; // this probably should too
+                        options.Authority = idpOptions.Authority;
+                        options.ApiName = idpOptions.ApiName;
                     });
 
+            services.Configure<IdentityProviderOptions>(Configuration.GetSection(IdentityProviderOptions.SectionName));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseHttpsRedirection();
 

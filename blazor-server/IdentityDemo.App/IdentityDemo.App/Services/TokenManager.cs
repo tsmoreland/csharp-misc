@@ -14,8 +14,10 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityDemo.App.Models;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace IdentityDemo.App.Services
 {
@@ -24,19 +26,23 @@ namespace IdentityDemo.App.Services
         private readonly IHttpClientFactory _clientFactory;
         private readonly ITokenProvider _tokenProvider;
         private readonly ILogger _logger;
+        private readonly IOptions<IdentityProviderOptions> _identtyProviderOptions;
 
         /// <summary>
         /// Instantiates a new instance of <see cref="TokenManager"/> class.
         /// </summary>
         /// <param name="clientFactory">HttpClientFactory used to refresh tokens</param>
         /// <param name="tokenProvider">token provider used to get current tokens and expiry time</param>
+        /// <param name="identtyProviderOptions">identity provider options required to refresh the acccess token</param>
+        /// <param name="logger"/>
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="clientFactory"/> or <param name="tokenProvider"> are null</param>
         /// </exception>
-        public TokenManager(IHttpClientFactory clientFactory, ITokenProvider tokenProvider, ILogger<TokenManager> logger)
+        public TokenManager(IHttpClientFactory clientFactory, ITokenProvider tokenProvider, IOptions<IdentityProviderOptions> identtyProviderOptions, ILogger<TokenManager> logger)
         {
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+            _identtyProviderOptions = identtyProviderOptions ?? throw new ArgumentNullException(nameof(identtyProviderOptions));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -46,15 +52,15 @@ namespace IdentityDemo.App.Services
                 return _tokenProvider.AccessToken;
 
             var idpClient = _clientFactory.CreateClient();
-            var discoveryResponse = await idpClient.GetDiscoveryDocumentAsync("https://localhost:44377"); // address should come from configuration
+            var discoveryResponse = await idpClient.GetDiscoveryDocumentAsync(_identtyProviderOptions.Value.Authority); // address should come from configuration
             if (discoveryResponse.IsError)
                 return LogAndReturnEmpty(discoveryResponse);
             var refreshResponse = await idpClient.RequestRefreshTokenAsync(
                 new RefreshTokenRequest
                 {
                     Address = discoveryResponse.TokenEndpoint,
-                    ClientId = "identitydemoapp", // move to configuration
-                    ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A", // move to configuration
+                    ClientId = _identtyProviderOptions.Value.ClientId,
+                    ClientSecret = _identtyProviderOptions.Value.ClientSecret,
                     RefreshToken = _tokenProvider.RefreshToken,
                 });
             if (refreshResponse.IsError)
