@@ -11,23 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-
-using System;
+using System.Threading.Tasks;
 
 namespace IdentityDemo.App.Services
 {
-    public class TokenProvider : ITokenProvider
+    public interface ITokenManager
     {
-        public string XsrfToken { get; set; } = string.Empty;
-        public string AccessToken { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
-        public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.MinValue;
-
-        public void SetOAuthTokens(string accessToken, string refreshToken, DateTimeOffset expiresAt)
-        {
-            AccessToken = accessToken;
-            RefreshToken = refreshToken;
-            ExpiresAt = expiresAt;
-        }
+        Task<string> GetAcccessTokenOrEmptyAsync();
     }
 }

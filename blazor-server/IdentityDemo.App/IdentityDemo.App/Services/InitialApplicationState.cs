@@ -11,11 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
+
 namespace IdentityDemo.App.Services
 {
     public class InitialApplicationState
     {
-        public string XsrfToken { get; set; }
-        public string AccessToken { get; set; }
+        public string XsrfToken { get; set; } = string.Empty;
+        public string AccessToken { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTimeOffset ExpiresAt { get; set; } = DateTimeOffset.MinValue;
     }
 }

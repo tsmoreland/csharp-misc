@@ -19,23 +19,30 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using IdentityDemo.Shared;
 using IdentityModel.Client;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityDemo.App.Services
 {
     public class WeatherForecastService : IWeatherForecastService
     {
         private readonly HttpClient _client;
-        private readonly ITokenProvider _tokenProvider;
+        private readonly ITokenManager _tokenManager;
+        private readonly ILogger<WeatherForecastService> _logger;
 
-        public WeatherForecastService(HttpClient client, ITokenProvider tokenProvider)
+        public WeatherForecastService(HttpClient client, ITokenManager tokenManager, ILogger<WeatherForecastService> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+            _tokenManager = tokenManager ?? throw new ArgumentNullException(nameof(tokenManager));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
         {
-            _client.SetBearerToken(_tokenProvider.AccessToken);
+            var accessToken = await _tokenManager.GetAcccessTokenOrEmptyAsync();
+            if (string.IsNullOrEmpty(accessToken))
+                return Array.Empty<WeatherForecast>();
+
+            _client.SetBearerToken(accessToken);
             return (await JsonSerializer.DeserializeAsync<IEnumerable<WeatherForecast>>(
                     await _client.GetStreamAsync("api/weatherforecast"),
                     new JsonSerializerOptions {PropertyNameCaseInsensitive = true}))

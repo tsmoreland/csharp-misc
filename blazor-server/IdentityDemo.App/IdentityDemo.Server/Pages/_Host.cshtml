@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Globalization
 @using IdentityDemo.App
 @using Microsoft.AspNetCore.Authentication
 @namespace IdentityDemo.Server.Pages
@@ -24,7 +25,12 @@
         {
             XsrfToken = Xsrf.GetAndStoreTokens(HttpContext).RequestToken,
             AccessToken = await HttpContext.GetTokenAsync("access_token"),
+            RefreshToken = await HttpContext.GetTokenAsync("refresh_token"),
+            ExpiresAt = DateTimeOffset.TryParse(await HttpContext.GetTokenAsync("expires_at"), CultureInfo.InvariantCulture, DateTimeStyles.None, out var expiration)
+                ? expiration
+                : DateTimeOffset.UtcNow
         };
+
     }
 
     <app>

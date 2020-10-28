@@ -12,11 +12,17 @@
 // 
 
 
+using System;
+
 namespace IdentityDemo.App.Services
 {
     public interface ITokenProvider
     {
         string XsrfToken { get; set; }
-        string AccessToken { get; set; }
+        string AccessToken { get; }
+        string RefreshToken { get; }
+        DateTimeOffset ExpiresAt { get; }
+
+        void SetOAuthTokens(string accessToken, string refreshToken, DateTimeOffset expiresAt);
     }
 }

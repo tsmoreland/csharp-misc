@@ -60,6 +60,7 @@ namespace IdentityDemo.Server
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("email");
+                    options.Scope.Add("offline_access");
                     options.Scope.Add("identitydemoapi");
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
@@ -74,6 +75,7 @@ namespace IdentityDemo.Server
 
 
             services.AddScoped<ITokenProvider, TokenProvider>();
+            services.AddScoped<ITokenManager, TokenManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
