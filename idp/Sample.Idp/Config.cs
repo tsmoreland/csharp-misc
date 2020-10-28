@@ -26,8 +26,7 @@ namespace Sample.Idp
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("scope1"),
-                new ApiScope("scope2"),
+                new ApiScope("identitydemoapi"),
             };
 
         public static IEnumerable<Client> Clients =>

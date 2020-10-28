@@ -60,6 +60,7 @@ namespace IdentityDemo.Server
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("email");
+                    options.Scope.Add("identitydemoapi");
                     options.SaveTokens = true;
                     options.GetClaimsFromUserInfoEndpoint = true;
                     // options.CallbackPath = ... not needed as this is stored in the Idp
