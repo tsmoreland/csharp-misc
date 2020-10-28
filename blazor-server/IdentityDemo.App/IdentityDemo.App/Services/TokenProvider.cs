@@ -16,7 +16,8 @@ namespace IdentityDemo.App.Services
 {
     public class TokenProvider : ITokenProvider
     {
-        public string XsrfToken { get; set; }
+        public string XsrfToken { get; set; } = string.Empty;
 
+        public string AccessToken { get; set; } = string.Empty;
     }
 }

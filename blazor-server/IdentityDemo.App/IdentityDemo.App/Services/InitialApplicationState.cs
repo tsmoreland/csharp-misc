@@ -16,5 +16,6 @@ namespace IdentityDemo.App.Services
     public class InitialApplicationState
     {
         public string XsrfToken { get; set; }
+        public string AccessToken { get; set; }
     }
 }

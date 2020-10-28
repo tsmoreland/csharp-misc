@@ -9,25 +9,31 @@ namespace Sample.Idp
 {
     public static class Config
     {
-        public static IEnumerable<IdentityResource> IdentityResources => 
+        public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
-                new IdentityResource("custom", new [] { "custom" })
+                new IdentityResource("custom", new[] {"custom"})
             };
 
-        public static IEnumerable<ApiResource> ApiResources =>
-            new ApiResource[]
+        public static IEnumerable<ApiResource> ApiResources
+        {
+            get
             {
-                new ApiResource("identitydemoapi", "IdentityDemo API", new [] { "custom" }),
-            };
+                var resource = new ApiResource("identitydemoapi", "IdentityDemo API", new[] {"custom"});
+                resource.Scopes.Add("identitydemoapi");
+                yield return resource;
+            }
+        }
+
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("identitydemoapi"),
+                new ApiScope("identitydemoapi", new [] { "custom" }),
             };
+
 
         public static IEnumerable<Client> Clients =>
             new Client[]
@@ -37,6 +43,8 @@ namespace Sample.Idp
                 {
                     ClientId = "identitydemoapp",
                     ClientName = "IdentityDemo",
+                    RequireConsent = false,
+                    AllowOfflineAccess = true,
                     AllowedGrantTypes = GrantTypes.Code,
                     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
                     RequirePkce = true,

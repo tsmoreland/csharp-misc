@@ -9,6 +9,7 @@
     protected override Task OnInitializedAsync()
     {
         TokenProvider.XsrfToken = InitialState.XsrfToken;
+        TokenProvider.AccessToken = InitialState.AccessToken;
         return base.OnInitializedAsync();
     }
 }

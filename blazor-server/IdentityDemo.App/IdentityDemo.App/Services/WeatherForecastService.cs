@@ -18,20 +18,24 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IdentityDemo.Shared;
+using IdentityModel.Client;
 
 namespace IdentityDemo.App.Services
 {
     public class WeatherForecastService : IWeatherForecastService
     {
         private readonly HttpClient _client;
+        private readonly ITokenProvider _tokenProvider;
 
-        public WeatherForecastService(HttpClient client)
+        public WeatherForecastService(HttpClient client, ITokenProvider tokenProvider)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
+            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
 
         public async Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
         {
+            _client.SetBearerToken(_tokenProvider.AccessToken);
             return (await JsonSerializer.DeserializeAsync<IEnumerable<WeatherForecast>>(
                     await _client.GetStreamAsync("api/weatherforecast"),
                     new JsonSerializerOptions {PropertyNameCaseInsensitive = true}))

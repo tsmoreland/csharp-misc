@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using IdentityDemo.App
+@using Microsoft.AspNetCore.Authentication
 @namespace IdentityDemo.Server.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -22,6 +23,7 @@
         var initialAppState = new IdentityDemo.App.Services.InitialApplicationState
         {
             XsrfToken = Xsrf.GetAndStoreTokens(HttpContext).RequestToken,
+            AccessToken = await HttpContext.GetTokenAsync("access_token"),
         };
     }
 
