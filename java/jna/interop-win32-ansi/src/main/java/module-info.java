@@ -14,9 +14,9 @@
 module interop.win32.ansi {
     requires java.base;
     requires moreland.sample.jna.interop.service;
-    //requires com.sun.jna;
-    //requires com.sun.jna.ptr;
-    //requires com.sun.jna.win32;
+    requires com.sun.jna;
+
+    exports moreland.sample.jna.interop.service.win32;
 
     provides moreland.sample.jna.interop.service.MessageBox
         with moreland.sample.jna.interop.service.win32.Win32MessageBoxAnsi;

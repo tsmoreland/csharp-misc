@@ -13,8 +13,18 @@
 
 package moreland.sample.jna.interop.service.win32.internal;
 
-//import com.sun.jna.Library;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.Platform;
 
-public interface User32LibraryInterface {
+
+public interface User32LibraryInterface extends Library {
+    User32LibraryInterface INSTANCE = Platform.isWindows()
+        ? (User32LibraryInterface) Native.loadLibrary("user32", User32LibraryInterface.class)
+        : null;
+
+    int messageBoxExA(Pointer hWnd, String text, String caption, int type, short languageId);
+    
 
 }
