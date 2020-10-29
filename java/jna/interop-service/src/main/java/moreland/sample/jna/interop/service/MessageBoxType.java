@@ -16,7 +16,6 @@ package moreland.sample.jna.interop.service;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public enum MessageBoxType {
 
@@ -29,7 +28,8 @@ public enum MessageBoxType {
     /**
      * The message box contains three push buttons:
      * Cancel, Try Again, Continue. Use this message
-     * box type instead of MB_ABORTRETRYIGNORE.
+     * box type instead of
+     * {@Code MessageBoxType.ABORT_RETRY_IGNORE}.
      */
     HELP(0x00004000),
 

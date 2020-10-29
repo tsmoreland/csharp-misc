@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>interop-service</module>
+        <module>interop-win32-ansi</module>
     </modules>
 
     <properties>
