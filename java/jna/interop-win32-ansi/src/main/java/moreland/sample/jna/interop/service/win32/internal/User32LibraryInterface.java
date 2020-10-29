@@ -11,30 +11,10 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package moreland.sample.jna.interop.service.win32;
+package moreland.sample.jna.interop.service.win32.internal;
 
-import moreland.sample.jna.interop.service.MessageBox;
-import moreland.sample.jna.interop.service.MessageBoxResult;
-import moreland.sample.jna.interop.service.MessageBoxType;
+//import com.sun.jna.Library;
 
-import java.util.EnumSet;
-import java.util.Optional;
+public interface User32LibraryInterface {
 
-public final class Win32MessageBoxAnsi implements MessageBox {
-
-    /**
-     * {@inheritDoc}
-     */
-    public Win32MessageBoxAnsi() {
-        super();
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<MessageBoxResult> display(String text, String caption, EnumSet<MessageBoxType> type) {
-        return Optional.empty();
-    }
 }
