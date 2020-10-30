@@ -11,6 +11,7 @@
     <modules>
         <module>interop-service</module>
         <module>interop-win32-ansi</module>
+        <module>interop-app</module>
     </modules>
 
     <properties>
