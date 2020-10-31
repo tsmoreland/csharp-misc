@@ -13,9 +13,9 @@
 
 package moreland.sample.jna.interop.service;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public enum MessageBoxType {
 
@@ -207,13 +207,13 @@ public enum MessageBoxType {
      * @return integer value resulting from or operations on all values present in {@Code values}
      * @exception IllegalArgumentException if {@Code} is null
      */
-    public static int toInteger(EnumSet<MessageBoxType> values) {
+    public static int toInteger(Set<MessageBoxType> values) {
         if (Objects.isNull(values))
             throw new IllegalArgumentException("values is null");
 
         return values
             .stream()
-            .map(type -> type.getValue())
+            .map(MessageBoxType::getValue)
             .reduce(0, (left, right) -> left | right);
     }
 

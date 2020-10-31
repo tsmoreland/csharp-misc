@@ -16,25 +16,45 @@ package moreland.sample.jna.interop.service.win32;
 import moreland.sample.jna.interop.service.MessageBox;
 import moreland.sample.jna.interop.service.MessageBoxResult;
 import moreland.sample.jna.interop.service.MessageBoxType;
+import moreland.sample.jna.interop.service.win32.internal.User32LibraryInterface;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
+import com.sun.jna.Pointer;
+
 public final class Win32MessageBoxAnsi implements MessageBox {
+
+    private User32LibraryInterface user32Library;
 
     /**
      * {@inheritDoc}
      */
     public Win32MessageBoxAnsi() {
-        super();
+        this(User32LibraryInterface.INSTANCE);
     }
 
+    Win32MessageBoxAnsi(User32LibraryInterface user32Library) {
+        super();
+        this.user32Library = user32Library;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<MessageBoxResult> display(String text, String caption, EnumSet<MessageBoxType> type) {
-        return Optional.empty();
+        
+        short language = 0;
+        var nativeResult = user32Library.messageBoxExA(Pointer.NULL, text, caption, MessageBoxType.toInteger(type), language);
+        if (nativeResult == 0) {
+            return Optional.empty();
+        }
+
+        var result = MessageBoxResult.fromInteger(nativeResult);
+        if (!result.isPresent()) {
+            // ... log failure ...
+        }
+        return result;
     }
 }

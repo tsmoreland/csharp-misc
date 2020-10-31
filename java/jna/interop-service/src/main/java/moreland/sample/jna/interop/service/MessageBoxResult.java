@@ -13,6 +13,9 @@
 
 package moreland.sample.jna.interop.service;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum MessageBoxResult {
 
     /**
@@ -57,6 +60,19 @@ public enum MessageBoxResult {
 
     public int getValue() {
         return value;
+    }
+
+    /**
+     * Attempts to create MessageBoxResult from integer value
+     * @param value integer value to convert
+     * @return Optional containing the converted value on success;
+     *         otherwise an empty
+     */
+    public static Optional<MessageBoxResult> fromInteger(int value) {
+        return Arrays
+            .stream(MessageBoxResult.class.getEnumConstants())
+            .filter(result -> result.getValue() == value)
+            .findFirst();
     }
 
     private int value;
