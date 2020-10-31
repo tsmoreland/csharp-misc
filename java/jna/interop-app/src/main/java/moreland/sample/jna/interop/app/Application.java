@@ -35,6 +35,8 @@ class Application {
         if (Objects.isNull(first)) {
             System.out.println("No messagebox services found.");
             return;
+        } else {
+            System.out.println(String.format("Found %d services, using: %s", messsageBoxServices.size(), first.getClass().getName()));
         }
 
         first.display("Body", "Title", EnumSet.of(MessageBoxType.OK));
