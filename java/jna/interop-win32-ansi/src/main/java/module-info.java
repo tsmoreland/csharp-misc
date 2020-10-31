@@ -15,6 +15,7 @@ module interop.win32.ansi {
     requires java.base;
     requires transitive moreland.sample.jna.interop.service;
     requires transitive com.sun.jna;
+    requires transitive com.sun.jna.platform;
 
     exports moreland.sample.jna.interop.service.win32;
 

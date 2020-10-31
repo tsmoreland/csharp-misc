@@ -18,10 +18,8 @@ import moreland.sample.jna.interop.service.MessageBoxResult;
 import moreland.sample.jna.interop.service.MessageBoxType;
 import moreland.sample.jna.interop.service.win32.internal.User32LibraryInterface;
 
-import java.util.EnumSet;
 import java.util.Optional;
-
-import com.sun.jna.Pointer;
+import java.util.Set;
 
 public final class Win32MessageBoxAnsi implements MessageBox {
 
@@ -43,18 +41,28 @@ public final class Win32MessageBoxAnsi implements MessageBox {
      * {@inheritDoc}
      */
     @Override
-    public Optional<MessageBoxResult> display(String text, String caption, EnumSet<MessageBoxType> type) {
+    public Optional<MessageBoxResult> display(String text, String caption, Set<MessageBoxType> type) {
         
         short language = 0;
-        var nativeResult = user32Library.messageBoxExA(Pointer.NULL, text, caption, MessageBoxType.toInteger(type), language);
-        if (nativeResult == 0) {
+        try {
+            var nativeResult = user32Library.MessageBoxExA(null, text, caption, MessageBoxType.toInteger(type), language);
+            if (nativeResult == 0) {
+                return Optional.empty();
+            }
+
+            var result = MessageBoxResult.fromInteger(nativeResult);
+            if (!result.isPresent()) {
+                // ... log failure ...
+            }
+            return result;
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println(e.getMessage());
+            Throwable inner;
+            while ((inner = e.getCause()) != null) {
+                System.out.println("\t" + inner.getMessage());
+            }
             return Optional.empty();
         }
-
-        var result = MessageBoxResult.fromInteger(nativeResult);
-        if (!result.isPresent()) {
-            // ... log failure ...
-        }
-        return result;
     }
 }

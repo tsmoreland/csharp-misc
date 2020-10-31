@@ -13,8 +13,8 @@
 
 package moreland.sample.jna.interop.service;
 
-import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 
 public interface MessageBox {
     /**
@@ -37,5 +37,5 @@ public interface MessageBox {
      * and the user presses ESC, the return value will be
      * {@Code MessageBoxResult.OK}.
      */
-    Optional<MessageBoxResult> display(String text, String caption, EnumSet<MessageBoxType> type);
+    Optional<MessageBoxResult> display(String text, String caption, Set<MessageBoxType> type);
 }
