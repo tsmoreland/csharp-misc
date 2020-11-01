@@ -120,14 +120,20 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login([FromQuery(Name="ReturnUrl")] string returnUrl = "")
         {
-            return View();
+            ViewBag.ReturnUrl = returnUrl;
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return View();
+
+            return Url.IsLocalUrl(ViewBag.ReturnUrl)
+                ? Redirect(ViewBag.ReturnUrl)
+                : RedirectToAction(nameof(Index), "Home");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model, [FromQuery(Name = "ReturnUrl")] string returnUrl = "")
         {
             if (!ModelState.IsValid)
                 return View();
@@ -169,7 +175,10 @@ namespace WebUI.Controllers
             }
             var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
             await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
-            return RedirectToAction(nameof(Index));
+
+            return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? LocalRedirect(returnUrl)
+                : (IActionResult) RedirectToAction(nameof(Index));
 
             static ClaimsPrincipal Store2FactorAuth(string userId, string provider) =>
                 new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
