@@ -108,6 +108,7 @@ namespace WebUI
             {
                 options.LoginPath = "/Home/Login";
                 options.LogoutPath = "/Home/Logout";
+                options.AccessDeniedPath = "/Home/AccessDenied"; 
                 //options.SessionStore = ... if we wanted to use session id, then we'd need to implement a store, see https://github.com/aspnet/Security/blob/22d2fe99c6fd9806b36025399a217a3a8b4e50f4/samples/CookieSessionSample/MemoryCacheTicketStore.cs
             });
 

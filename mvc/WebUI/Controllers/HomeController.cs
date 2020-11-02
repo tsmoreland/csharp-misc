@@ -451,6 +451,10 @@ namespace WebUI.Controllers
         public IActionResult Error() =>
             View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
+        [HttpGet]
+        public IActionResult AccessDenied() =>
+            View();
+
         private ViewResult FailWithMessage(string message)
         {
             ModelState.AddModelError(string.Empty, message);
