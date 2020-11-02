@@ -21,6 +21,7 @@ using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace WebUI.Controllers
         private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
         private readonly SignInManager<DemoUser> _signInManager;
         private readonly IDemoRepository _repository;
+        private readonly UrlEncoder _urlEncoder;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(
@@ -42,12 +44,14 @@ namespace WebUI.Controllers
             IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
             SignInManager<DemoUser> signInManager,
             IDemoRepository repository,
+            UrlEncoder urlEncoder,
             ILogger<HomeController> logger)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _urlEncoder = urlEncoder;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -290,6 +294,7 @@ namespace WebUI.Controllers
 
         [HttpGet]
         [Authorize]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Constant URI required for QR code")]
         public async Task<IActionResult> RegisterAuthenticator()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -300,6 +305,7 @@ namespace WebUI.Controllers
             }
 
             var authenticatorKey = await GetExistingOrNewAuthentictorKeyAsync();
+            ViewBag.AuthenticatorUri = GenerateQrCodeUri(user.Email, authenticatorKey);
 
             return View(new RegisterAuthenticatorModel {AuthenticatorKey = authenticatorKey});
 
@@ -307,11 +313,29 @@ namespace WebUI.Controllers
             {
                 var key = await _userManager.GetAuthenticatorKeyAsync(user);
                 if (key != null)
+                {
+                    ViewBag.RecoveryCodes = (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToArray();
                     return key;
+                }
 
                 await _userManager.ResetAuthenticatorKeyAsync(user);
+                ViewBag.RecoveryCodes = (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToArray();
+
                 return await _userManager.GetAuthenticatorKeyAsync(user);
             }
+
+            string GenerateQrCodeUri(string email, string unformattedKey)
+            {
+                const string authenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+
+                return string.Format(
+                    authenticatorUriFormat, 
+                    _urlEncoder.Encode("TwoFactor"),
+                    _urlEncoder.Encode(email), 
+                    _urlEncoder.Encode(unformattedKey));
+            }
+
+
         }
 
         [HttpPost]
