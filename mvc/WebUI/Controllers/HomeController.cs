@@ -62,6 +62,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
@@ -69,6 +70,7 @@ namespace WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterModel model)
         {
             if (!ModelState.IsValid)
@@ -109,6 +111,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult RegisterSuccess()
         {
             return View();
@@ -124,6 +127,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login([FromQuery(Name="ReturnUrl")] string returnUrl = "")
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -137,6 +141,7 @@ namespace WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginModel model, [FromQuery(Name = "ReturnUrl")] string returnUrl = "")
         {
             if (!ModelState.IsValid)
@@ -199,9 +204,11 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ForgotPassword() => View();
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             if (!ModelState.IsValid)
@@ -224,10 +231,12 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ResetPassword(string token, string email) =>
             View(new ResetPasswordModel {Token = token, Email = email});
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             if (!ModelState.IsValid)
@@ -257,12 +266,14 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult TwoFactor()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> TwoFactor(TwoFactorModel model)
         {
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
@@ -330,7 +341,7 @@ namespace WebUI.Controllers
 
                 return string.Format(
                     authenticatorUriFormat, 
-                    _urlEncoder.Encode("TwoFactor"),
+                    _urlEncoder.Encode("IdentityDemo"),
                     _urlEncoder.Encode(email), 
                     _urlEncoder.Encode(unformattedKey));
             }
@@ -423,7 +434,6 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
@@ -435,7 +445,6 @@ namespace WebUI.Controllers
 
 
         [HttpGet]
-        [Authorize]
         [ResponseCache(CacheProfileName = "Default")]
         public IActionResult Profile() 
         {
@@ -444,14 +453,17 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Privacy() => View();
 
         [HttpGet]
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() =>
             View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult AccessDenied() =>
             View();
 

@@ -111,6 +111,12 @@ namespace WebUI
                 options.AccessDeniedPath = "/Home/AccessDenied"; 
                 //options.SessionStore = ... if we wanted to use session id, then we'd need to implement a store, see https://github.com/aspnet/Security/blob/22d2fe99c6fd9806b36025399a217a3a8b4e50f4/samples/CookieSessionSample/MemoryCacheTicketStore.cs
             });
+            services.ConfigureExternalCookie(options => 
+            { 
+                options.LoginPath = "/Home/Login";
+                options.LogoutPath = "/Home/Logout";
+                options.AccessDeniedPath = "/Home/AccessDenied"; 
+            });
 
             // intented for password reset, time is arbitrary (as in I just chose a random one without much consideration for usability)
             services.Configure<DataProtectionTokenProviderOptions>(options =>
@@ -202,8 +208,8 @@ namespace WebUI
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllers();
+                    pattern: "{controller=Home}/{action=Index}/{id?}").RequireAuthorization();
+                endpoints.MapControllers().RequireAuthorization();
             });
         }
     }
