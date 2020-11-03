@@ -128,6 +128,13 @@ namespace WebUI
                 options.IterationCount = 100_000;
                 options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3; // default made explicit
             });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Canadian", policy =>
+                {
+                    policy.RequireClaim("country", "CAN");
+                });
+            });
 
             var authBuilder = services
                 .AddAuthentication();

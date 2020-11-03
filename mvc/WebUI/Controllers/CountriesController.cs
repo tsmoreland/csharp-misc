@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WebUI.Extensions;
 
