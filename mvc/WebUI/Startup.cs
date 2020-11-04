@@ -79,7 +79,7 @@ namespace WebUI
 
             // look up how to handle data protection keys, for example an api spread across multiple nodes
             // each node would need to use the same key
-            services.AddIdentity<DemoUser, IdentityRole>(options =>
+            services.AddIdentity<DemoUser, IdentityRole>( options =>
                 {
                     options.Password.RequiredLength = 8;
                     options.Password.RequireLowercase = true; // default, just stateing it explicitly
@@ -96,7 +96,6 @@ namespace WebUI
                     options.Lockout.AllowedForNewUsers = true;
                     options.Lockout.MaxFailedAccessAttempts = 3;
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
-
                 })
                 .AddEntityFrameworkStores<DemoDbContext>()
                 .AddDefaultTokenProviders() // for things like forgot password tokens
@@ -104,18 +103,31 @@ namespace WebUI
                 .AddPasswordValidator<DemoPasswordValidator<DemoUser>>();
             services.AddScoped<IUserClaimsPrincipalFactory<DemoUser>, DemoUserClaimsPrincipalFactory>();
 
+            if (!TimeSpan.TryParse(Configuration["Authentication:CookieExpiresAfter"], out TimeSpan expiresAfter))
+                expiresAfter = TimeSpan.MinValue;
+            
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Home/Login";
                 options.LogoutPath = "/Home/Logout";
                 options.AccessDeniedPath = "/Home/AccessDenied"; 
                 //options.SessionStore = ... if we wanted to use session id, then we'd need to implement a store, see https://github.com/aspnet/Security/blob/22d2fe99c6fd9806b36025399a217a3a8b4e50f4/samples/CookieSessionSample/MemoryCacheTicketStore.cs
+                if (expiresAfter != TimeSpan.MinValue)
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                    options.SlidingExpiration = true;
+                }
             });
             services.ConfigureExternalCookie(options => 
             { 
                 options.LoginPath = "/Home/Login";
                 options.LogoutPath = "/Home/Logout";
                 options.AccessDeniedPath = "/Home/AccessDenied"; 
+                if (expiresAfter != TimeSpan.MinValue)
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                    options.SlidingExpiration = true;
+                }
             });
 
             // intented for password reset, time is arbitrary (as in I just chose a random one without much consideration for usability)
