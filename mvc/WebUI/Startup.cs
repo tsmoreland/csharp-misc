@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +53,12 @@ namespace WebUI
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                 });
 
+            services.AddHttpsRedirection(optionss =>
+            {
+                var rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
+                if (int.TryParse(rawSslPort, out var sslPort))
+                    optionss.HttpsPort = sslPort; // from launchSettings.json but should probably come from config
+            });
             var migrationAssembly = GetType().Assembly.GetName().Name;
 
             // SQLite connection strings:
@@ -199,7 +206,16 @@ namespace WebUI
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+
             }
+            var rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
+            if (int.TryParse(rawSslPort, out var sslPort))
+            {
+                var rewriteOptions = new RewriteOptions()
+                    .AddRedirectToHttps(StatusCodes.Status308PermanentRedirect, sslPort);
+                app.UseRewriter(rewriteOptions);
+            }
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
