@@ -23,6 +23,7 @@ public interface User32LibraryInterface extends StdCallLibrary {
         ? (User32LibraryInterface) Native.load("user32", User32LibraryInterface.class)
         : null;
 
+    @SuppressWarnings("java:S100")
     int MessageBoxExA(HWND hWnd, String text, String caption, int type, short languageId);
     
 
