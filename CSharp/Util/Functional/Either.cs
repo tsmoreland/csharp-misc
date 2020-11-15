@@ -143,7 +143,7 @@ namespace Moreland.CSharp.Util.Functional
 
         /// <inheritdoc/>
         public bool Equals([AllowNull] Either<TLeft, TRight> other) =>
-            other != null! && _left.Equals(other._left) && _right.Equals(other._right);
+            _left.Equals(other._left) && _right.Equals(other._right);
 
         /// <summary>
         /// Returns <typeparamref name="TLeft"/> if present, otherwise default
