@@ -12,11 +12,13 @@
 // 
 
 using System;
+using AddressBook.Core.Interfaces;
 
 namespace AddressBook.Core.Model
 {
-    public record EmailAddress
+    public record EmailAddress : IEntityBacked<Guid>
     {
+        public Guid Id { get; init; } = Guid.NewGuid();
         public string Name { get; init; } = string.Empty;
         public string Address { get; init; } = string.Empty;
     }

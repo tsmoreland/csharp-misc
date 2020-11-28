@@ -12,14 +12,10 @@
 // 
 
 
-using System;
-using AddressBook.Core.Interfaces;
-
 namespace AddressBook.Core.Model
 {
-    public sealed class PhysicalAddress : IEntityBacked<Guid>
+    public record PhysicalAddress
     {
-        public Guid Id { get; init; } = Guid.NewGuid();
         public string Street { get; init; } = string.Empty;
         public string City { get; init; } = string.Empty;
         public string Province { get; init; } = string.Empty;
