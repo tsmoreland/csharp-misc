@@ -24,10 +24,18 @@ namespace AddressBook.Core.Model
         private readonly ConcurrentDictionary<AddressKey, EmailAddress> _emailAddresses;
 
         public Contact()
+            : this(Guid.NewGuid())
+        {
+        }
+
+        public Contact(Guid id)
         {
             _physicalAddresses = new ConcurrentDictionary<AddressKey, PhysicalAddress>();
             _emailAddresses = new ConcurrentDictionary<AddressKey, EmailAddress>();
+            Id = id;
         }
+
+        internal Guid Id { get; } 
 
         public string CompleteName { get; init; } = string.Empty;
         public string GivenName { get; init; } = string.Empty;

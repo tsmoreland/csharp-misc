@@ -11,19 +11,38 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using AddressBook.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
-using System.Collections.Generic;
-using AddressBook.Core.Model;
-using Moreland.CSharp.Util;
-
-namespace AddressBook.Core.Interfaces
+namespace AddressBook.Data
 {
-    public interface IContactRepository
+    public class ContactDatabaseContext : DbContext
     {
-        IEnumerable<Contact> GetAll();
+        public DbSet<ContactEntity> Contacts { get; init; } = null!;
 
-        Maybe<Contact> FindByCompleteName(string completeName);
+        /// <inheritdoc />
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
+            const string schema = "AddressBook";
 
+            var entity = modelBuilder.Entity<ContactEntity>();
+            entity.ToTable("Contacts", schema);
+            entity.HasKey(c => c.Id);
+
+            entity.Property(c => c.CompleteName)
+                .IsRequired()
+                .HasMaxLength(300);
+            entity.Property(c => c.GivenName)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(c => c.MiddleName)
+                .HasMaxLength(100);
+            entity.Property(c => c.Surname)
+                .IsRequired()
+                .HasMaxLength(100);
+
+        }
     }
 }

@@ -12,10 +12,41 @@
 // 
 
 using AddressBook.Core.Interfaces;
+using AddressBook.Core.Model;
+using Moreland.CSharp.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AddressBook.Data.Repositories
 {
     public sealed class ContactRepository : IContactRepository
     {
+        private readonly ContactDatabaseContext _contactDatabaseContext;
+
+        /// <summary>
+        /// Instantiates a new instance of the <see cref="ContactDatabaseContext"/> class.
+        /// </summary>
+        /// <param name="contactDatabaseContext">database context</param>
+        /// <exception cref="ArgumentNullException">
+        /// if <paramref name="contactDatabaseContext"/> is null
+        /// </exception>
+        public ContactRepository(ContactDatabaseContext contactDatabaseContext)
+        {
+            GuardAgainst.ArgumentBeingNull(contactDatabaseContext, "contactDatabaseContext");
+            _contactDatabaseContext = contactDatabaseContext;
+        }
+
+        public Maybe<Contact> FindByCompleteName(string completeName)
+        {
+            var contact = _contactDatabaseContext.Contacts.SingleOrDefault(c => c.CompleteName == completeName);
+            if (contact is null)
+                return Maybe.Empty<Contact>();
+            return Maybe.Empty<Contact>();
+        }
+        public IEnumerable<Contact> GetAll()
+        {
+            return Array.Empty<Contact>();
+        }
     }
 }

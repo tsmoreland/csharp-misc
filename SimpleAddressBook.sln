@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "WebUI\WebUI.csproj", "{6867CAC5-9590-4242-8B80-4B7B82658D3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "WebUI\WebUI.csproj", "{6867CAC5-9590-4242-8B80-4B7B82658D3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressBook.Data", "AddressBook.Data\AddressBook.Data.csproj", "{40D98B8C-08E9-4D51-89B1-3A3703712691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddressBook.Data", "AddressBook.Data\AddressBook.Data.csproj", "{40D98B8C-08E9-4D51-89B1-3A3703712691}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "AddressBook.Setup", "AddressBook.Setup\AddressBook.Setup.wixproj", "{1F6A56D1-E52F-4304-811D-A043E3A057FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressBook.Core", "AddressBook.Core\AddressBook.Core.csproj", "{5EC429CD-C368-4A64-9B0A-6AC45930DD0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddressBook.Core", "AddressBook.Core\AddressBook.Core.csproj", "{5EC429CD-C368-4A64-9B0A-6AC45930DD0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,14 @@ Global
 		{5EC429CD-C368-4A64-9B0A-6AC45930DD0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5EC429CD-C368-4A64-9B0A-6AC45930DD0A}.Release|x86.ActiveCfg = Release|Any CPU
 		{5EC429CD-C368-4A64-9B0A-6AC45930DD0A}.Release|x86.Build.0 = Release|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Debug|x86.Build.0 = Debug|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Release|x86.ActiveCfg = Release|Any CPU
+		{E3E7B51A-C6EC-4E19-95C8-70F11A4B316B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

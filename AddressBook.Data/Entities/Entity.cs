@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AddressBook.Core.Entities
+namespace AddressBook.Data.Entities
 {
     [SuppressMessage("Major Code Smell", "S4035:Classes implementing \"IEquatable<T>\" should be sealed", Justification = "Equatability is intentionally limited to identifier which is contained within this class")]
     public abstract class Entity<TIdentifier>
