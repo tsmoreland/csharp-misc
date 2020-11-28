@@ -12,9 +12,12 @@
 // 
 
 using System;
+using System.Collections.Generic;
+using AddressBook.Core.Model;
 
 namespace AddressBook.Data.Entities
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class ContactEntity : Entity<Guid>
     {
         /// <summary>
@@ -33,7 +36,7 @@ namespace AddressBook.Data.Entities
 
         public string CompleteName { get; set; } = string.Empty;
         public string GivenName { get; set; } = string.Empty;
-        public string? MiddleName { get; set; } 
+        public string? MiddleName { get; set; } = null;
         public string Surname { get; set; } = string.Empty;
 
         public string? HomeStreet { get; set; }
@@ -42,21 +45,13 @@ namespace AddressBook.Data.Entities
         public string? HomeCountryOrRegion { get; set; }
         public string? HomePostCode { get; set; }
 
-        public string? BusinessStreet { get; set; } 
-        public string? BusinessCity { get; set; } 
-        public string? BusinessProvince { get; set; }
-        public string? BusinessCountryOrRegion { get; set; }
-        public string? BusinessPostCode { get; set; }
+        public string? WorkStreet { get; set; }
+        public string? WorkCity { get; set; }
+        public string? WorkProvince { get; set; }
+        public string? WorkCountryOrRegion { get; set; }
+        public string? WorkPostCode { get; set; }
 
-        public string? OtherStreet { get; set; } 
-        public string? OtherCity { get; set; } 
-        public string? OtherProvince { get; set; }
-        public string? OtherCountryOrRegion { get; set; }
-        public string? OtherPostCode { get; set; }
 
-        public string? HomeEmailName { get; set; } 
-        public string? HomeEmailAddress { get; set; } 
-        public string? BusinessEmailName { get; set; } 
-        public string? BusinessEmailAddress { get; set; } 
+        public List<EmailAddress> EmailAddresses { get; set; } = new ();
     }
 }

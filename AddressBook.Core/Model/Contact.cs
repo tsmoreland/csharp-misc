@@ -12,16 +12,19 @@
 // 
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
+using AddressBook.Core.Interfaces;
 
 namespace AddressBook.Core.Model
 {
-    public sealed class Contact
+    public sealed class Contact : IEntityBacked<Guid>
     {
         private readonly ConcurrentDictionary<AddressKey, PhysicalAddress> _physicalAddresses;
-        private readonly ConcurrentDictionary<AddressKey, EmailAddress> _emailAddresses;
+        private readonly List<EmailAddress> _emailAddresses;
+        private string _givenName = string.Empty;
+        private string _surname = string.Empty;
 
         public Contact()
             : this(Guid.NewGuid())
@@ -30,44 +33,54 @@ namespace AddressBook.Core.Model
 
         public Contact(Guid id)
         {
-            _physicalAddresses = new ConcurrentDictionary<AddressKey, PhysicalAddress>();
-            _emailAddresses = new ConcurrentDictionary<AddressKey, EmailAddress>();
+            _physicalAddresses = new();
+            _emailAddresses = new();
             Id = id;
         }
 
-        internal Guid Id { get; } 
+        /// <inheritdoc/>
+        public Guid Id { get; }
 
-        public string CompleteName { get; init; } = string.Empty;
-        public string GivenName { get; init; } = string.Empty;
-        public string MiddleName { get; init; } = string.Empty;
-        public string Surname { get; init; } = string.Empty;
+        public string CompleteName { get; private set; } = string.Empty;
+        public string GivenName 
+        { 
+            get => _givenName;
+            set
+            {
+                if (_givenName == value)
+                    return;
+                var originalValue = _givenName;
+                _givenName = value;
+                if (CompleteName is not {Length: > 0} || CompleteName == originalValue || CompleteName == Surname)
+                    UpdateCompleteName();
+            }
+        } 
+        public string MiddleName { get; private set; } = string.Empty;
+        public string Surname
+        {
+            get => _surname;
+            set
+            {
+                if (_surname == value)
+                    return;
+                var originalValue = _surname;
+                _surname = value;
+                if (CompleteName is not {Length: > 0} || CompleteName == GivenName || CompleteName == originalValue)
+                    UpdateCompleteName();
+            }
+        }
 
         public IEnumerable<PhysicalAddress> PhysicalAddresses =>
             _physicalAddresses.Values.AsEnumerable();
 
         public IEnumerable<EmailAddress> EmailAddresses =>
-            _emailAddresses.Values.AsEnumerable();
+            _emailAddresses.AsEnumerable();
 
-        /// <summary>
-        /// Attempts to set address 
-        /// </summary>
-        /// <param name="key">key or type of the address to set</param>
-        /// <param name="physicalAddress">the address value</param>
-        /// <returns>
-        /// returns true on sucess; otherwise, false
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// if address is null
-        /// </exception>
-        public bool TrySetPhysicalAddress(AddressKey key, PhysicalAddress physicalAddress)
+        public bool TryAddOrUpdateAddress(AddressKey key, PhysicalAddress address)
         {
-            if (physicalAddress is null)
-                throw new ArgumentNullException(nameof(physicalAddress));
-
             try
             {
-                _physicalAddresses.AddOrUpdate(key, physicalAddress,
-                    (_, _) => physicalAddress);
+                _physicalAddresses.AddOrUpdate(key, address, (_, _) => address);
                 return true;
             }
             catch (OverflowException)
@@ -76,32 +89,38 @@ namespace AddressBook.Core.Model
             }
         }
 
-        /// <summary>
-        /// Attempts to set address 
-        /// </summary>
-        /// <param name="key">key or type of the address to set</param>
-        /// <param name="address">the address value</param>
-        /// <returns>
-        /// returns true on sucess; otherwise, false
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// if address is null
-        /// </exception>
-        public bool TrySetEmailAddress(AddressKey key, EmailAddress address)
+        public bool TryAddAddress(EmailAddress address)
         {
-            if (address is null)
-                throw new ArgumentNullException(nameof(address));
-
-            try
-            {
-                _emailAddresses.AddOrUpdate(key, address,
-                    (_, _) => address);
-                return true;
-            }
-            catch (OverflowException)
-            {
+            if (_emailAddresses.Contains(address))
                 return false;
-            }
+
+            _emailAddresses.Add(address);
+            return true;
+        }
+
+        public bool TryRemoveAddress(AddressKey key) =>
+            _physicalAddresses.TryRemove(key, out _);
+
+        public bool TryRemoveAddress(EmailAddress address)
+        {
+            if (!_emailAddresses.Contains(address))
+                return false;
+
+            _emailAddresses.Remove(address);
+            return true;
+        }
+
+        private void UpdateCompleteName()
+        {
+            var hasGivenName = GivenName is {Length: > 0};
+            var hasSurname = Surname is {Length: > 0};
+
+            if (hasGivenName && hasSurname)
+                CompleteName = $"{GivenName} {Surname}";
+            else if (hasGivenName)
+                CompleteName = GivenName;
+            else if (hasSurname)
+                CompleteName = Surname;
         }
     }
 }

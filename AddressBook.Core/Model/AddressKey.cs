@@ -20,8 +20,8 @@ namespace AddressBook.Core.Model
     {
         /// <summary>Home Address</summary>
         Home = 0,
-        /// <summary>Business Address</summary>
-        Business,
+        /// <summary>Work Address</summary>
+        Work,
 
         /// <summary>Other Address</summary>
         Other

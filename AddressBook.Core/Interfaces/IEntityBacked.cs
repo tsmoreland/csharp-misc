@@ -11,19 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-
-using System;
-using AddressBook.Core.Interfaces;
-
-namespace AddressBook.Core.Model
+namespace AddressBook.Core.Interfaces
 {
-    public sealed class PhysicalAddress : IEntityBacked<Guid>
+    public interface IEntityBacked<out TIdentifier> where TIdentifier : struct
     {
-        public Guid Id { get; init; } = Guid.NewGuid();
-        public string Street { get; init; } = string.Empty;
-        public string City { get; init; } = string.Empty;
-        public string Province { get; init; } = string.Empty;
-        public string CountryOrRegion { get; init; } = string.Empty;
-        public string PostCode { get; init; } = string.Empty;
+        TIdentifier Id { get; }
     }
 }

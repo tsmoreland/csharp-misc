@@ -13,12 +13,26 @@
 
 using AddressBook.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Microsoft.Extensions.Logging;
 
 namespace AddressBook.Data
 {
     public class ContactDatabaseContext : DbContext
     {
         public DbSet<ContactEntity> Contacts { get; init; } = null!;
+
+        /// <inheritdoc />
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+
+            const string connectionString = "Data Source=ContactList.db;Cache=Shared"; // this should come from options injected into the constructor
+            optionsBuilder
+                .UseSqlite(connectionString)
+                .LogTo(Console.WriteLine, new[] {DbLoggerCategory.Database.Command.Name}, LogLevel.Information); // logger should not be console, other settings should come from injected options
+        }
+
 
         /// <inheritdoc />
         protected override void OnModelCreating(ModelBuilder modelBuilder)
