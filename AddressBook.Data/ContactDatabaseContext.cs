@@ -14,6 +14,7 @@
 using AddressBook.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using AddressBook.Core.Model;
 using Microsoft.Extensions.Logging;
 
 namespace AddressBook.Data
@@ -38,25 +39,46 @@ namespace AddressBook.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             const string schema = "AddressBook";
 
-            var entity = modelBuilder.Entity<ContactEntity>();
-            entity.ToTable("Contacts", schema);
-            entity.HasKey(c => c.Id);
+            // makes future use redundant, but no harm in being explicit
+            modelBuilder.HasDefaultSchema(schema);
 
-            entity.Property(c => c.CompleteName)
-                .IsRequired()
-                .HasMaxLength(300);
-            entity.Property(c => c.GivenName)
-                .IsRequired()
-                .HasMaxLength(100);
-            entity.Property(c => c.MiddleName)
-                .HasMaxLength(100);
-            entity.Property(c => c.Surname)
-                .IsRequired()
-                .HasMaxLength(100);
+            ConfigureContactsTable(schema, modelBuilder);
+            ConfigureEmailAddressesTable(schema, modelBuilder);
 
+            static void ConfigureContactsTable(string schema, ModelBuilder builder)
+            {
+                var entity = builder.Entity<ContactEntity>();
+                entity.ToTable("Contacts", schema);
+                entity.HasKey(c => c.Id);
+
+                entity.Property(c => c.CompleteName)
+                    .IsRequired()
+                    .HasMaxLength(300);
+                entity.Property(c => c.GivenName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.Property(c => c.MiddleName)
+                    .HasMaxLength(100);
+                entity.Property(c => c.Surname)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(c => c.ConcurrencyStamp)
+                    .IsConcurrencyToken()
+                    .ValueGeneratedOnAddOrUpdate();
+            }
+            static void ConfigureEmailAddressesTable(string schema, ModelBuilder builder)
+            {
+                var entity = builder.Entity<EmailAddress>();
+                entity.ToTable("EmailAddresses", schema);
+
+                entity.HasKey(e => e.Address);
+                entity.Property(e => e.Address).HasMaxLength(100).IsUnicode(false).IsRequired();
+                entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+
+            }
         }
     }
 }

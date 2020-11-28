@@ -11,14 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
-using AddressBook.Core.Interfaces;
-
 namespace AddressBook.Core.Model
 {
-    public record EmailAddress : IEntityBacked<Guid>
+    public record EmailAddress 
     {
-        public Guid Id { get; init; } = Guid.NewGuid();
         public string Name { get; init; } = string.Empty;
         public string Address { get; init; } = string.Empty;
     }

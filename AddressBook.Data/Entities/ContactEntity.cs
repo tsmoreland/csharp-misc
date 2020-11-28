@@ -51,7 +51,14 @@ namespace AddressBook.Data.Entities
         public string? WorkCountryOrRegion { get; set; }
         public string? WorkPostCode { get; set; }
 
+        public string? OtherStreet { get; set; }
+        public string? OtherCity { get; set; }
+        public string? OtherProvince { get; set; }
+        public string? OtherCountryOrRegion { get; set; }
+        public string? OtherPostCode { get; set; }
 
         public List<EmailAddress> EmailAddresses { get; set; } = new ();
+
+        public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
     }
 }
