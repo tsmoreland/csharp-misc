@@ -3,10 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <langversion>preview</langversion>
+    <nullable>enable</nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
 
 </Project>

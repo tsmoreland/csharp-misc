@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <langversion>preview</langversion>
+    <nullable>enable</nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AddressBook.Core\AddressBook.Core.csproj" />
+    <ProjectReference Include="..\AddressBook.Data\AddressBook.Data.csproj" />
+  </ItemGroup>
 
 </Project>
