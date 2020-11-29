@@ -17,6 +17,7 @@
 
 	<modules>
     <module>commandlineecho-cli</module>
+    <module>commandlineecho-service</module>
   </modules>
 
   <properties>

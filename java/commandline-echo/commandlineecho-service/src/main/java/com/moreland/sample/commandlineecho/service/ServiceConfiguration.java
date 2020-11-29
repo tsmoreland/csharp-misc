@@ -10,16 +10,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-package com.moreland.sample.commandlineecho.cli;
+package com.moreland.sample.commandlineecho.service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ApplicationConfiguration {
-    
+public class ServiceConfiguration {
+
     @Bean
-    public Printer printer() {
-        return new ConsolePrinter();
+    public Obfuscator obfuscator() {
+        return new ReversingObfuscator();
     }
+    
 }

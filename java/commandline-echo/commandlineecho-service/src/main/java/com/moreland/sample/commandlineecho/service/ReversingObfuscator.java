@@ -10,16 +10,19 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-package com.moreland.sample.commandlineecho.cli;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+package com.moreland.sample.commandlineecho.service;
 
-@Configuration
-public class ApplicationConfiguration {
-    
-    @Bean
-    public Printer printer() {
-        return new ConsolePrinter();
+public class ReversingObfuscator implements Obfuscator {
+
+    @Override
+    public String jumble(String source) {
+        var builder = new StringBuilder();
+        for (int i= source.length() - 1; i >= 0; i--) {
+            builder.append(source.charAt(i));
+        }
+        return builder.toString();
+
     }
+    
 }

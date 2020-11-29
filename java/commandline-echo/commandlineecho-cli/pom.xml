@@ -9,10 +9,15 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>credentialstore-cli</artifactId>
+  <artifactId>commandlineecho-cli</artifactId>
   <packaging>jar</packaging>
 
 	<dependencies>
+    <dependency>
+      <groupId>com.moreland.sample.commandlineecho</groupId>
+      <artifactId>commandlineecho-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
 
 	</dependencies>
 
