@@ -208,6 +208,7 @@ namespace WebUI.Controllers
         public IActionResult ForgotPassword() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
@@ -236,6 +237,7 @@ namespace WebUI.Controllers
             View(new ResetPasswordModel {Token = token, Email = email});
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
@@ -273,6 +275,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> TwoFactor(TwoFactorModel model)
         {
@@ -350,6 +353,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> RegisterAuthenticator(RegisterAuthenticatorModel model)
         {
@@ -434,6 +438,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
