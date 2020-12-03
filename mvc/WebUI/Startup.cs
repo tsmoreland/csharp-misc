@@ -71,16 +71,9 @@ namespace WebUI
             services
                 .AddDbContext<DemoDbContext>(options =>
                 {
-#if DEBUGGING_MIGRATIONS
                     options.EnableSensitiveDataLogging();
-#endif
-#if USE_SQL_LITE
                     var connectionString = Configuration.GetConnectionString("IdentityDemoSQLite");
                     options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
-#else
-                    var connectionString = Configuration.GetConnectionString("IdentityDemoSQLServer");
-                    options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
-#endif
                 });
             services.AddScoped<IDemoRepository, DemoRepository>();
 

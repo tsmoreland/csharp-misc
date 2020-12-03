@@ -32,9 +32,8 @@ namespace IdentityDomain.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            const string schema = "demo";
 
-            builder.Entity<Country>().ToTable("Countries", schema);
+            builder.Entity<Country>().ToTable("Countries");
             builder.Entity<Country>().HasData(
                 Country.None,
                 new Country { Id = "CAN", Name = "Canada" },
@@ -42,16 +41,16 @@ namespace IdentityDomain.Infrastructure
                 new Country { Id = "USA", Name = "United States" }
             );
             builder.Entity<DemoUser>(DemoUserBuilder);
-            builder.Entity<IdentityRole>().ToTable("Role", schema);
-            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims", schema);
-            builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles", schema);
-            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims", schema);
-            builder.Entity<IdentityUserLogin<string>>().ToTable("Logins", schema);
-            builder.Entity<IdentityUserToken<string>>().ToTable("Tokens", schema);
+            builder.Entity<IdentityRole>().ToTable("Role");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("Logins");
+            builder.Entity<IdentityUserToken<string>>().ToTable("Tokens");
 
             static void DemoUserBuilder(EntityTypeBuilder<DemoUser> userBuilder)
             {
-                userBuilder.ToTable("DemoUsers", schema);
+                userBuilder.ToTable("DemoUsers");
                 userBuilder.Property(u => u.CountryId).IsRequired();
             }
         }
