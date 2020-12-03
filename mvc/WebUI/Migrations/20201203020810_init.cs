@@ -3,20 +3,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebUI.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "demo");
-
             migrationBuilder.CreateTable(
                 name: "Countries",
-                schema: "demo",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false)
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,13 +21,12 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Role",
-                schema: "demo",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,26 +35,25 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DemoUsers",
-                schema: "demo",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    Locale = table.Column<string>(nullable: false),
-                    CountryId = table.Column<string>(nullable: false)
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Locale = table.Column<string>(type: "TEXT", nullable: false),
+                    CountryId = table.Column<string>(type: "TEXT", nullable: false),
+                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "TEXT", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +61,6 @@ namespace WebUI.Migrations
                     table.ForeignKey(
                         name: "FK_DemoUsers_Countries_CountryId",
                         column: x => x.CountryId,
-                        principalSchema: "demo",
                         principalTable: "Countries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -75,14 +68,13 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
-                schema: "demo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RoleId = table.Column<string>(type: "TEXT", nullable: false),
+                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
+                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,7 +82,6 @@ namespace WebUI.Migrations
                     table.ForeignKey(
                         name: "FK_RoleClaims_Role_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "demo",
                         principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -98,13 +89,12 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Logins",
-                schema: "demo",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
-                    ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: false)
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,7 +102,6 @@ namespace WebUI.Migrations
                     table.ForeignKey(
                         name: "FK_Logins_DemoUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "demo",
                         principalTable: "DemoUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -120,13 +109,12 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Tokens",
-                schema: "demo",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    LoginProvider = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -134,7 +122,6 @@ namespace WebUI.Migrations
                     table.ForeignKey(
                         name: "FK_Tokens_DemoUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "demo",
                         principalTable: "DemoUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -142,14 +129,13 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserClaims",
-                schema: "demo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
+                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -157,7 +143,6 @@ namespace WebUI.Migrations
                     table.ForeignKey(
                         name: "FK_UserClaims_DemoUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "demo",
                         principalTable: "DemoUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -165,92 +150,87 @@ namespace WebUI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserRoles",
-                schema: "demo",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    RoleId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_UserRoles_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalSchema: "demo",
-                        principalTable: "Role",
+                        name: "FK_UserRoles_DemoUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "DemoUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_DemoUsers_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "demo",
-                        principalTable: "DemoUsers",
+                        name: "FK_UserRoles_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                schema: "demo",
                 table: "Countries",
                 columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { "NUL", "None" },
-                    { "CAN", "Canada" },
-                    { "GBR", "United Kingdom" },
-                    { "USA", "United States" }
-                });
+                values: new object[] { "NUL", "None" });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_DemoUsers_CountryId",
-                schema: "demo",
-                table: "DemoUsers",
-                column: "CountryId");
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { "CAN", "Canada" });
+
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { "GBR", "United Kingdom" });
+
+            migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { "USA", "United States" });
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                schema: "demo",
                 table: "DemoUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DemoUsers_CountryId",
+                table: "DemoUsers",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                schema: "demo",
                 table: "DemoUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Logins_UserId",
-                schema: "demo",
                 table: "Logins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "demo",
                 table: "Role",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
-                schema: "demo",
                 table: "RoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
-                schema: "demo",
                 table: "UserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
-                schema: "demo",
                 table: "UserRoles",
                 column: "RoleId");
         }
@@ -258,36 +238,28 @@ namespace WebUI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Logins",
-                schema: "demo");
+                name: "Logins");
 
             migrationBuilder.DropTable(
-                name: "RoleClaims",
-                schema: "demo");
+                name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "Tokens",
-                schema: "demo");
+                name: "Tokens");
 
             migrationBuilder.DropTable(
-                name: "UserClaims",
-                schema: "demo");
+                name: "UserClaims");
 
             migrationBuilder.DropTable(
-                name: "UserRoles",
-                schema: "demo");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "Role",
-                schema: "demo");
+                name: "DemoUsers");
 
             migrationBuilder.DropTable(
-                name: "DemoUsers",
-                schema: "demo");
+                name: "Role");
 
             migrationBuilder.DropTable(
-                name: "Countries",
-                schema: "demo");
+                name: "Countries");
         }
     }
 }

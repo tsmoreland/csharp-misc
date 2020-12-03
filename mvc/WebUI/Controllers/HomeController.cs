@@ -118,12 +118,13 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             return (user != null && (await _userManager.ConfirmEmailAsync(user, token)).Succeeded)
                 ? View("EmailConfirmed")
-                : View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
+                : View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unknown"});
         }
 
         [HttpGet]
@@ -131,7 +132,7 @@ namespace WebUI.Controllers
         public IActionResult Login([FromQuery(Name="ReturnUrl")] string returnUrl = "")
         {
             ViewBag.ReturnUrl = returnUrl;
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity?.IsAuthenticated != true)
                 return View();
 
             return Url.IsLocalUrl(ViewBag.ReturnUrl)
@@ -146,7 +147,6 @@ namespace WebUI.Controllers
         {
             if (!ModelState.IsValid)
                 return View();
-
 
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
@@ -307,7 +307,6 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Constant URI required for QR code")]
         public async Task<IActionResult> RegisterAuthenticator()
         {
@@ -354,7 +353,6 @@ namespace WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> RegisterAuthenticator(RegisterAuthenticatorModel model)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -385,7 +383,7 @@ namespace WebUI.Controllers
                 .ToArray();
 
             if (schemas.All(schema => schema.Name != provider))
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
+                return View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unknown"});
 
             var properties = new AuthenticationProperties
             {
@@ -402,10 +400,10 @@ namespace WebUI.Controllers
             var externalUserId = result.Principal.FindFirstValue("sub")
                                  ?? result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)
                                  ?? string.Empty; // alternately throw exception because it's invalid
-            var provider = result.Properties.Items["scheme"] ?? string.Empty;
+            var provider = result.Properties?.Items["scheme"] ?? string.Empty;
 
             if (string.IsNullOrEmpty(externalUserId))
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current.Id });
+                return View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unkown"});
 
             var user = await _userManager.FindByLoginAsync(provider, externalUserId);
             if (user != null)
