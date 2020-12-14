@@ -375,3 +375,4 @@ MigrationBackup/
 # Maven
 **/log/
 **/target/
+/csharp/OwinSample/WebApp/lib
