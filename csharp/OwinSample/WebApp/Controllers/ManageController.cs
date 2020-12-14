@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#nullable enable
+
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,14 +22,15 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OwinSample.WebApp.Identity;
 using OwinSample.WebApp.Models;
+using OwinSample.WebApp.Services;
 
 namespace OwinSample.WebApp.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager? _signInManager;
+        private ApplicationUserManager? _userManager;
 
         public ManageController()
         {
@@ -165,11 +168,18 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/VerifyPhoneNumber
-        public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
+        public async Task<ActionResult> VerifyPhoneNumber(string? phoneNumber)
         {
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
+            if (string.IsNullOrEmpty(code))
+            {
+                // ...
+            }
+
             // Send an SMS through the SMS provider to verify the phone number
-            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            return phoneNumber != null 
+                ? View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber }) 
+                : View("Error");
         }
 
         //

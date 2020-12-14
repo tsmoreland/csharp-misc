@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+#nullable enable
+
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -26,8 +28,8 @@ namespace OwinSample.WebApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager? _signInManager;
+        private ApplicationUserManager? _userManager;
 
         public AccountController()
         {
@@ -345,7 +347,7 @@ namespace OwinSample.WebApp.Controllers
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
+                // SignInStatus.Failure
                 default:
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
@@ -430,7 +432,7 @@ namespace OwinSample.WebApp.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -466,7 +468,7 @@ namespace OwinSample.WebApp.Controllers
             {
             }
 
-            public ChallengeResult(string provider, string redirectUri, string userId)
+            public ChallengeResult(string provider, string redirectUri, string? userId)
             {
                 LoginProvider = provider;
                 RedirectUri = redirectUri;
@@ -475,7 +477,7 @@ namespace OwinSample.WebApp.Controllers
 
             public string LoginProvider { get; set; }
             public string RedirectUri { get; set; }
-            public string UserId { get; set; }
+            public string? UserId { get; set; }
 
             public override void ExecuteResult(ControllerContext context)
             {
@@ -487,6 +489,6 @@ namespace OwinSample.WebApp.Controllers
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
-#endregion
+        #endregion
     }
 }

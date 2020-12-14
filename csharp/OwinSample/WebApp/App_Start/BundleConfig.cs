@@ -11,35 +11,44 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Diagnostics.CodeAnalysis;
 using System.Web.Optimization;
 
 namespace OwinSample.WebApp
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    [SuppressMessage("Major Code Smell", "S1118:Utility classes should not have public constructors", Justification = "Expected Infrastructure")]
     public class BundleConfig
     {
+        protected BundleConfig()
+        {
+            
+        }
+
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+            bundles
+                .Add(new ScriptBundle("~/bundles/jquery")
+                .Include("~/lib/jquery/jquery.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jquery.validate*"));
+            bundles
+                .Add(new ScriptBundle("~/bundles/jqueryval")
+                .Include(
+                    "~/lib/jquery-validate/jquery.validate.js",
+                    "~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
-            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+            bundles
+                .Add(new ScriptBundle("~/bundles/modernizr")
+                .Include("~/lib/modernizr/modernizr.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+            bundles
+                .Add(new ScriptBundle("~/bundles/bootstrap")
+                .Include("~/lib/twitter-bootstrap/js/bootstrap.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+            bundles
+                .Add(new StyleBundle("~/Content/css")
+                .Include("~/lib/twitter-bootstrap/css/bootstrap.css", "~/Content/site.css"));
         }
     }
 }

@@ -17,7 +17,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OwinSample.WebApp</RootNamespace>
-    <AssemblyName>WebApp</AssemblyName>
+    <AssemblyName>OwinSample.WebApp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -51,6 +51,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
@@ -188,138 +191,25 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-grid.css" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-grid.min.css" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-reboot.css" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="lib\jquery-ajax-unobtrusive\jquery.unobtrusive-ajax.js" />
+    <Content Include="lib\jquery-ajax-unobtrusive\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="lib\jquery-validate\jquery.validate.js" />
+    <Content Include="lib\jquery-validate\jquery.validate.min.js" />
+    <Content Include="lib\jquery\jquery.js" />
+    <Content Include="lib\jquery\jquery.min.js" />
+    <Content Include="lib\jquery\jquery.slim.js" />
+    <Content Include="lib\jquery\jquery.slim.min.js" />
+    <Content Include="lib\modernizr\modernizr.js" />
+    <Content Include="lib\modernizr\modernizr.min.js" />
     <Content Include="lib\twitter-bootstrap\css\bootstrap.css" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap.min.css" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.bundle.js" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.bundle.min.js" />
     <Content Include="lib\twitter-bootstrap\js\bootstrap.js" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="libman.json" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-grid.css.map" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-grid.min.css.map" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-reboot.css.map" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap-reboot.min.css.map" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap.css.map" />
-    <Content Include="lib\twitter-bootstrap\css\bootstrap.min.css.map" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.bundle.js.map" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.bundle.min.js.map" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.js.map" />
-    <Content Include="lib\twitter-bootstrap\js\bootstrap.min.js.map" />
-    <Content Include="lib\twitter-bootstrap\scss\_alert.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_badge.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_breadcrumb.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_button-group.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_buttons.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_card.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_carousel.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_close.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_code.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_custom-forms.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_dropdown.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_forms.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_functions.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_grid.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_images.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_input-group.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_jumbotron.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_list-group.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_media.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_mixins.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_modal.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_nav.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_navbar.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_pagination.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_popover.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_print.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_progress.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_reboot.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_root.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_spinners.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\bootstrap-grid.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\bootstrap-reboot.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\bootstrap.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_tables.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_toasts.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_tooltip.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_transitions.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_type.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_utilities.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\_variables.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_alert.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_background-variant.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_badge.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_border-radius.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_box-shadow.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_breakpoints.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_buttons.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_caret.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_clearfix.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_deprecate.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_float.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_forms.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_gradients.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_grid-framework.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_grid.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_hover.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_image.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_list-group.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_lists.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_nav-divider.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_pagination.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_reset-text.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_resize.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_screen-reader.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_size.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_table-row.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_text-emphasis.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_text-hide.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_text-truncate.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_transition.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\mixins\_visibility.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_align.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_background.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_borders.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_clearfix.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_display.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_embed.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_flex.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_float.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_interactions.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_overflow.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_position.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_screenreaders.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_shadows.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_sizing.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_spacing.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_stretched-link.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_text.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\utilities\_visibility.scss" />
-    <Content Include="lib\twitter-bootstrap\scss\vendor\_rfs.scss" />
-    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
-    <Content Include="Scripts\jquery-3.4.1.js" />
-    <Content Include="Scripts\jquery-3.4.1.min.js" />
-    <Content Include="Scripts\jquery-3.4.1.slim.js" />
-    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="lib\jquery\jquery.min.map" />
+    <Content Include="lib\jquery\jquery.slim.min.map" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -363,13 +253,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
