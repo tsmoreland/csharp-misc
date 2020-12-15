@@ -22,7 +22,6 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using OwinSample.WebApp.Identity;
 using OwinSample.WebApp.Models;
-using OwinSample.WebApp.Services;
 
 namespace OwinSample.WebApp.Controllers
 {
