@@ -172,6 +172,11 @@
   <ItemGroup>
     <Compile Include="Identity\ApplicationUserManager.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Migrations\202012150042046_initial.cs" />
+    <Compile Include="Migrations\202012150042046_initial.designer.cs">
+      <DependentUpon>202012150042046_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="Identity\ApplicationSignInManager.cs" />
@@ -250,6 +255,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202012150042046_initial.resx">
+      <DependentUpon>202012150042046_initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
