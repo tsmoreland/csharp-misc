@@ -97,7 +97,11 @@ EXTERN_C const IID IID_IGrizzly;
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Roar( void) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Oneify( 
-            /* [in] */ SAFEARRAY * pSource,
+            /* [out][in] */ SAFEARRAY * *pSource,
+            /* [retval][out] */ VARIANT_BOOL *pRetVal) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE Twoify( 
+            /* [out][in] */ SAFEARRAY * pSource,
             /* [retval][out] */ VARIANT_BOOL *pRetVal) = 0;
         
     };
@@ -171,7 +175,12 @@ EXTERN_C const IID IID_IGrizzly;
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *Oneify )( 
             IGrizzly * This,
-            /* [in] */ SAFEARRAY * pSource,
+            /* [out][in] */ SAFEARRAY * *pSource,
+            /* [retval][out] */ VARIANT_BOOL *pRetVal);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *Twoify )( 
+            IGrizzly * This,
+            /* [out][in] */ SAFEARRAY * pSource,
             /* [retval][out] */ VARIANT_BOOL *pRetVal);
         
         END_INTERFACE
@@ -221,6 +230,9 @@ EXTERN_C const IID IID_IGrizzly;
 
 #define IGrizzly_Oneify(This,pSource,pRetVal)	\
     ( (This)->lpVtbl -> Oneify(This,pSource,pRetVal) ) 
+
+#define IGrizzly_Twoify(This,pSource,pRetVal)	\
+    ( (This)->lpVtbl -> Twoify(This,pSource,pRetVal) ) 
 
 #endif /* COBJMACROS */
 

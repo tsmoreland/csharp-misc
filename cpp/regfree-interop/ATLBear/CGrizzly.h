@@ -29,7 +29,8 @@ public:
     STDMETHODIMP get_Name(BSTR* value) override;
     STDMETHODIMP put_Name(BSTR value) override;
     STDMETHODIMP Roar() override;
-	STDMETHODIMP Oneify(SAFEARRAY* pSource, VARIANT_BOOL* pRetval); 
+	STDMETHODIMP Oneify(SAFEARRAY** pSource, VARIANT_BOOL* pRetval) override; 
+	STDMETHODIMP Twoify(SAFEARRAY* pSource, VARIANT_BOOL* pRetval) override; 
 
 public:
 

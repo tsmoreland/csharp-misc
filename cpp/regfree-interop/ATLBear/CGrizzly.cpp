@@ -42,7 +42,27 @@ STDMETHODIMP CGrizzly::Roar()
     });
 }
 
-STDMETHODIMP CGrizzly::Oneify(SAFEARRAY* pSource, VARIANT_BOOL* pRetVal) 
+STDMETHODIMP CGrizzly::Oneify(SAFEARRAY** pSource, VARIANT_BOOL* pRetVal) 
+{
+    return SafeComCall([pSource, pRetVal]()
+    {
+        void* pData{nullptr};
+        if (auto const hr = SafeArrayAccessData(*pSource, &pData);
+            FAILED(hr)) {
+            *pRetVal = VARIANT_FALSE;
+            return S_OK;
+        }
+
+        byte const bytes[] = { 1, 1, 1, 1,  1, 1, 1, 1};
+        memcpy_s(pData, std::size(bytes), bytes, std::size(bytes));
+        SafeArrayUnaccessData(*pSource);
+
+        *pRetVal = VARIANT_TRUE;
+        return S_OK;
+    });
+}
+
+STDMETHODIMP CGrizzly::Twoify(SAFEARRAY* pSource, VARIANT_BOOL* pRetVal) 
 {
     return SafeComCall([pSource, pRetVal]()
     {
@@ -53,7 +73,7 @@ STDMETHODIMP CGrizzly::Oneify(SAFEARRAY* pSource, VARIANT_BOOL* pRetVal)
             return S_OK;
         }
 
-        byte const bytes[] = { 1, 1, 1, 1,  1, 1, 1, 1};
+        byte const bytes[] = { 2, 2, 2, 2,  2, 2, 2, 2};
         memcpy_s(pData, std::size(bytes), bytes, std::size(bytes));
         SafeArrayUnaccessData(pSource);
 
