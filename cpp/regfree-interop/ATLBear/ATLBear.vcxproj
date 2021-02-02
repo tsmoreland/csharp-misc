@@ -121,7 +121,8 @@
       <OutputManifestFile>$(TargetPath).manifest</OutputManifestFile>
     </Manifest>
     <PostBuildEvent>
-      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo</Command>
+      <Command>mt -manifest Manifest.xml -outputresource:"$(TargetPath)";2 -nologo
+tlbimp $(IntDir)ATLBear.tlb /out:$(OutDir)interop.$(AssemblyName).dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

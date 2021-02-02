@@ -40,7 +40,7 @@ _Use_decl_annotations_
 STDAPI DllRegisterServer(void)
 {
 	// registers object, typelib and all interfaces in typelib
-	HRESULT hr = _AtlModule.DllRegisterServer();
+	HRESULT const hr = _AtlModule.DllRegisterServer();
 #ifdef _MERGE_PROXYSTUB
 	if (FAILED(hr))
 		return hr;
@@ -53,7 +53,7 @@ STDAPI DllRegisterServer(void)
 _Use_decl_annotations_
 STDAPI DllUnregisterServer(void)
 {
-	HRESULT hr = _AtlModule.DllUnregisterServer();
+	HRESULT const hr = _AtlModule.DllUnregisterServer();
 #ifdef _MERGE_PROXYSTUB
 	if (FAILED(hr))
 		return hr;

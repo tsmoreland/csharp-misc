@@ -7,8 +7,8 @@
 /* at Tue Jan 19 03:14:07 2038
  */
 /* Compiler settings for ATLBear.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
-    protocol : dce , ms_ext, c_ext, robust
+    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
+    protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
          __declspec(uuid()), __declspec(selectany), __declspec(novtable)
@@ -96,6 +96,10 @@ EXTERN_C const IID IID_IGrizzly;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Roar( void) = 0;
         
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE Oneify( 
+            /* [in] */ SAFEARRAY * pSource,
+            /* [retval][out] */ VARIANT_BOOL *pRetVal) = 0;
+        
     };
     
     
@@ -165,6 +169,11 @@ EXTERN_C const IID IID_IGrizzly;
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *Roar )( 
             IGrizzly * This);
         
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *Oneify )( 
+            IGrizzly * This,
+            /* [in] */ SAFEARRAY * pSource,
+            /* [retval][out] */ VARIANT_BOOL *pRetVal);
+        
         END_INTERFACE
     } IGrizzlyVtbl;
 
@@ -210,6 +219,9 @@ EXTERN_C const IID IID_IGrizzly;
 #define IGrizzly_Roar(This)	\
     ( (This)->lpVtbl -> Roar(This) ) 
 
+#define IGrizzly_Oneify(This,pSource,pRetVal)	\
+    ( (This)->lpVtbl -> Oneify(This,pSource,pRetVal) ) 
+
 #endif /* COBJMACROS */
 
 
@@ -247,10 +259,20 @@ unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *,
 unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
 void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
 
+unsigned long             __RPC_USER  LPSAFEARRAY_UserSize(     unsigned long *, unsigned long            , LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserMarshal(  unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserUnmarshal(unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+void                      __RPC_USER  LPSAFEARRAY_UserFree(     unsigned long *, LPSAFEARRAY * ); 
+
 unsigned long             __RPC_USER  BSTR_UserSize64(     unsigned long *, unsigned long            , BSTR * ); 
 unsigned char * __RPC_USER  BSTR_UserMarshal64(  unsigned long *, unsigned char *, BSTR * ); 
 unsigned char * __RPC_USER  BSTR_UserUnmarshal64(unsigned long *, unsigned char *, BSTR * ); 
 void                      __RPC_USER  BSTR_UserFree64(     unsigned long *, BSTR * ); 
+
+unsigned long             __RPC_USER  LPSAFEARRAY_UserSize64(     unsigned long *, unsigned long            , LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserMarshal64(  unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserUnmarshal64(unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+void                      __RPC_USER  LPSAFEARRAY_UserFree64(     unsigned long *, LPSAFEARRAY * ); 
 
 /* end of Additional Prototypes */
 

@@ -22,6 +22,7 @@ interface IGrizzly : IDispatch
     [id(1), propget] HRESULT Name([out, retval] BSTR* pRetVal);
     [id(1), propput] HRESULT Name([in] BSTR value);
     [id(2)] HRESULT Roar();
+	[id(3)] HRESULT Oneify([in] SAFEARRAY(byte) pSource, [out, retval] VARIANT_BOOL *pRetVal);
 };
 
 [

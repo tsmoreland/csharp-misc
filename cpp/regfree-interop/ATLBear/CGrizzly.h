@@ -29,6 +29,7 @@ public:
     STDMETHODIMP get_Name(BSTR* value) override;
     STDMETHODIMP put_Name(BSTR value) override;
     STDMETHODIMP Roar() override;
+	STDMETHODIMP Oneify(SAFEARRAY* pSource, VARIANT_BOOL* pRetval); 
 
 public:
 
@@ -65,6 +66,7 @@ private:
 
     template<class F>
     [[nodiscard]] static HRESULT SafeComCall(F functor) noexcept;
+
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Grizzly), CGrizzly)

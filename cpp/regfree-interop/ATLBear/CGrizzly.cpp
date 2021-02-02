@@ -42,6 +42,26 @@ STDMETHODIMP CGrizzly::Roar()
     });
 }
 
+STDMETHODIMP CGrizzly::Oneify(SAFEARRAY* pSource, VARIANT_BOOL* pRetVal) 
+{
+    return SafeComCall([pSource, pRetVal]()
+    {
+        void* pData{nullptr};
+        if (auto const hr = SafeArrayAccessData(pSource, &pData);
+            FAILED(hr)) {
+            *pRetVal = VARIANT_FALSE;
+            return S_OK;
+        }
+
+        byte const bytes[] = { 1, 1, 1, 1,  1, 1, 1, 1};
+        memcpy_s(pData, std::size(bytes), bytes, std::size(bytes));
+        SafeArrayUnaccessData(pSource);
+
+        *pRetVal = VARIANT_TRUE;
+        return S_OK;
+    });
+}
+
 template<class F>
 HRESULT CGrizzly::SafeComCall(F functor) noexcept
 {
