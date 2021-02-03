@@ -63,7 +63,7 @@ END_COM_MAP()
     CComPtr<IUnknown> m_pUnkMarshaler{ nullptr };
 
 private:
-    std::unique_ptr<Bears::Native::GrizzlyBear> m_pGrizzly;
+	std::unique_ptr<Bears::Native::GrizzlyBear> m_pGrizzly{};
 
     template<class F>
     [[nodiscard]] static HRESULT SafeComCall(F functor) noexcept;

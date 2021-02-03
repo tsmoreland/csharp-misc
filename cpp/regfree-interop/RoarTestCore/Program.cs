@@ -42,6 +42,7 @@ namespace RoarTestCore
             foreach (var t in bytes)
                 Console.Out.Write($"{t} ");
             Console.Out.WriteLine();
+            Console.ReadKey();
         }
     }
 }
