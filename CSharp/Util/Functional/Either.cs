@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-#if NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETCOREAPP2_1
+#if NET461 || NET462 || NET47 || NET471 || NET472 || NET48 || NETSTANDARD2_0 || NETCOREAPP2_1
 using Moreland.CSharp.Util.Modernizer;
 #endif
 
@@ -143,7 +143,7 @@ namespace Moreland.CSharp.Util.Functional
 
         /// <inheritdoc/>
         public bool Equals([AllowNull] Either<TLeft, TRight> other) =>
-            other != null! && _left.Equals(other._left) && _right.Equals(other._right);
+            other != default && _left.Equals(other._left) && _right.Equals(other._right);
 
         /// <summary>
         /// Returns <typeparamref name="TLeft"/> if present, otherwise default

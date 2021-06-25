@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Moreland.CSharp.Util
 {
-#if NET40 || NET45 || NET46 || NET472 || NET48 || NETSTANDARD2_0
+#if NET461 || NET472 || NET48 || NETSTANDARD2_0
     /// <summary>
     /// Intended for use in .NET Standard 2.0 or .NET Framework 4.8 and below, 
     /// </summary>

@@ -14,9 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-#if !NET40
 using System.Threading.Tasks;
-#endif
 using Moreland.CSharp.Util.Collections;
 using ProjectResources = Moreland.CSharp.Util.Properties.Resources;
 
@@ -82,7 +80,6 @@ namespace Moreland.CSharp.Util
                 emptyAction.Invoke();
         }
 
-#if !NET40
         /// <summary>
         /// If a value is present, performs the given action with the value, otherwise does nothing.
         /// </summary>
@@ -112,7 +109,6 @@ namespace Moreland.CSharp.Util
             else
                 await emptyAction.Invoke().ConfigureAwait(true);
         }
-#endif
 
         /// <summary>If a value is present and the value matches a given predicate, it returns a Maybe describing the value, otherwise returns an empty Maybe.</summary>
         // ReSharper disable once ConstantConditionalAccessQualifier
@@ -213,7 +209,9 @@ namespace Moreland.CSharp.Util
         /// return the <see cref="Maybe{TValue}"/> as an <see cref="object"/> instead
         /// </remarks>
         /// <exception cref="InvalidOperationException">when <see cref="HasValue"/> is false</exception>
+#if !NET461
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Provided by Value property")]
+#endif
         public static explicit operator TValue(Maybe<TValue> maybe) => 
             maybe.Value;
 

@@ -12,7 +12,7 @@
 // 
 
 #pragma warning disable S1128 // False postive regaarding unnecessary using
-#if !(NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48)
+#if !(NETSTANDARD2_0 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48)
 using System;
 #endif
 #pragma warning restore S1128 // False postive regaarding unnecessary using
@@ -21,7 +21,7 @@ namespace Moreland.CSharp.Util.Internal
 {
     internal static class HashProxy
     {
-#       if NETSTANDARD2_0 || NET40 || NET45 || NET451 || NET452 || NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
+#       if NETSTANDARD2_0 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48
         /// <summary>uses <see cref="HashCodeBuilder"/> to build a hashcode for <paramref name="objects"/></summary>
         public static int Combine(params object?[] objects) => 
             HashCodeBuilder.Create(objects).ToHashCode();

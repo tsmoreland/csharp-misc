@@ -11,9 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-#if !(NET40 || NET45)
 using System;
-#endif
 
 namespace Moreland.CSharp.Util.Collections
 {
@@ -29,11 +27,7 @@ namespace Moreland.CSharp.Util.Collections
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
         public static TValue[] Empty<TValue>() =>
-#if NET40 || NET45
-            new TValue[0];
-#else
             Array.Empty<TValue>();
-#endif
 
         /// <summary>
         /// Constructs a new array from <paramref name="values"/>
