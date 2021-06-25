@@ -25,7 +25,7 @@ namespace Moreland.CSharp.Util.Test
         public void ArgumentBeginNull_ThrowsArgumentNullExceptionWithUnknownParameterName_WhenArgumentIsNullAndParameterNameIsEmpty()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => GuardAgainst.ArgumentBeingNull<object>(null!, string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
+            Assert.That(ex!.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace Moreland.CSharp.Util.Test
         {
             Either<Guid, string> either = null!;
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(either, string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
+            Assert.That(ex!.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
         }
 
         [Test]
@@ -41,14 +41,14 @@ namespace Moreland.CSharp.Util.Test
         {
             string @string = null!;
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(@string, string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
+            Assert.That(ex!.ParamName, Is.EqualTo(ProjectResources.UnknownParameterName));
         }
 
         [Test]
         public void ArgumentBeginNull_ThrowsArgumentNullExceptionWithGivenParameterName_WhenArgumentIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => GuardAgainst.ArgumentBeingNull<object>(null!, "parameter"));
-            Assert.That(ex.ParamName, Is.EqualTo("parameter"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameter"));
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace Moreland.CSharp.Util.Test
         {
             Either<Guid, string> either = null!;
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(either, "parameter"));
-            Assert.That(ex.ParamName, Is.EqualTo("parameter"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameter"));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Moreland.CSharp.Util.Test
         {
             Either<Guid, string> either = new Either<Guid, string>();
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(either, "parameter"));
-            Assert.That(ex.ParamName, Is.EqualTo("parameter"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameter"));
         }
 
         [Test]
@@ -72,14 +72,14 @@ namespace Moreland.CSharp.Util.Test
         {
             string @string = null!;
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(@string, "parameter"));
-            Assert.That(ex.ParamName, Is.EqualTo("parameter"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameter"));
         }
 
         [Test]
         public void ArgumentIsNullOrEmpty_String_ThrowsArgumentExceptionWithGivenParameterName_WhenArgumentIsEmpty()
         {
             var ex = Assert.Throws<ArgumentException>(() => GuardAgainst.ArgumentIsNullOrEmpty(string.Empty, "parameter"));
-            Assert.That(ex.ParamName, Is.EqualTo("parameter"));
+            Assert.That(ex!.ParamName, Is.EqualTo("parameter"));
         }
 
         [Test]

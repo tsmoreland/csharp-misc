@@ -79,7 +79,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => _ = source.Map(MapFromLeft, MapFromRight));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
@@ -87,21 +87,21 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = new Either<Guid, string>();
             var ex = Assert.Throws<ArgumentException>(() => _ = source.Map(MapFromLeft, MapFromRight));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
         public void Map_ThrowsArgumentNullException_WhenFromLeftIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _leftEither.Map(null!, MapFromRight));
-            Assert.That(ex.ParamName, Is.EqualTo("fromLeft"));
+            Assert.That(ex!.ParamName, Is.EqualTo("fromLeft"));
         }
 
         [Test]
         public void Map_ThrowsArgumentNullException_WhenFromRightIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _leftEither.Map(MapFromLeft, null!));
-            Assert.That(ex.ParamName, Is.EqualTo("fromRight"));
+            Assert.That(ex!.ParamName, Is.EqualTo("fromRight"));
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Select(value => 0));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Func<string, int> selector = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Select(selector));
-            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+            Assert.That(ex!.ParamName, Is.EqualTo("selector"));
         }
 
         [Test]
@@ -163,7 +163,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Select(s => Either.From<Guid, int>(0)));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Func<string, Either<Guid, int>> selector = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Select(selector));
-            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+            Assert.That(ex!.ParamName, Is.EqualTo("selector"));
         }
 
         [Test]
@@ -193,14 +193,14 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Reduce(str => Guid.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
         [Test]
         public void Reduce_Left_ThrowsArgumentNullException_WhenSelectorIsNull()
         {
             Func<string, Guid> reducer = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Reduce(reducer));
-            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+            Assert.That(ex!.ParamName, Is.EqualTo("reducer"));
         }
 
         [Test]
@@ -225,7 +225,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.Reduce(guid => string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
@@ -233,7 +233,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Func<Guid, string> reducer = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.Reduce(reducer));
-            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+            Assert.That(ex!.ParamName, Is.EqualTo("reducer"));
         }
 
         [Test]
@@ -258,14 +258,14 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.ValueOr(str => Guid.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
         [Test]
         public void ValueOr_Left_ThrowsArgumentNullException_WhenSelectorIsNull()
         {
             Func<string, Guid> reducer = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.ValueOr(reducer));
-            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+            Assert.That(ex!.ParamName, Is.EqualTo("reducer"));
         }
 
         [Test]
@@ -290,7 +290,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Either<Guid, string> source = null!;
             var ex = Assert.Throws<ArgumentException>(() => source.ValueOr(guid => string.Empty));
-            Assert.That(ex.ParamName, Is.EqualTo("source"));
+            Assert.That(ex!.ParamName, Is.EqualTo("source"));
         }
 
         [Test]
@@ -298,7 +298,7 @@ namespace Moreland.CSharp.Util.Test.Functional
         {
             Func<Guid, string> reducer = null!;
             var ex = Assert.Throws<ArgumentNullException>(() => _leftEither.ValueOr(reducer));
-            Assert.That(ex.ParamName, Is.EqualTo("reducer"));
+            Assert.That(ex!.ParamName, Is.EqualTo("reducer"));
         }
 
         [Test]

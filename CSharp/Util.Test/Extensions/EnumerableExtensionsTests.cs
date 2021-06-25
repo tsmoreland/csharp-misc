@@ -112,7 +112,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Action<int> consumer = Substitute.For<Action<int>>();
 
             var ex = Assert.Throws<ArgumentNullException>(() => items.ForEach(consumer));
-            Assert.That(ex.ParamName, Is.EqualTo("items"));
+            Assert.That(ex!.ParamName, Is.EqualTo("items"));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             Action<int> consumer = null!;
 
             var ex = Assert.Throws<ArgumentNullException>(() => items.ForEach(consumer));
-            Assert.That(ex.ParamName, Is.EqualTo("consumer"));
+            Assert.That(ex!.ParamName, Is.EqualTo("consumer"));
         }
 
         [Test]

@@ -60,14 +60,14 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Failed_ThrowsArgumentNullException_WhenMessageIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _testHelper.FailedBuilder(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("message"));
+            Assert.That(ex!.ParamName, Is.EqualTo("message"));
         }
 
         [Test]
         public void FailedWithCause_ThrowsArgumentNullException_WhenMessageIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _testHelper.FailedWithCauseBuilder(null!, _cause));
-            Assert.That(ex.ParamName, Is.EqualTo("message"));
+            Assert.That(ex!.ParamName, Is.EqualTo("message"));
         }
 
         [Test]
@@ -110,14 +110,14 @@ namespace Moreland.CSharp.Util.Test.Results
         public void Value_ThrowsInvalidOperationException_WhenFailed()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _ = _failed.Value);
-            Assert.That(ex.Message, Is.EqualTo(Resources.InvalidResultValueAccess));
+            Assert.That(ex!.Message, Is.EqualTo(Resources.InvalidResultValueAccess));
         }
 
         [Test]
         public void Value_ThrowsInvalidOperationException_WhenFailedWithCause()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _ = _failedWithCause.Value);
-            Assert.That(ex.Message, Is.EqualTo(Resources.InvalidResultValueAccess));
+            Assert.That(ex!.Message, Is.EqualTo(Resources.InvalidResultValueAccess));
         }
 
         [Test]
@@ -385,7 +385,7 @@ namespace Moreland.CSharp.Util.Test.Results
                 : Assert.Throws<ArgumentNullException>(() =>
                     _ = _testHelper.Select(result, (Func<T, IValueResult<List<int>>>)null!));
 
-            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+            Assert.That(ex!.ParamName, Is.EqualTo("selector"));
         }
 
         [TestCase(SelectorType.DirectValue)]
@@ -561,7 +561,7 @@ namespace Moreland.CSharp.Util.Test.Results
         public void ValueOr_Converted_ThrowsArgumentNullException_WhenSupplierIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _testHelper.ValueOrNullSupplier(_ok));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("supplier"));
         }
 
         [TestCase(ResultType.Successful, false, false)]
@@ -571,8 +571,9 @@ namespace Moreland.CSharp.Util.Test.Results
         public void ValueOr_ThrowsArgumentNullException_WhenSupplierIsNull(ResultType resultType, bool includeMessage, bool includeException)
         {
             var result = BuildValueResult(resultType, _value, includeMessage, includeException);
-            var ex = Assert.Throws<ArgumentNullException>(() => _ = result.ValueOr((Func<T>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            Func<T> supplier = null!;
+            var ex = Assert.Throws<ArgumentNullException>(() => _ = result.ValueOr(supplier));
+            Assert.That(ex!.ParamName, Is.EqualTo("supplier"));
         }
 
         [TestCase(true)]
@@ -629,7 +630,7 @@ namespace Moreland.CSharp.Util.Test.Results
             var ex = includeMessage 
                 ? Assert.Throws<ArgumentNullException>(() => _ = _failedWithCause.ValueOrThrow((Func<string, Exception?, Exception>)null!))
                 : Assert.Throws<ArgumentNullException>(() => _ = _failedWithCause.ValueOrThrow((Func<Exception>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("exceptionSupplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("exceptionSupplier"));
         }
 
         [TestCase(ResultType.Successful, false, false, ExpectedResult = true)]
@@ -639,7 +640,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
         public bool ObjectEquals_ReturnsTrue_WhenOk(ResultType resultType, bool includeMessage, bool includeException)
         {
-            object? result = BuildValueResult(resultType, _value, includeMessage, includeException);
+            object result = BuildValueResult(resultType, _value, includeMessage, includeException);
             return _testHelper.ObjectEquals(_ok, result);
         }
 
@@ -650,7 +651,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
         public bool ObjectEquals_ReturnsTrue_WhenOkWithMessage(ResultType resultType, bool includeMessage, bool includeException)
         {
-            object? result = BuildValueResult(resultType, _value, includeMessage, includeException);
+            object result = BuildValueResult(resultType, _value, includeMessage, includeException);
             return _testHelper.ObjectEquals(_okWithMessage, result);
         }
 
@@ -661,7 +662,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
         public bool ObjectEquals_ReturnsTrue_WhenFailed(ResultType resultType, bool includeMessage, bool includeException)
         {
-            object? result = BuildValueResult(resultType, _value, includeMessage, includeException);
+            object result = BuildValueResult(resultType, _value, includeMessage, includeException);
             return _testHelper.ObjectEquals(_failed, result);
         }
 
@@ -672,7 +673,7 @@ namespace Moreland.CSharp.Util.Test.Results
         [TestCase(ResultType.Null, false, false, ExpectedResult = false)]
         public bool ObjectEquals_ReturnsTrue_WhenFailedWithCause(ResultType resultType, bool includeMessage, bool includeException)
         {
-            object? result = BuildValueResult(resultType, _value, includeMessage, includeException);
+            object result = BuildValueResult(resultType, _value, includeMessage, includeException);
             return _testHelper.ObjectEquals(_failedWithCause, result);
         }
 

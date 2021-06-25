@@ -40,7 +40,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
         public void AddRange_Params_ThrowsArgumentNullException_WhenCollectionIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => ((ICollection<T>)null!).AddRange(_builder(), _builder()));
-            Assert.That(ex.ParamName, Is.EqualTo("collection"));
+            Assert.That(ex!.ParamName, Is.EqualTo("collection"));
         }
 
         [Test]
@@ -48,14 +48,14 @@ namespace Moreland.CSharp.Util.Test.Extensions
         {
             IEnumerable<T> enumerable = FluentList.Of(_builder(), _builder());
             var ex = Assert.Throws<ArgumentNullException>(() => ((ICollection<T>)null!).AddRange(enumerable));
-            Assert.That(ex.ParamName, Is.EqualTo("collection"));
+            Assert.That(ex!.ParamName, Is.EqualTo("collection"));
         }
 
         [Test]
         public void AddRange_IEnumerable_ThrowsArgumentNullException_WhenItemsIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _collection.AddRange((IEnumerable<T>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("items"));
+            Assert.That(ex!.ParamName, Is.EqualTo("items"));
         }
 
         [Test]

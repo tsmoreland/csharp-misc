@@ -95,7 +95,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             int? value = BuildRandomInt32();
 
             var ex = Assert.Throws<ArgumentNullException>(() => _ = value.ValueOr(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("supplier"));
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             List<string>? value = BuildRandomListOfString();
 
             var ex = Assert.Throws<ArgumentNullException>(() => _ = value.ValueOr((Func<List<string>>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("supplier"));
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             int? value = BuildRandomInt32();
 
             var ex = Assert.Throws<ArgumentNullException>(() => _ = value.ValueOrThrow(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("exceptionSupplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("exceptionSupplier"));
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace Moreland.CSharp.Util.Test.Extensions
             List<string>? value = BuildRandomListOfString();
 
             var ex = Assert.Throws<ArgumentNullException>(() => _ = value.ValueOrThrow(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("exceptionSupplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("exceptionSupplier"));
         }
 
         [Test]

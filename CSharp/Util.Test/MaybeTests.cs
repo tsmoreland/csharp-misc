@@ -131,14 +131,14 @@ namespace Moreland.CSharp.Util.Test
                 ? Assert.Throws<ArgumentNullException>(() => _maybeWithValue.IfHasValue(null!, _emptyAction))
                 : Assert.Throws<ArgumentNullException>(() => _maybeWithValue.IfHasValue(null!));
 
-            Assert.That(ex.ParamName, Is.EqualTo("action"));
+            Assert.That(ex!.ParamName, Is.EqualTo("action"));
         }
 
         [Test]
         public void IfHasValue_ThrowsArgumentNullException_WhenEmptyActionIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _maybeWithValue.IfHasValue(_action, null!));
-            Assert.That(ex.ParamName, Is.EqualTo("emptyAction"));
+            Assert.That(ex!.ParamName, Is.EqualTo("emptyAction"));
         }
 
         [TestCase(true)]
@@ -169,7 +169,7 @@ namespace Moreland.CSharp.Util.Test
                 ? Assert.ThrowsAsync<ArgumentNullException>(async () => await _maybeWithValue.IfHasValueAsync(null!, _emptyActionAsync))
                 : Assert.ThrowsAsync<ArgumentNullException>(async () => await _maybeWithValue.IfHasValueAsync(null!));
 
-            Assert.That(ex.ParamName, Is.EqualTo("action"));
+            Assert.That(ex!.ParamName, Is.EqualTo("action"));
         }        
 
         [Test]
@@ -192,7 +192,7 @@ namespace Moreland.CSharp.Util.Test
         public void IfHasValueAsync_ThrowsArgumentNullException_WhenEmptyActionIsNull()
         {
             var ex = Assert.ThrowsAsync<ArgumentNullException>(async () => await _maybeWithValue.IfHasValueAsync(_actionAsync, null!));
-            Assert.That(ex.ParamName, Is.EqualTo("emptyAction"));
+            Assert.That(ex!.ParamName, Is.EqualTo("emptyAction"));
         }
 
         [TestCase(true)]
@@ -281,7 +281,7 @@ namespace Moreland.CSharp.Util.Test
         public void Select_ThrowsArgumentNullException_WhenSelectorIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.Select((Func<T, object>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+            Assert.That(ex!.ParamName, Is.EqualTo("selector"));
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace Moreland.CSharp.Util.Test
         public void SelectMaybe_ThrowsArgumentNullException_WhenSelectorIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.Select((Func<T, Maybe<object>>)null!));
-            Assert.That(ex.ParamName, Is.EqualTo("selector"));
+            Assert.That(ex!.ParamName, Is.EqualTo("selector"));
         }
 
         [Test]
@@ -357,7 +357,7 @@ namespace Moreland.CSharp.Util.Test
         public void ValueOr_Supplier_ThrowsArgumentNullException_WhenSupplierIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.ValueOr(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("supplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("supplier"));
         }
 
         [Test]
@@ -386,7 +386,7 @@ namespace Moreland.CSharp.Util.Test
         public void ValueOrThrow_ThrowsArgumentNullException_WhenExceptionSupplierIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _maybeWithValue.ValueOrThrow(null!));
-            Assert.That(ex.ParamName, Is.EqualTo("exceptionSupplier"));
+            Assert.That(ex!.ParamName, Is.EqualTo("exceptionSupplier"));
         }
 
         [Test]

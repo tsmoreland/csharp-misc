@@ -38,70 +38,70 @@ namespace Moreland.CSharp.Util.Test.Extensions
         public void Union_ThrowsArgumentNullException_WhenFirstIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.Union(_second, MergeByAddition));
-            Assert.That(ex.ParamName, Is.EqualTo("first"));
+            Assert.That(ex!.ParamName, Is.EqualTo("first"));
         }
 
         [Test]
         public void Union_ThrowsArgumentNullException_WhenSecondIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Union(_nullDictionary, MergeByAddition));
-            Assert.That(ex.ParamName, Is.EqualTo("second"));
+            Assert.That(ex!.ParamName, Is.EqualTo("second"));
         }
 
         [Test]
         public void Union_ThrowsArgumentNullException_WhenMergeHandlerIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Union(_second, null!));
-            Assert.That(ex.ParamName, Is.EqualTo("mergeHandler"));
+            Assert.That(ex!.ParamName, Is.EqualTo("mergeHandler"));
         }
 
         [Test]
         public void UnionMergeUsingFirst_ThrowsArgumentNullException_WhenFirstIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.UnionMergeUsingFirst(_second));
-            Assert.That(ex.ParamName, Is.EqualTo("first"));
+            Assert.That(ex!.ParamName, Is.EqualTo("first"));
         }
 
         [Test]
         public void UnionMergeUsingFirst_ThrowsArgumentNullException_WhenSecondIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.UnionMergeUsingFirst(_nullDictionary));
-            Assert.That(ex.ParamName, Is.EqualTo("second"));
+            Assert.That(ex!.ParamName, Is.EqualTo("second"));
         }
 
         [Test]
         public void UnionMergeUsingSecond_ThrowsArgumentNullException_WhenFirstIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.UnionMergeUsingSecond(_second));
-            Assert.That(ex.ParamName, Is.EqualTo("first"));
+            Assert.That(ex!.ParamName, Is.EqualTo("first"));
         }
 
         [Test]
         public void UnionMergeUsingSecond_ThrowsArgumentNullException_WhenSecondIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.UnionMergeUsingSecond(_nullDictionary));
-            Assert.That(ex.ParamName, Is.EqualTo("second"));
+            Assert.That(ex!.ParamName, Is.EqualTo("second"));
         }
 
         [Test]
         public void Intersect_ThrowsArgumentNullException_WhenFirstIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _nullDictionary.Intersect(_second, MergeByAddition));
-            Assert.That(ex.ParamName, Is.EqualTo("first"));
+            Assert.That(ex!.ParamName, Is.EqualTo("first"));
         }
 
         [Test]
         public void Intersect_ThrowsArgumentNullException_WhenSecondIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Intersect(_nullDictionary, MergeByAddition));
-            Assert.That(ex.ParamName, Is.EqualTo("second"));
+            Assert.That(ex!.ParamName, Is.EqualTo("second"));
         }
 
         [Test]
         public void Intersect_ThrowsArgumentNullException_WhenMergeHandlerIsNull()
         {
             var ex = Assert.Throws<ArgumentNullException>(() => _ = _first.Intersect(_second, null!));
-            Assert.That(ex.ParamName, Is.EqualTo("mergeHandler"));
+            Assert.That(ex!.ParamName, Is.EqualTo("mergeHandler"));
         }
 
         [Test]
