@@ -56,7 +56,7 @@ namespace Moreland.CSharp.Util
             if (string.IsNullOrWhiteSpace(parameterName))
                 parameterName = ProjectResources.UnknownParameterName;
 
-            if (argument == default || argument.IsEmpty)
+            if (argument.IsEmpty)
                 throw new ArgumentException(ProjectResources.InvalidEither, parameterName);
         }
 
