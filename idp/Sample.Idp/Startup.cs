@@ -44,12 +44,12 @@ namespace Sample.Idp
                 // this adds the config data from DB (clients, resources, CORS)
                 .AddConfigurationStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseSqlite(connectionString);
+                    options.ConfigureDbContext = b => b.UseSqlite(connectionString);
                 })
                 // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseSqlite(connectionString);
+                    options.ConfigureDbContext = b => b.UseSqlite(connectionString);
 
                     // this enables automatic token cleanup. this is optional.
                     options.EnableTokenCleanup = true;
@@ -69,6 +69,7 @@ namespace Sample.Idp
                     options.ClientId = "copy client ID from Google here";
                     options.ClientSecret = "copy client secret from Google here";
                 });
+            services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -76,7 +77,7 @@ namespace Sample.Idp
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
 
             app.UseStaticFiles();
