@@ -12,6 +12,7 @@
 //
 package com.moreland.restdemo;
 
+import org.owasp.encoder.Encode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,11 @@ public final class WeatherController {
 
     @GetMapping("/weather")
     public Weather getWeather(@RequestParam(value = "city", defaultValue = "Toronto") String city) {
-        return new Weather(city, 20);
+        var encoded = city != null && !city.isBlank() 
+            ? Encode.forJavaScript(Encode.forHtml(city))
+            : "";
+
+        return new Weather(encoded, 20);
     }
     
 }
