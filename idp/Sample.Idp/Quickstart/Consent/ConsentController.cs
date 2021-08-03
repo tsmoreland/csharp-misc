@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System;
 using System.Web;
 
+// ReSharper disable once CheckNamespace
 namespace IdentityServerHost.Quickstart.UI
 {
     /// <summary>
@@ -104,19 +105,18 @@ namespace IdentityServerHost.Quickstart.UI
 
             ConsentResponse grantedConsent = null;
 
-            // user clicked 'no' - send back the standard 'access_denied' response
-            if (model?.Button == "no")
+            switch (model.Button)
             {
-                grantedConsent = new ConsentResponse { Error = AuthorizationError.AccessDenied };
+                // user clicked 'no' - send back the standard 'access_denied' response
+                case "no":
+                    grantedConsent = new ConsentResponse { Error = AuthorizationError.AccessDenied };
 
-                // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
-            }
-            // user clicked 'yes' - validate the data
-            else if (model?.Button == "yes")
-            {
+                    // emit event
+                    await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                    break;
+                // user clicked 'yes' - validate the data
                 // if the user consented to some scope, build the response model
-                if (model.ScopesConsented != null && model.ScopesConsented.Any())
+                case "yes" when model.ScopesConsented != null && model.ScopesConsented.Any():
                 {
                     var scopes = model.ScopesConsented;
                     if (ConsentOptions.EnableOfflineAccess == false)
@@ -133,15 +133,14 @@ namespace IdentityServerHost.Quickstart.UI
 
                     // emit event
                     await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent));
+                    break;
                 }
-                else
-                {
+                case "yes":
                     result.ValidationError = ConsentOptions.MustChooseOneErrorMessage;
-                }
-            }
-            else
-            {
-                result.ValidationError = ConsentOptions.InvalidSelectionErrorMessage;
+                    break;
+                default:
+                    result.ValidationError = ConsentOptions.InvalidSelectionErrorMessage;
+                    break;
             }
 
             if (grantedConsent != null)
