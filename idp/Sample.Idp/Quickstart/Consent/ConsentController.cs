@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using IdentityServer4.Validation;
 using System.Collections.Generic;
 using System;
+using System.Web;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -170,7 +171,11 @@ namespace IdentityServerHost.Quickstart.UI
             }
             else
             {
-                _logger.LogError("No consent request matching request: {0}", returnUrl);
+                var encodedReturnUrl = HttpUtility.UrlEncode(returnUrl)
+                    .Replace("%0d", "", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%0A", "", StringComparison.OrdinalIgnoreCase);
+
+                _logger.LogError($"No consent request matching request: {encodedReturnUrl}");
             }
 
             return null;
