@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -223,11 +222,11 @@ namespace WebUI.Controllers
                 // redirect to e-mail sent page
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
-                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userEmail}", resetUrl, user.Email);
+                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userEmail}", Sanitize(resetUrl), Sanitize(user.Email));
             }
             else
             {
-                _logger.LogInformation("ToDo: send message to {modelEmail} informing them that they do not have an account", model.Email);
+                _logger.LogInformation("ToDo: send message to {modelEmail} informing them that they do not have an account", Sanitize(model.Email));
             }
 
             return View("ResetPasswordRequestSuccess");
