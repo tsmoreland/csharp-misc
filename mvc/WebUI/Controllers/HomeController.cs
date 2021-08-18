@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -105,10 +106,17 @@ namespace WebUI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
-            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}",  SecurityElement.Escape(confirmEmailUrl), SecurityElement.Escape(user.Email));
+            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}",  Sanitize(confirmEmailUrl), Sanitize(user.Email));
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
+
+            static string Sanitize(string value)
+            {
+                return  value is {Length: > 0}
+                    ? HttpUtility.JavaScriptStringEncode(value.Replace("\r", "").Replace("\n", ""))
+                    : null;
+            }
         }
 
         [HttpGet]
