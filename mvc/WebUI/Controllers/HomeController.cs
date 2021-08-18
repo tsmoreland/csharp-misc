@@ -178,7 +178,7 @@ namespace WebUI.Controllers
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    _logger.LogInformation($"ToDo: send {token} to {user.Email}");
+                    _logger.LogInformation("ToDo: send {token} to {userEmail}", token, user.Email);
                     return await RedirectToTwoFactor("Email");
                 }
             }
@@ -221,11 +221,11 @@ namespace WebUI.Controllers
                 // redirect to e-mail sent page
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
-                _logger.LogInformation($"ToDo: send the '{resetUrl}' to {user.Email}");
+                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userEmail}", resetUrl, user.Email);
             }
             else
             {
-                _logger.LogInformation($"ToDo: send message to {model.Email} informing them that they do not have an account");
+                _logger.LogInformation("ToDo: send message to {modelEmail} informing them that they do not have an account", model.Email);
             }
 
             return View("ResetPasswordRequestSuccess");
