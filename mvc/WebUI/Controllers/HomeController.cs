@@ -104,7 +104,7 @@ namespace WebUI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
-            _logger.LogInformation($"Todo: send {confirmEmailUrl} to {user.Email}");
+            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}", confirmEmailUrl, user.Email);
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
@@ -187,7 +187,7 @@ namespace WebUI.Controllers
 
             return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
                 ? LocalRedirect(returnUrl)
-                : (IActionResult) RedirectToAction(nameof(Index));
+                : RedirectToAction(nameof(Index));
 
             static ClaimsPrincipal Store2FactorAuth(string userId, string provider) =>
                 new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
