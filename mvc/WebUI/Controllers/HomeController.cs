@@ -81,7 +81,7 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null)
             {
-                _logger.LogError($"{model.UserName} already exists, returning success to user without taking action");
+                _logger.LogError("{modelUserName} already exists, returning success to user without taking action", Sanitize(model.UserName));
                 return Redirect(nameof(RegisterSuccess));
             }
 
@@ -110,15 +110,6 @@ namespace WebUI.Controllers
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
-
-            /*
-            static string Sanitize(string value)
-            {
-                return  value is {Length: > 0}
-                    ? HttpUtility.JavaScriptStringEncode(value.Replace("\r", "").Replace("\n", ""))
-                    : null;
-            }
-            */
         }
 
         [HttpGet]
@@ -189,7 +180,7 @@ namespace WebUI.Controllers
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    _logger.LogInformation("ToDo: send {token} to {userEmail}", token, user.Email);
+                    _logger.LogInformation("ToDo: send {token} to {userEmail}", Sanitize(token), Sanitize(user.Email));
                     return await RedirectToTwoFactor("Email");
                 }
             }
