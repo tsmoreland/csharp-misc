@@ -28,7 +28,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebUI.Models;
-using SecurityElement = System.Security.SecurityElement;
+using static WebUI.Helpers.LogSanitizer;
 
 namespace WebUI.Controllers
 {
@@ -111,12 +111,14 @@ namespace WebUI.Controllers
 
             return Redirect(nameof(RegisterSuccess));
 
+            /*
             static string Sanitize(string value)
             {
                 return  value is {Length: > 0}
                     ? HttpUtility.JavaScriptStringEncode(value.Replace("\r", "").Replace("\n", ""))
                     : null;
             }
+            */
         }
 
         [HttpGet]
