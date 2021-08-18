@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebUI.Models;
+using static WebUI.Helpers.LogSanitizer;
 
 namespace WebUI.Controllers
 {
@@ -104,7 +105,7 @@ namespace WebUI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
-            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}", confirmEmailUrl, user.Email);
+            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}", Sanitize(confirmEmailUrl), Sanitize(user.Email));
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
