@@ -340,3 +340,6 @@ ASALocalRun/
 healthchecksdb
 /WebUI/identityDemo.db
 *.db
+
+.vscode/
+*.dccache
