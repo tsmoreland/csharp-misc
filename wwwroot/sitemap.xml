@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<urlset>
+  <url>
+    <locl>https://localhost:5001/index</locl>
+    <lastmod>2021-08-26T10:00:00-00:00</lastmod>
+    <changefreq>Daily</changefreq>
+  </url>
+  <url>
+    <locl>https://localhost:5001/Error</locl>
+    <lastmod>2021-08-26T10:00:00-00:00</lastmod>
+    <changefreq>Always</changefreq>
+    <priority>0.0</priority>
+  </url>
+</urlset>

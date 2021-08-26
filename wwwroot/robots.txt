@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /secrets/supersecret.txt
+
+Sitemap: https://localhost:5001/sitemap.xml
