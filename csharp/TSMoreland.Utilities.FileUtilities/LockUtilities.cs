@@ -47,6 +47,10 @@ public static class LockUtilities
         {
             return Win32.Win32LockUtilities.IsFileLocked(file);
         }
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            return Linux.LinuxLockUtilities.IsFileLocked(file);
+        }
 
         throw new NotSupportedException("Not supported on this platform");
     }
