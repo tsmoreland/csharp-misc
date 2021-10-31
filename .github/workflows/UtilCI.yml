@@ -2,9 +2,9 @@ name: CI Build
 
 on:   
   push:
-    branches: [ trunk, develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ trunk, develop ]
+    branches: [ main, develop ]
 
 jobs:
   build:
@@ -20,7 +20,10 @@ jobs:
         include-prerelease: true
     - name: Install dependencies
       run: dotnet restore
+      working-directory: Util
     - name: Build
       run: dotnet build --configuration Release --no-restore
+      working-directory: Util      
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      working-directory: Util
