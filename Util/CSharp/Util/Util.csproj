@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6;netcoreapp3.1;netstandard2.1;netstandard2.0;net461;net472;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0;netcoreapp3.1;netstandard2.1;netstandard2.0;net461;net472;net48</TargetFrameworks>
     <RootNamespace>Moreland.CSharp.Util</RootNamespace>
     <AssemblyName>Moreland.CSharp.Util</AssemblyName>
-    <LangVersion>9</LangVersion>
+    <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../LICENSE">
+    <None Include="../../../LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

@@ -30,8 +30,13 @@ namespace Moreland.CSharp.Util.Test.Extensions
         [SetUp]
         public void Setup()
         {
+#if !NET461
             _first = From((1, 1), (2, 2), (3, 3));
             _second = From((4, 4), (5, 5), (6, 6));
+#else
+            _first = From(new KeyValuePair<int, int>(1, 1), new KeyValuePair<int, int>(2, 2), new KeyValuePair<int, int>(3, 3));
+            _second = From(new KeyValuePair<int, int>(4, 4), new KeyValuePair<int, int>(5, 5), new KeyValuePair<int, int>(6, 6));
+#endif
         }
 
         [Test]
@@ -149,13 +154,27 @@ namespace Moreland.CSharp.Util.Test.Extensions
             mergeHandler.Received(_first.Count).Invoke(Arg.Any<int>(), Arg.Any<int>());
         }
 
+#if !NET461
         private static Dictionary<int, int> From(params (int key, int value)[] items)
         {
             var dictionary = new Dictionary<int, int>();
             foreach (var (key, value) in items)
+            {
                 dictionary[key] = value;
+            }
             return dictionary;
         }
+#else
+        private static Dictionary<int, int> From(params KeyValuePair<int, int>[] items)
+        {
+            var dictionary = new Dictionary<int, int>();
+            foreach (var pair in items)
+            {
+                dictionary[pair.Key] = pair.Value;
+            }
+            return dictionary;
+        }
+#endif
 
         private static int MergeByAddition(int first, int second) => first + second;
     }
