@@ -1,4 +1,4 @@
-[![CI Build](https://github.com/tsmoreland/Misc/actions/workflows/UtilCI.yml/badge.svg)](https://github.com/tsmoreland/Misc/actions/workflows/UtilCI.yml)
+[![CI Build](https://github.com/tsmoreland/Misc/actions/workflows/CI.yml/badge.svg)](https://github.com/tsmoreland/Misc/actions/workflows/CI.yml)
 
 # Moreland.CSharp.Util
 
