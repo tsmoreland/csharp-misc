@@ -41,7 +41,7 @@ jobs:
         include-prerelease: true
     - name: Install dependencies
       run: dotnet restore
-      working-directory: Util
+      working-directory: FileUtilties/csharp  
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: FileUtilties/csharp      
