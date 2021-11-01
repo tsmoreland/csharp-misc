@@ -20,7 +20,9 @@ using System.Runtime.Versioning;
 
 namespace TSMoreland.Utilities.FileUtilities.Win32;
 
+#if NET5_0_OR_GREATER
 [SupportedOSPlatform("windows")]
+#endif
 internal static class Win32LockUtilities
 {
 

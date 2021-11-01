@@ -43,6 +43,7 @@ public static class LockUtilities
             throw new ArgumentNullException(nameof(file));
         }
 
+#if NET5_0_OR_GREATER
         if (OperatingSystem.IsWindows())
         {
             return Win32.Win32LockUtilities.IsFileLocked(file);
@@ -53,6 +54,10 @@ public static class LockUtilities
         }
 
         throw new NotSupportedException("Not supported on this platform");
+#else
+        return Win32.Win32LockUtilities.IsFileLocked(file);
+#endif
+
     }
 
     /// <summary>
@@ -67,11 +72,15 @@ public static class LockUtilities
             throw new ArgumentNullException(nameof(file));
         }
 
+#if NET5_0_OR_GREATER
         if (OperatingSystem.IsWindows())
         {
             return Win32.Win32LockUtilities.GetProcessesLockingFile(file);
         }
-
         throw new NotSupportedException("Not supported on this platform");
+#else
+        return Win32.Win32LockUtilities.GetProcessesLockingFile(file);
+#endif
+
     }
 }

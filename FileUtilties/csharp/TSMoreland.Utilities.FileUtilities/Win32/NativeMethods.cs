@@ -20,7 +20,9 @@ using System.Runtime.InteropServices;
 // ReSharper disable FieldCanBeMadeReadOnly.Local, InconsistentNaming
 #pragma warning disable CS0649
 
+#if NET5_0_OR_GREATER
 [SupportedOSPlatform("windows")]
+#endif
 internal static class NativeMethods
 {
     [StructLayout(LayoutKind.Sequential)]
