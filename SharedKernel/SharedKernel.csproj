@@ -1,13 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <langversion>preview</langversion>
+    <TargetFramework>net6.0</TargetFramework>
+    <langversion>10</langversion>
     <nullable>enable</nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Moreland.CSharp.Util" Version="2.1.0" />
-  </ItemGroup>
 
 </Project>
