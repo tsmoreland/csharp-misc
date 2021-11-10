@@ -13,36 +13,38 @@
 
 using AddressBook.Core.Interfaces;
 using AddressBook.Core.Model;
-using Moreland.CSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 
 namespace AddressBook.Data.Repositories
 {
     public sealed class ContactRepository : IContactRepository
     {
         private readonly ContactDatabaseContext _contactDatabaseContext;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Instantiates a new instance of the <see cref="ContactDatabaseContext"/> class.
         /// </summary>
         /// <param name="contactDatabaseContext">database context</param>
+        /// <param name="mapper"></param>
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="contactDatabaseContext"/> is null
         /// </exception>
-        public ContactRepository(ContactDatabaseContext contactDatabaseContext)
+        public ContactRepository(ContactDatabaseContext contactDatabaseContext, IMapper mapper)
         {
-            GuardAgainst.ArgumentBeingNull(contactDatabaseContext, "contactDatabaseContext");
-            _contactDatabaseContext = contactDatabaseContext;
+            _contactDatabaseContext = contactDatabaseContext ?? throw new ArgumentNullException(nameof(contactDatabaseContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Maybe<Contact> FindByCompleteName(string completeName)
+        public Contact? FindByCompleteName(string completeName)
         {
-            var contact = _contactDatabaseContext.Contacts.SingleOrDefault(c => c.CompleteName == completeName);
-            if (contact is null)
-                return Maybe.Empty<Contact>();
-            return Maybe.Empty<Contact>();
+            var entity = _contactDatabaseContext.Contacts.SingleOrDefault(c => c.CompleteName == completeName);
+            return entity is null 
+                ? null 
+                : _mapper.Map<Contact>(entity);
         }
         public IEnumerable<Contact> GetAll()
         {

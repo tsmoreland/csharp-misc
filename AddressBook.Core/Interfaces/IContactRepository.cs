@@ -14,7 +14,6 @@
 
 using System.Collections.Generic;
 using AddressBook.Core.Model;
-using Moreland.CSharp.Util;
 
 namespace AddressBook.Core.Interfaces
 {
@@ -22,7 +21,7 @@ namespace AddressBook.Core.Interfaces
     {
         IEnumerable<Contact> GetAll();
 
-        Maybe<Contact> FindByCompleteName(string completeName);
+        Contact? FindByCompleteName(string completeName);
 
 
     }
