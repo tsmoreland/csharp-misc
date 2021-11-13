@@ -5,16 +5,17 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger<Program>();
 
 app.UseRouting();
+
+app.Use((context, next) =>
+{
+    logger.LogInformation(context.Request.Path);
+    logger.LogInformation(context.Request.Headers.ContentLength?.ToString() ?? "no length set");
+    return next(context);
+});
 
 app.UseAuthorization();
 
