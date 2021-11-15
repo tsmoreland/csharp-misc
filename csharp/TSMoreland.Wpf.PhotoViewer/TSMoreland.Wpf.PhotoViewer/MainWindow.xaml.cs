@@ -122,8 +122,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         this.WindowState = WindowState.Normal;
         this.Left = 0;
         this.Top = 0;
-        this.Width = SystemParameters.PrimaryScreenWidth - 1;
-        this.Height = SystemParameters.PrimaryScreenWidth - 1;
+        this.Width = SystemParameters.PrimaryScreenWidth;
+        this.Height = SystemParameters.PrimaryScreenWidth;
     }
 
     private async void SelectFileOrFolder_Click(object sender, RoutedEventArgs e)
@@ -132,6 +132,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             Multiselect = true,
             Filter = "Jpeg Images (.jpg)|*.jpg",
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
         };
 
         bool? result = dialog.ShowDialog();
