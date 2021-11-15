@@ -1,0 +1,34 @@
+﻿<Window x:Class="TSMoreland.Wpf.PhotoViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TSMoreland.Wpf.PhotoViewer"
+        mc:Ignorable="d"
+        x:Name="MainWindowControl"
+        Title="" Height="450" Width="800">
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="ControlPanel" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="SelectFileOrFolder" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"  Content="Select File or Folder" Padding="3,0,3,0" Height="24" Click="SelectFileOrFolder_Click"/>
+            <CheckBox Content="Shuffle" IsChecked="{Binding Path=Shuffle, ElementName=MainWindowControl}" Margin="2" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Image  Name="Viewer" Grid.Row="1" Grid.Column="0" Stretch="Uniform" Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                Source="{Binding Path=ImageSource, ElementName=MainWindowControl}"
+                >
+            <!--
+            <Image.Source>
+                <BitmapImage UriSource="{Binding ImageSourceUri, ElementName=MainWindowControl}"/>
+            </Image.Source>
+            -->
+        </Image>
+    </Grid>
+</Window>
