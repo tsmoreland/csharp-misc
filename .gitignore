@@ -376,3 +376,4 @@ MigrationBackup/
 **/log/
 **/target/
 /csharp/OwinSample/WebApp/lib
+.dccache
