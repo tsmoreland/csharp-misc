@@ -1,0 +1,1 @@
+java -p interop-service/target/lib;interop-win32-ansi/target/lib;interop-app/target/lib;interop-app/target/interop-app-1.0-SNAPSHOT.jar;interop-win32-ansi/target/interop-win32-ansi-1.0-SNAPSHOT.jar;interop-service/target/interop-service-1.0-SNAPSHOT.jar; -m moreland.sample.jna.interop.app/moreland.sample.jna.interop.app.Application

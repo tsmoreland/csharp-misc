@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity 
+      version="1.0.0.0" 
+      type="win32"
+      name="CsClientService"/>
+
+  <clrClass
+      clsid="{13057773-01BA-4012-800D-EFD3F4EBAB98}"
+      progid="Moreland.CsClientService"
+      threadingModel="Both"
+      runtimeVersion="4.0.30319"
+      name="Moreland.CsClientService"/>
+  <file name="CsClientService.dll"/>
+
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity type="win32" name="ClientService" version="1.0.0.0" />
+    </dependentAssembly>
+  </dependency>
+
+</assembly>

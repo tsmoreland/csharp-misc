@@ -1,0 +1,44 @@
+// ClientService.idl : IDL source for ClientService
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (ClientService.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+#define GUID_ManagedName 0F21F359-AB84-41E8-9A78-36D110E6D2F9
+
+[
+	uuid(4e4ca0a4-c0cf-4d6c-a1ba-06bcf3b0e30f),
+	version(1.0),
+    custom(GUID_ManagedName, "Moreland.ClientService")
+]
+library ClientServiceLib
+{
+    [
+        object,
+        uuid(23ca7d29-7f18-4112-928f-5221f589b494),
+        dual,
+        nonextensible,
+        pointer_default(unique),
+        custom(GUID_ManagedName, "Moreland.ClientService.IService"),
+    ]
+    interface IService : IDispatch
+    {
+        [id(1)]
+        HRESULT ToUpper([in] BSTR input, [out, retval] BSTR* output);
+    };
+
+	importlib("stdole2.tlb");
+	[
+		uuid(886ce33c-5e78-4690-8ebd-66ab81ce26da),
+        custom(GUID_ManagedName, "Moreland.ClientService.Service")
+	]
+	coclass Service
+	{
+		[default] interface IService;
+	};
+};
+
+import "shobjidl.idl";

@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Application<interop-app>",
+            "request": "launch",
+            "modulePaths": [
+                "${workspaceFolder}/interop-service\\target\\lib",
+                "${workspaceFolder}/interop-win32-ansi\\target\\lib",
+                "${workspaceFolder}/interop-app\\target\\lib",
+                "${workspaceFolder}/interop-app\\target\\interop-app-1.0-SNAPSHOT.jar",
+                "${workspaceFolder}/interop-win32-ansi\\target\\interop-win32-ansi-1.0-SNAPSHOT.jar",
+                "${workspaceFolder}/interop-service\\target\\interop-service-1.0-SNAPSHOT.jar"
+            ],
+            "mainClass": "moreland.sample.jna.interop.app/moreland.sample.jna.interop.app.Application",
+            "projectName": "interop-app"
+        }
+    ]
+}
