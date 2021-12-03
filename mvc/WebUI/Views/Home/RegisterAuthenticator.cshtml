@@ -1,0 +1,46 @@
+﻿@model RegisterAuthenticatorModel
+
+<div class="row">
+    <div class="col-sm-8 offset-sm-2">
+        <h2 class="text-center">Register Authentictor</h2>
+        <div id="qrCode"></div>
+        <p>Your authenticator key is: @Model.AuthenticatorKey</p>
+        <h4>Recovery Codes</h4>
+        <p><strong>Put these codes in a safe place.</strong></p>
+        <div class="row">
+            <div class="col-md-12">
+                @for (var row = 0; row < ViewBag.RecoveryCodes.Length; row += 2)
+                {
+                    <code>@ViewBag.RecoveryCodes[row]</code><text>&nbsp;</text><code>@ViewBag.RecoveryCodes[row + 1]</code><br />
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form asp-action="RegisterAuthenticator" method="post" class="form-group">
+                    <input asp-for="AuthenticatorKey" type="hidden"/>
+                    <div class="form-group row">
+                        <label asp-for="Code" class="col-sm-4"></label>
+                        <div class="col-sm-8">
+                            <input asp-for="Code" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                    <div asp-validation-summary="All"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="~/lib/qrcodejs/qrcode.js"></script>
+<script type="text/javascript">
+    new QRCode(document.getElementById("qrCode"),
+        {
+            text: "@Html.Raw(ViewBag.AuthenticatorUri)",
+            width: 150,
+            height: 150
+        });
+</script>

@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Hosting
+@inject IWebHostEnvironment HostEnvironment;
+
+<div class="alert alert-success">
+    <p>Success</p>
+    
+    @if (HostEnvironment.IsDevelopment())
+    {
+        <p><a href="@TempData["ConfirmEmailUrl"]">Confirm E-mail (This should be sent rather than shown here)</a></p>
+    }
+</div>
