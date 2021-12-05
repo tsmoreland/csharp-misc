@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.ObjectTracker.App", "TSMoreland.ObjectTracker.App\TSMoreland.ObjectTracker.App.csproj", "{08DA6A2A-3E84-4070-8F56-D75BBD9235CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.ObjectTracker.App", "TSMoreland.ObjectTracker.App\TSMoreland.ObjectTracker.App.csproj", "{08DA6A2A-3E84-4070-8F56-D75BBD9235CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.ObjectTracker.Core", "TSMoreland.ObjectTracker.Core\TSMoreland.ObjectTracker.Core.csproj", "{1CE53058-046D-4347-86CC-7DC0376678F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.ObjectTracker.Core", "TSMoreland.ObjectTracker.Core\TSMoreland.ObjectTracker.Core.csproj", "{1CE53058-046D-4347-86CC-7DC0376678F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.ObjectTracker.Data.Abstractions", "TSMoreland.ObjectTracker.Data.Abstractions\TSMoreland.ObjectTracker.Data.Abstractions.csproj", "{522D5B69-A6F0-418A-AC71-60034B0AF417}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.ObjectTracker.Data.Abstractions", "TSMoreland.ObjectTracker.Data.Abstractions\TSMoreland.ObjectTracker.Data.Abstractions.csproj", "{522D5B69-A6F0-418A-AC71-60034B0AF417}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.ObjectTracker.Data", "TSMoreland.ObjectTracker.Data\TSMoreland.ObjectTracker.Data.csproj", "{110AF518-8750-4FA9-A91E-B25565BF3A4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.ObjectTracker.Data", "TSMoreland.ObjectTracker.Data\TSMoreland.ObjectTracker.Data.csproj", "{110AF518-8750-4FA9-A91E-B25565BF3A4D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F0A7213-3E98-4311-9F32-256042CDDC77}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
