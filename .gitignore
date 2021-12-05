@@ -351,3 +351,7 @@ MigrationBackup/
 
 .vscode/
 .dccache
+
+# Sqlite related files
+*.db-wal
+*.db-shm
