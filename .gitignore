@@ -353,5 +353,6 @@ MigrationBackup/
 .dccache
 
 # Sqlite related files
+*.db
 *.db-wal
 *.db-shm
