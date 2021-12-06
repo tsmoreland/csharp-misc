@@ -10,16 +10,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-using TSMoreland.ObjectTracker.Core;
 
-namespace TSMoreland.ObjectTracker.App.ViewModels;
+namespace TSMoreland.ObjectTracker.Data;
 
-public sealed record ObjectViewModel(int Id, string Name, IReadOnlyList<LogViewModel> Logs)
+public interface ITenantDbContextFactory
 {
-    public static ObjectViewModel ConvertFrom(ObjectModel model)
-    {
-        var (id, name, logs) = model;
-        return new ObjectViewModel(id, name, logs.Select(LogViewModel.ConvertFrom).ToList());
-    }
-
+    ObjectContext CreateDbContext(string tenantName);
 }
