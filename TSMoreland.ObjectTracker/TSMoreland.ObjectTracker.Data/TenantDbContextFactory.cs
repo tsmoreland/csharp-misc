@@ -14,7 +14,12 @@
 namespace TSMoreland.ObjectTracker.Data;
 
 
-public interface ITenantDbContextFactory
+
+public sealed class TenantDbContextFactory : ITenantDbContextFactory
 {
-    ObjectContext CreateDbContext(string tenantName);
+    /// <inheritdoc />
+    public ObjectContext CreateDbContext(string tenantName)
+    {
+        throw new NotImplementedException();
+    }
 }
