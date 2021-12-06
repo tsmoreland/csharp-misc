@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Microsoft.EntityFrameworkCore;
+
 namespace TSMoreland.ObjectTracker.Data;
 
 
@@ -20,6 +22,11 @@ public sealed class TenantDbContextFactory : ITenantDbContextFactory
     /// <inheritdoc />
     public ObjectContext CreateDbContext(string tenantName)
     {
-        throw new NotImplementedException();
+        var optionsBuilder = new DbContextOptionsBuilder<ObjectContext>();
+        optionsBuilder.UseSqlite($"{tenantName}.db", b =>
+            b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
+
+        return new ObjectContext(optionsBuilder.Options);
+
     }
 }

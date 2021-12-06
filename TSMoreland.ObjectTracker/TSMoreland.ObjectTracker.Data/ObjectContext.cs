@@ -27,8 +27,11 @@ public sealed class ObjectContext : DbContext
     /// <inheritdoc/>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=objectTracker.db", b => 
-            b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlite("Data Source=objectTracker.db", b =>
+                b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
+        }
 
         base.OnConfiguring(optionsBuilder);
     }
