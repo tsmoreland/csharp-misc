@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TSMoreland.Wpf.PhotoViewer.Annotations;
 
 namespace TSMoreland.Wpf.PhotoViewer;
 
@@ -19,33 +18,32 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 {
     private readonly List<string> _files = new();
     private int _index = -1;
-    private bool _shuffle;
-    private readonly Random _random = new ();
+    private readonly Random _random = new();
 
     public MainWindow()
     {
         InitializeComponent();
         Background = Brushes.DarkGray;
 
-        this.KeyDown += MainWindow_KeyDown;
-        this.Loaded += MainWindow_Loaded;
+        KeyDown += MainWindow_KeyDown;
+        Loaded += MainWindow_Loaded;
 
     }
 
     public ImageSource ImageSource
     {
         get => (ImageSource)GetValue(ImageSourceProperty);
-        set 
-        { 
+        set
+        {
             SetValue(ImageSourceProperty, value);
             OnPropertyChanged();
         }
     }
-    public bool Shuffle 
+    public bool Shuffle
     {
         get => (bool)GetValue(ShuffleProperty);
-        set 
-        { 
+        set
+        {
             SetValue(ShuffleProperty, value);
             OnPropertyChanged();
         }
@@ -66,18 +64,18 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return ValueTask.CompletedTask;
         }
 
-        this.WindowState = WindowState.Normal;
-        this.Left = 0;
-        this.Top = 0;
-        this.Width = SystemParameters.PrimaryScreenWidth - 0.5;
-        this.Height = SystemParameters.PrimaryScreenWidth - 0.5;
+        WindowState = WindowState.Normal;
+        Left = 0;
+        Top = 0;
+        Width = SystemParameters.PrimaryScreenWidth - 0.5;
+        Height = SystemParameters.PrimaryScreenWidth - 0.5;
 
         var uri = new Uri(_files[_index]);
         ImageSource = new BitmapImage(uri);
         Title = _files[_index];
 
-        this.Width = SystemParameters.PrimaryScreenWidth;
-        this.Height = SystemParameters.PrimaryScreenWidth;
+        Width = SystemParameters.PrimaryScreenWidth;
+        Height = SystemParameters.PrimaryScreenWidth;
 
         return ValueTask.CompletedTask;
     }
@@ -119,11 +117,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        this.WindowState = WindowState.Normal;
-        this.Left = 0;
-        this.Top = 0;
-        this.Width = SystemParameters.PrimaryScreenWidth;
-        this.Height = SystemParameters.PrimaryScreenWidth;
+        WindowState = WindowState.Normal;
+        Left = 0;
+        Top = 0;
+        Width = SystemParameters.PrimaryScreenWidth;
+        Height = SystemParameters.PrimaryScreenWidth;
     }
 
     private async void SelectFileOrFolder_Click(object sender, RoutedEventArgs e)
@@ -173,7 +171,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    [NotifyPropertyChangedInvocator]
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
