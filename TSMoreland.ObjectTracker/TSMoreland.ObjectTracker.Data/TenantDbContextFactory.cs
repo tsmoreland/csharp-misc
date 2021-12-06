@@ -15,8 +15,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TSMoreland.ObjectTracker.Data;
 
-
-
 public sealed class TenantDbContextFactory : ITenantDbContextFactory
 {
     /// <inheritdoc />
