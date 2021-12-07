@@ -20,11 +20,17 @@ public sealed class TenantDbContextFactory : ITenantDbContextFactory
     /// <inheritdoc />
     public ObjectContext CreateDbContext(string tenantName)
     {
+        string filename = $"{tenantName}.db";
         var optionsBuilder = new DbContextOptionsBuilder<ObjectContext>();
-        optionsBuilder.UseSqlite($"{tenantName}.db", b =>
+        optionsBuilder.UseSqlite($"Data Source={filename}", b =>
             b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
 
-        return new ObjectContext(optionsBuilder.Options);
+        var context = new ObjectContext(optionsBuilder.Options);
+        if (!File.Exists(filename))
+        {
+            context.Database.Migrate();
+        }
+        return context;
 
     }
 }
