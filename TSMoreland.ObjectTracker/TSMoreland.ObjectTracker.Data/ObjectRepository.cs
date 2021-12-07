@@ -29,11 +29,13 @@ public sealed class ObjectRepository : IObjectRepository
     /// <inheritdoc />
     public async Task<ObjectEntity> Add(ObjectEntity entity, CancellationToken cancellationToken)
     {
+        ThrowIfDisposed();
         return (await _context.AddAsync(entity, cancellationToken)).Entity;
     }
     /// <inheritdoc />
     public async Task<LogEntity> AddMessage(int id, LogEntity entity, CancellationToken cancellationToken)
     {
+        ThrowIfDisposed();
         entity.ObjectEntityId = id;
         return (await _context.AddAsync(entity, cancellationToken)).Entity;
     }
@@ -42,30 +44,36 @@ public sealed class ObjectRepository : IObjectRepository
     /// <inheritdoc />
     public IAsyncEnumerable<IdNamePair> GetAll(int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
-        return _context.Objects
-            .AsNoTracking()
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(e => new IdNamePair(e.Id, e.Name))
-            .AsAsyncEnumerable();
+        return _disposed
+            ? ThrowIfDisposed<IdNamePair>()
+            : _context.Objects
+                .AsNoTracking()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(e => new IdNamePair(e.Id, e.Name))
+                .AsAsyncEnumerable();
     }
 
     /// <inheritdoc />
     public IAsyncEnumerable<LogViewModel> GetLogsForObjectById(int id, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
-        return _context.Objects
-            .AsNoTracking()
-            .Where(e => e.Id == id)
-            .Include(e => e.Logs)
-            .SelectMany(e => e.Logs)
-            .Select(e => new LogViewModel(e.Severity, e.Message))
-            .AsAsyncEnumerable();
+        return _disposed
+            ? ThrowIfDisposed<LogViewModel>()
+            :  _context.Objects
+                .AsNoTracking()
+                .Where(e => e.Id == id)
+                .Include(e => e.Logs)
+                .SelectMany(e => e.Logs)
+                .Select(e => new LogViewModel(e.Severity, e.Message))
+                .AsAsyncEnumerable();
     }
 
     /// <inheritdoc />
     public Task<ObjectViewModel?> GetById(int id, CancellationToken cancellationToken)
     {
-        return _context.Objects
+        return _disposed
+            ? Task.FromException<ObjectViewModel?>(new ObjectDisposedException("instance has been disposed"))
+            :  _context.Objects
             .AsNoTracking()
             .Where(e => e.Id == id)
             .Select(e => (ObjectViewModel?) new ObjectViewModel(e.Id, e.Name))
@@ -74,6 +82,7 @@ public sealed class ObjectRepository : IObjectRepository
 
     public async Task Update(int id, ObjectEntity entity, CancellationToken cancellationToken)
     {
+        ThrowIfDisposed();
         ObjectEntity? existing = await _context.Objects.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
 
         if (existing is null)
@@ -86,7 +95,68 @@ public sealed class ObjectRepository : IObjectRepository
 
     public Task<int> Commit(CancellationToken cancellationToken)
     {
-        return _context.SaveChangesAsync(cancellationToken);
+        return _disposed
+            ? Task.FromException<int>(new ObjectDisposedException("instance has been disposed"))
+            : _context.SaveChangesAsync(cancellationToken);
     }
+
+    #region IDisposable / IAsyncDisposable
+    private bool _disposed;
+
+    private void ThrowIfDisposed()
+    {
+        if (_disposed)
+        {
+            throw new ObjectDisposedException("instance has been disposed");
+        }
+    }
+    private async IAsyncEnumerable<T> ThrowIfDisposed<T>()
+    {
+        await Task.CompletedTask;
+        if (_disposed)
+        {
+            throw new ObjectDisposedException("instance has been disposed");
+        }
+
+        yield break;
+    }
+
+
+    ~ObjectRepository() => Dispose(false);
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        if (disposing)
+        {
+            _context.Dispose();
+        }
+    }
+
+    /// <inheritdoc />
+    public ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        _disposed = true;
+        GC.SuppressFinalize(this);
+        return _context.DisposeAsync();
+    }
+    #endregion
 
 }

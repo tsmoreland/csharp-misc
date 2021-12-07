@@ -9,19 +9,11 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-using TSMoreland.ObjectTracker.Data.Abstractions.Entities;
-using TSMoreland.ObjectTracker.Data.Abstractions.ViewModels;
+//
 
 namespace TSMoreland.ObjectTracker.Data.Abstractions;
 
-public interface IObjectRepository : IDisposable, IAsyncDisposable
+public interface ITenantObjectRepositoryFactory
 {
-    Task<ObjectEntity> Add(ObjectEntity entity, CancellationToken cancellationToken);
-    Task<LogEntity> AddMessage(int id, LogEntity entity, CancellationToken cancellationToken);
-    IAsyncEnumerable<IdNamePair> GetAll(int pageNumber, int pageSize, CancellationToken cancellationToken);
-    IAsyncEnumerable<LogViewModel> GetLogsForObjectById(int id, int pageNumber, int pageSize, CancellationToken cancellationToken);
-    Task<ObjectViewModel?> GetById(int id, CancellationToken cancellationToken);
-    Task Update(int id, ObjectEntity entity, CancellationToken cancellationToken);
-    Task<int> Commit(CancellationToken cancellationToken);
+    IObjectRepository CreateObjectRepository(string tenantName);
 }

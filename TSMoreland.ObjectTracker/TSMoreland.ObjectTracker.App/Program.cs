@@ -10,6 +10,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TSMoreland.ObjectTracker.Data;
@@ -25,6 +27,8 @@ services.AddAuthorization();
 services.AddDbContext<ObjectContext>();
 
 services.AddScoped<IObjectRepository, ObjectRepository>();
+services.AddSingleton<ITenantDbContextFactory, TenantDbContextFactory>();
+services.AddSingleton<ITenantObjectRepositoryFactory, TenantObjectRepositoryFactory>();
 
 WebApplication app = builder.Build();
 
@@ -41,7 +45,10 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+else
+{
+    app.UseExceptionHandler("/Error");
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -52,12 +59,13 @@ app.UseAuthorization();
 
 app.MapGet("/error", () => Results.Problem());
 
-app.MapPost("/objects", async ([FromServices] IObjectRepository repository, ObjectEntity entity, CancellationToken cancellationToken) =>
-{
-    ObjectEntity createdEntity = await repository.Add(entity, cancellationToken);
-    await repository.Commit(cancellationToken);
-    return Results.Created($"/objects/{createdEntity.Id}", createdEntity);
-});
+app.MapPost("/objects",
+    async ([FromServices] IObjectRepository repository, ObjectEntity entity, CancellationToken cancellationToken) =>
+    {
+        ObjectEntity createdEntity = await repository.Add(entity, cancellationToken);
+        await repository.Commit(cancellationToken);
+        return Results.Created($"/objects/{createdEntity.Id}", createdEntity);
+    });
 
 app.MapGet("/objects", 
     ([FromServices] IObjectRepository repository, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
@@ -72,12 +80,13 @@ app.MapGet("/objects/{id:int}",
             : Results.NotFound();
     });
 
-app.MapPost("/objects/{id:int}/logs", async ([FromServices] IObjectRepository repository, [FromRoute] int id, LogEntity entity, CancellationToken cancellationToken) =>
-{
-    LogEntity createdEntity = await repository.AddMessage(id, entity, cancellationToken);
-    await repository.Commit(cancellationToken);
-    return Results.Created($"/objects/{id}/logs/{createdEntity.Id}", createdEntity);
-});
+app.MapPost("/objects/{id:int}/logs",
+    async ([FromServices] IObjectRepository repository, [FromRoute] int id, LogEntity entity, CancellationToken cancellationToken) =>
+    {
+        LogEntity createdEntity = await repository.AddMessage(id, entity, cancellationToken);
+        await repository.Commit(cancellationToken);
+        return Results.Created($"/objects/{id}/logs/{createdEntity.Id}", createdEntity);
+    });
 
 app.MapGet("/objects/{id:int}/logs", 
     ([FromServices] IObjectRepository repository, [FromRoute] int id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
@@ -85,29 +94,51 @@ app.MapGet("/objects/{id:int}/logs",
 
 // Tenant based API endpoints
 
-app.MapGet("/{tenant}/objects", 
-    ([FromServices] ITenantObjectRepository repository, [FromRoute] string tenant, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
-        repository.GetAll(tenant, pageNumber ?? 1, pageSize ?? 10, cancellationToken));
+app.MapPost("/{tenant}/objects",
+    async ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, ObjectEntity entity, CancellationToken cancellationToken) =>
+    {
+        await using IObjectRepository repository = repositoryFactory.CreateObjectRepository(tenant);
+        ObjectEntity createdEntity = await repository.Add(entity, cancellationToken);
+        await repository.Commit(cancellationToken);
+        return Results.Created($"/objects/{createdEntity.Id}", createdEntity);
+    });
+
+app.MapGet("/{tenant}/objects",
+    ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
+        CancellationToken cancellationToken) =>
+     Enumerate(repositoryFactory, tenant, repository => repository.GetAll(pageNumber ?? 1, pageSize ?? 10, cancellationToken), cancellationToken));
 
 app.MapGet("/{tenant}/objects/{id:int}",
-    async ([FromServices] ITenantObjectRepository repository, [FromRoute] string tenant, [FromRoute] int id, CancellationToken cancellationToken) =>
+    async ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromRoute] int id, CancellationToken cancellationToken) =>
     {
-        ObjectViewModel? result = await repository.GetById(tenant, id, cancellationToken);
+        await using IObjectRepository repository = repositoryFactory.CreateObjectRepository(tenant);
+        ObjectViewModel? result = await repository.GetById(id, cancellationToken);
         return result is not null
             ? Results.Ok(result)
             : Results.NotFound();
     });
 
-app.MapPost("/{tenant}/objects/{id:int}/logs", async ([FromServices] ITenantObjectRepository repository, [FromRoute] string tenant, [FromRoute] int id, LogEntity entity, CancellationToken cancellationToken) =>
-{
-    LogEntity createdEntity = await repository.AddMessage(tenant, id, entity, cancellationToken);
-    await repository.Commit(tenant, cancellationToken);
-    return Results.Created($"/objects/{id}/logs/{createdEntity.Id}", createdEntity);
-});
+app.MapPost("/{tenant}/objects/{id:int}/logs",
+    async ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromRoute] int id, LogEntity entity, CancellationToken cancellationToken) =>
+    {
+        await using IObjectRepository repository = repositoryFactory.CreateObjectRepository(tenant);
+        LogEntity createdEntity = await repository.AddMessage(id, entity, cancellationToken);
+        await repository.Commit(cancellationToken);
+        return Results.Created($"/objects/{id}/logs/{createdEntity.Id}", createdEntity);
+    });
 
 app.MapGet("/{tenant}/objects/{id:int}/logs", 
-    ([FromServices] ITenantObjectRepository repository, [FromRoute] string tenant, [FromRoute] int id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
-        repository.GetLogsForObjectById(tenant, id, pageNumber ?? 1, pageSize ?? 10, cancellationToken));
-
+    ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromRoute] int id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
+        Enumerate(repositoryFactory, tenant, repository => repository.GetLogsForObjectById(id, pageNumber ?? 1, pageSize ?? 10, cancellationToken), cancellationToken));
 
 app.Run();
+
+static async IAsyncEnumerable<T> Enumerate<T>(ITenantObjectRepositoryFactory repositoryFactory, string tenant, Func<IObjectRepository, IAsyncEnumerable<T>> producer, [EnumeratorCancellation] CancellationToken cancellationToken)
+{
+    await using IObjectRepository repository = repositoryFactory.CreateObjectRepository(tenant);
+    await foreach (T item in producer(repository).WithCancellation(cancellationToken))
+    {
+        yield return item;
+    }
+}
+

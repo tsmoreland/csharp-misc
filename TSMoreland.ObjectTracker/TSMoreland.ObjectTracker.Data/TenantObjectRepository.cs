@@ -79,14 +79,50 @@ public sealed class TenantObjectRepository : ITenantObjectRepository
     }
 
     /// <inheritdoc />
-    public Task<ObjectViewModel?> GetById(string tenant, int id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<ObjectViewModel?> GetById(string tenant, int id, CancellationToken cancellationToken)
+    {
+        ObjectContext context = _dbContextFactory.CreateDbContext(tenant);
+        return context.Objects
+            .Where(e => e.Id == id)
+            .Select(e => new ObjectViewModel(e.Id, e.Name))
+            .FirstOrDefaultAsync(cancellationToken)
+            .ContinueWith(task =>  (ObjectViewModel?)CloseContext(task, context), CancellationToken.None);
+    }
 
     /// <inheritdoc />
-    public Task Update(string tenant, int id, ObjectEntity entity, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task Update(string tenant, int id, ObjectEntity entity, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <inheritdoc />
-    public Task Delete(string tenant, int id, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task Delete(string tenant, int id, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <inheritdoc />
-    public Task<int> Commit(string tenant, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public Task<int> Commit(string tenant, CancellationToken cancellationToken)
+    {
+        ObjectContext context = _dbContextFactory.CreateDbContext(tenant);
+        return context.SaveChangesAsync(cancellationToken)
+            .ContinueWith(task =>  CloseContext(task, context), CancellationToken.None);
+    }
+
+    private static T CloseContext<T>(Task<T> task, IDisposable context)
+    {
+        context.Dispose();
+        if (task.IsCompletedSuccessfully)
+        {
+            return task.Result;
+        }
+
+        if (task.IsFaulted && task.Exception is { })
+        {
+            throw task.Exception;
+        }
+
+        throw new OperationCanceledException("Task was cancelled.");
+    }
+
 }
