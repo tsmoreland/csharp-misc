@@ -9,26 +9,21 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-namespace TSMoreland.ObjectTracker.Data.Abstractions.Entities;
+//
 
-public sealed class LogEntity
+using TSMoreland.ObjectTracker.Data.Abstractions.Entities;
+using TSMoreland.ObjectTracker.Data.Abstractions.ViewModels;
+
+namespace TSMoreland.ObjectTracker.Data.Abstractions;
+
+public interface ITenantObjectRepository
 {
-    public LogEntity(int id, int objectEntityId, int severity, string message)
-    {
-        Id = id;
-        ObjectEntityId = objectEntityId;
-        Severity = severity;
-        Message = message;
-    }
-    private LogEntity()
-    {
-        
-    }
-
-    public int Id { get; private set; }
-    public int ObjectEntityId { get; set; }
-
-    public int Severity { get; set; }
-    public string Message { get; set; } = string.Empty;
+    Task<ObjectEntity> Add(string tenant, ObjectEntity entity, CancellationToken cancellationToken);
+    Task<LogEntity> AddMessage(string tenant, int id, LogEntity entity, CancellationToken cancellationToken);
+    IAsyncEnumerable<IdNamePair> GetAll(string tenant, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    IAsyncEnumerable<LogViewModel> GetLogsForObjectById(string tenant, int id, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    Task<ObjectViewModel?> GetById(string tenant, int id, CancellationToken cancellationToken);
+    Task Update(string tenant, int id, ObjectEntity entity, CancellationToken cancellationToken);
+    Task Delete(string tenant, int id, CancellationToken cancellationToken);
+    Task<int> Commit(string tenant, CancellationToken cancellationToken);
 }

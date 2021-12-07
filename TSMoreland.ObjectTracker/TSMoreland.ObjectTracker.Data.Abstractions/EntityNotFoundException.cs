@@ -9,26 +9,35 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
-namespace TSMoreland.ObjectTracker.Data.Abstractions.Entities;
+//
 
-public sealed class LogEntity
+using System.Runtime.Serialization;
+
+namespace TSMoreland.ObjectTracker.Data.Abstractions;
+
+[Serializable]
+public sealed class EntityNotFoundException : Exception
 {
-    public LogEntity(int id, int objectEntityId, int severity, string message)
+    public EntityNotFoundException()
+        : this(null, null)
     {
-        Id = id;
-        ObjectEntityId = objectEntityId;
-        Severity = severity;
-        Message = message;
+        
     }
-    private LogEntity()
+    public EntityNotFoundException(string? message)
+        : this(message, null)
+    {
+        
+    }
+    public EntityNotFoundException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
         
     }
 
-    public int Id { get; private set; }
-    public int ObjectEntityId { get; set; }
+    private EntityNotFoundException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
+        
+    }
 
-    public int Severity { get; set; }
-    public string Message { get; set; } = string.Empty;
 }
