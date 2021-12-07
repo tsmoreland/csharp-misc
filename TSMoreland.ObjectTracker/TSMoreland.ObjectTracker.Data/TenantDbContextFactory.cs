@@ -26,10 +26,11 @@ public sealed class TenantDbContextFactory : ITenantDbContextFactory
             b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
 
         var context = new ObjectContext(optionsBuilder.Options);
-        if (!File.Exists(filename))
-        {
-            context.Database.Migrate();
-        }
+
+        // no need to migrate here, these are intended as short-lived databases so migration "shouldn't" be necessary
+        // on the other hand if they live longer than intended then migration may be needed but that would mean
+        // needing to migrate every time as we couldn't know the version offhand without checking 
+        context.Database.EnsureCreated();
         return context;
 
     }
