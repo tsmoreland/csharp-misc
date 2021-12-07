@@ -27,32 +27,15 @@ public sealed class ObjectRepository : IObjectRepository
     }
 
     /// <inheritdoc />
-    public Task<ObjectEntity> Add(ObjectEntity entity, CancellationToken cancellationToken)
+    public async Task<ObjectEntity> Add(ObjectEntity entity, CancellationToken cancellationToken)
     {
-        var task = _context.AddAsync(entity, cancellationToken);
-        return task.IsCompleted 
-            ? Task.FromResult(task.Result.Entity) 
-            : Await();
-
-        async Task<ObjectEntity> Await()
-        {
-            return (await task).Entity;
-        }
+        return (await _context.AddAsync(entity, cancellationToken)).Entity;
     }
     /// <inheritdoc />
-    public Task<LogEntity> AddMessage(int id, LogEntity entity, CancellationToken cancellationToken)
+    public async Task<LogEntity> AddMessage(int id, LogEntity entity, CancellationToken cancellationToken)
     {
         entity.ObjectEntityId = id;
-
-        var task = _context.AddAsync(entity, cancellationToken);
-        return task.IsCompleted 
-            ? Task.FromResult(task.Result.Entity) 
-            : Await();
-
-        async Task<LogEntity> Await()
-        {
-            return (await task).Entity;
-        }
+        return (await _context.AddAsync(entity, cancellationToken)).Entity;
     }
 
 
@@ -91,11 +74,11 @@ public sealed class ObjectRepository : IObjectRepository
 
     public async Task Update(int id, ObjectEntity entity, CancellationToken cancellationToken)
     {
-        var existing = await _context.Objects.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
+        ObjectEntity? existing = await _context.Objects.FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
 
         if (existing is null)
         {
-            throw new Exception("Not found"); // ideally use a more specific exception type
+            throw new EntityNotFoundException();
         }
 
         existing.Name = entity.Name;
