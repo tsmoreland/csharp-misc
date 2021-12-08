@@ -93,6 +93,12 @@ public sealed class ObjectRepository : IObjectRepository
         existing.Name = entity.Name;
     }
 
+    /// <inheritdoc />
+    public Task Delete(int id, CancellationToken cancellationToken)
+    {
+        return _context.DeleteById(id, cancellationToken);
+    }
+
     public Task<int> Commit(CancellationToken cancellationToken)
     {
         return _disposed

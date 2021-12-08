@@ -25,6 +25,11 @@ public sealed class ObjectContext : DbContext
 
     public DbSet<ObjectEntity> Objects { get; set; } = null!; // initialization will be handled by EF
 
+    public Task<int> DeleteById(int id, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(0);
+    }
+
     /// <inheritdoc/>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
