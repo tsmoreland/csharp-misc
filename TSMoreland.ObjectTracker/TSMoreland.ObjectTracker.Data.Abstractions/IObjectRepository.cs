@@ -23,5 +23,7 @@ public interface IObjectRepository : IDisposable, IAsyncDisposable
     IAsyncEnumerable<LogViewModel> GetLogsForObjectById(int id, int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<ObjectViewModel?> GetById(int id, CancellationToken cancellationToken);
     Task Update(int id, ObjectEntity entity, CancellationToken cancellationToken);
+    Task Delete(int id, CancellationToken cancellationToken);
+    
     Task<int> Commit(CancellationToken cancellationToken);
 }
