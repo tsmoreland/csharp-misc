@@ -92,6 +92,10 @@ app.MapGet("/objects/{id:int}/logs",
     ([FromServices] IObjectRepository repository, [FromRoute] int id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
         repository.GetLogsForObjectById(id, pageNumber ?? 1, pageSize ?? 10, cancellationToken));
 
+app.MapDelete("/objects/{id:int}",
+    ([FromServices] IObjectRepository repository, [FromRoute] int id, CancellationToken cancellationToken) =>
+        repository.Delete(id, cancellationToken));
+
 // Tenant based API endpoints
 
 app.MapPost("/{tenant}/objects",

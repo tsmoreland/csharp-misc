@@ -27,7 +27,7 @@ public sealed class ObjectContext : DbContext
 
     public Task<int> DeleteById(int id, CancellationToken cancellationToken)
     {
-        return Database.ExecuteSqlRawAsync(@"BEBIN TRANSACTION;
+        return Database.ExecuteSqlRawAsync(@"BEGIN TRANSACTION;
 DELETE FROM LogEntity WHERE ObjectEntityId = {0};    
 DELETE FROM Objects WHERE Id = {0};
 COMMIT;", new object[] { id }, cancellationToken);
