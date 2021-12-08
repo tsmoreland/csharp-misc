@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TSMoreland.ObjectTracker.Data.Abstractions.Entities;
 
 namespace TSMoreland.ObjectTracker.Data;
@@ -40,6 +41,32 @@ public sealed class ObjectContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // table configuration for fluent design goes here, we don't need any yet as convention is enough
+        ConfigureObject(modelBuilder.Entity<ObjectEntity>());
+        ConfigureLog(modelBuilder.Entity<LogEntity>());
+
+        static void ConfigureObject(EntityTypeBuilder<ObjectEntity> entity)
+        {
+            entity.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(p => p.Progress)
+                .IsRequired()
+                .HasDefaultValue(0);
+            entity.Property(p => p.LastModified)
+                .HasDefaultValue(DateTime.MinValue)
+                .IsConcurrencyToken();
+        }
+        static void ConfigureLog(EntityTypeBuilder<LogEntity> entity)
+        {
+            entity.Property(p => p.Message)
+                .IsRequired()
+                .HasMaxLength(1024)
+                .IsUnicode(true);
+            entity.Property(p => p.Severity)
+                .IsRequired()
+                .HasDefaultValue(0);
+        }
     }
 
 }

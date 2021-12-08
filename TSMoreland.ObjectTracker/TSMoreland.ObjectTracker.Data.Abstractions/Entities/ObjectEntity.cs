@@ -14,12 +14,13 @@ namespace TSMoreland.ObjectTracker.Data.Abstractions.Entities;
 
 public sealed class ObjectEntity 
 {
-
-    public ObjectEntity(int id, string name, List<LogEntity> logs)
+    public ObjectEntity(int id, string name, int progress, DateTime lastModified, List<LogEntity>? logs)
     {
         Id = id;
         Name = name;
-        Logs = logs;
+        Progress = progress;
+        Logs = logs?.ToList() ?? new List<LogEntity>();
+        LastModified = lastModified;
     }
     private ObjectEntity()
     {
@@ -27,6 +28,9 @@ public sealed class ObjectEntity
 
     public int Id { get; private set; }
     public string Name { get; set; } = string.Empty;
+    public int Progress { get; set; } = 0;
+    public DateTime LastModified { get; set; } = DateTime.MinValue;
+
     public List<LogEntity> Logs { get; } = new();
 
 }
