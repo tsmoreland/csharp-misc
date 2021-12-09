@@ -32,9 +32,9 @@ public sealed class TenantDbContextFactory : ITenantDbContextFactory
         // needing to migrate every time as we couldn't know the version offhand without checking 
         context.Database.EnsureCreated();
 
+        // Doing this means we won't get a Migration table so we won't be able to migrate at a future point so this
+        // only works for a short lived database
 
-        // if for some reason we need to migrate an old database we'd be better having a secondary tool to
-        // manaully upgrade that database rather than doing it on every request
         
         return context;
 
