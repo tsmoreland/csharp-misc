@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <langversion>10</langversion>
+    <nullable>enable</nullable>
+  </PropertyGroup>
+
+</Project>
