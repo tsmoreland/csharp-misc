@@ -62,8 +62,24 @@ COMMIT;", new object[] { id }, cancellationToken);
                 .IsRequired()
                 .HasDefaultValue(0);
             entity.Property(p => p.LastModified)
-                .HasDefaultValue(DateTime.MinValue)
+                .ValueGeneratedOnAddOrUpdate()
                 .IsConcurrencyToken();
+
+            OwnedNavigationBuilder<ObjectEntity, Address> ownedEntity = entity.OwnsOne(e => e.Address);
+            ownedEntity.Property(p => p.HouseNumber)
+                .IsRequired()
+                .HasDefaultValue(0)
+                .HasColumnName("HouseNumber");
+            ownedEntity.Property(p => p.Street)
+                .IsRequired()
+                .HasMaxLength(256)
+                .IsUnicode()
+                .HasColumnName("Street");
+            ownedEntity.Property(p => p.PostCode)
+                .IsRequired()
+                .HasMaxLength(256)
+                .IsUnicode()
+                .HasColumnName("Postcode");
         }
         static void ConfigureLog(EntityTypeBuilder<LogEntity> entity)
         {
@@ -74,6 +90,11 @@ COMMIT;", new object[] { id }, cancellationToken);
             entity.Property(p => p.Severity)
                 .IsRequired()
                 .HasDefaultValue(0);
+            entity
+                .HasOne<ObjectEntity>()
+                .WithMany(e => e.Logs)
+                .HasForeignKey(e => e.ObjectEntityId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

@@ -9,30 +9,26 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
+//
+
 namespace TSMoreland.ObjectTracker.Data.Abstractions.Entities;
 
-public sealed class ObjectEntity 
+public sealed class Address
 {
-    public ObjectEntity(int id, string name, int progress, Address address, DateTime lastModified, List<LogEntity>? logs)
+    public Address(int houseNumber, string street, string postCode)
     {
-        Id = id;
-        Name = name;
-        Progress = progress;
-        Address = address;
-        Logs = logs?.ToList() ?? new List<LogEntity>();
-        LastModified = lastModified;
+        HouseNumber = houseNumber;
+        Street = street;
+        PostCode = postCode;
     }
-    private ObjectEntity()
+    private Address()
     {
+        
     }
 
-    public int Id { get; private set; }
-    public string Name { get; set; } = string.Empty;
-    public int Progress { get; set; } = 0;
-    public Address Address { get; private set; } = Address.None;
-    public DateTime LastModified { get; set; } = DateTime.MinValue;
+    public int HouseNumber { get; private set; }
+    public string Street { get; private set; } = string.Empty;
+    public string PostCode { get; private set; } = string.Empty;
 
-    public List<LogEntity> Logs { get; } = new();
-
+    public static Address None { get; } = new Address();
 }

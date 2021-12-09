@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TSMoreland.ObjectTracker.Data;
 
@@ -10,9 +11,10 @@ using TSMoreland.ObjectTracker.Data;
 namespace TSMoreland.ObjectTracker.Data.Migrations
 {
     [DbContext(typeof(ObjectContext))]
-    partial class ObjectContextModelSnapshot : ModelSnapshot
+    [Migration("20211208215820_Address")]
+    partial class Address
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
