@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>Moreland.CSharp.Util.Test</RootNamespace>
     <AssemblyName>Moreland.CSharp.Util.Test</AssemblyName>
-    <LangVersion>8</LangVersion>
+    <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <SignAssembly>true</SignAssembly>
