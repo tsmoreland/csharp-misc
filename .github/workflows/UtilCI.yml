@@ -3,12 +3,17 @@ name: CI Build
 on:   
   push:
     branches: [ main, develop ]
+    paths:
+    - Util/**
+    - .github/workflows/UtilCI.yml        
   pull_request:
     branches: [ main, develop ]
-
+    paths:
+    - Util/**
+    - .github/workflows/UtilCI.yml   
+    
 jobs:
   util:
-
     runs-on: windows-latest
 
     steps:
@@ -28,23 +33,3 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
       working-directory: Util
   
-  file-utiltiies:
-
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-        include-prerelease: true
-    - name: Install dependencies
-      run: dotnet restore
-      working-directory: FileUtilties/csharp  
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-      working-directory: FileUtilties/csharp      
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-      working-directory: FileUtilties/csharp
