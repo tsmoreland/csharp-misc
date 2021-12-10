@@ -1,4 +1,4 @@
-![Trunk CI Build](https://github.com/tsmoreland/Util/workflows/Trunk%20CI%20Build/badge.svg)
+[![CI Build](https://github.com/tsmoreland/Misc/actions/workflows/CI.yml/badge.svg)](https://github.com/tsmoreland/Misc/actions/workflows/CI.yml)
 
 # Moreland.CSharp.Util
 
