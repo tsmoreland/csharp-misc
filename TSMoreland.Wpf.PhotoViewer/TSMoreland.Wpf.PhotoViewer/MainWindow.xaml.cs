@@ -172,6 +172,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             _index = 0;
             ControlPanel.Visibility = Visibility.Collapsed;
+            Viewer.Visibility = Visibility.Visible;
         }
         else
         {
