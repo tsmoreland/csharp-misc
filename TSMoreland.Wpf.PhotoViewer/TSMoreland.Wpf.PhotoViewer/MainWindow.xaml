@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         x:Name="MainWindowControl"
         Title="" Height="450" Width="800">
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" Background="DarkGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -16,19 +16,15 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel x:Name="ControlPanel" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="SelectFileOrFolder" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"  Content="Select File or Folder" Padding="3,0,3,0" Height="24" Click="SelectFileOrFolder_Click"/>
-            <CheckBox Content="Shuffle" IsChecked="{Binding Path=Shuffle, ElementName=MainWindowControl}" Margin="2" VerticalAlignment="Center"/>
+        <StackPanel x:Name="ControlPanel" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Height="Auto">
+            <Button x:Name="SelectFileOrFolder" HorizontalAlignment="Center"  Content="Select File or Folder" Padding="3,0,3,0" Height="Auto" Width="Auto" Click="SelectFileOrFolder_Click" Background="DarkGray" />
+            <CheckBox Content="Shuffle" IsChecked="{Binding Path=Shuffle, ElementName=MainWindowControl}" Margin="2" VerticalAlignment="Center" Height="Auto" Width="Auto" Background="DarkGray"/>
         </StackPanel>
 
         <Image  Name="Viewer" Grid.Row="1" Grid.Column="0" Stretch="Uniform" Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                Visibility="Hidden"
                 Source="{Binding Path=ImageSource, ElementName=MainWindowControl}"
                 >
-            <!--
-            <Image.Source>
-                <BitmapImage UriSource="{Binding ImageSourceUri, ElementName=MainWindowControl}"/>
-            </Image.Source>
-            -->
         </Image>
     </Grid>
 </Window>

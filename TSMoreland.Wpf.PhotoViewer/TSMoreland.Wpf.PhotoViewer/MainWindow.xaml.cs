@@ -26,6 +26,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         Background = Brushes.DarkGray;
 
         KeyDown += MainWindow_KeyDown;
+        MouseDown += MainWindow_MouseDown;
         Loaded += MainWindow_Loaded;
 
     }
@@ -55,7 +56,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     public static readonly DependencyProperty ShuffleProperty =
         DependencyProperty.Register(nameof(Shuffle), typeof(bool), typeof(MainWindow),
-            new FrameworkPropertyMetadata(false));
+            new FrameworkPropertyMetadata(true));
 
     private ValueTask LoadImage()
     {
@@ -95,6 +96,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return;
         }
 
+        await RefreshImage();
+    }
+    private async void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        _index++;
+        await RefreshImage();
+    }
+
+    private async Task RefreshImage()
+    {
         if (!_files.Any())
         {
             _index = -1;
