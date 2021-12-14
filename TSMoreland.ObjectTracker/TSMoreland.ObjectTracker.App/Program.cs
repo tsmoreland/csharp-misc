@@ -135,6 +135,15 @@ app.MapGet("/{tenant}/objects/{id:int}/logs",
     ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromRoute] int id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize, CancellationToken cancellationToken) => 
         Enumerate(repositoryFactory, tenant, repository => repository.GetLogsForObjectById(id, pageNumber ?? 1, pageSize ?? 10, cancellationToken), cancellationToken));
 
+app.MapDelete("/{tenant}/objects/{id:int}",
+    async ([FromServices] ITenantObjectRepositoryFactory repositoryFactory, [FromRoute] string tenant, [FromRoute] int id,
+        CancellationToken cancellationToken) =>
+    {
+        await using IObjectRepository repository = repositoryFactory.CreateObjectRepository(tenant);
+        await repository.Delete(id, cancellationToken);
+        await repository.Commit(cancellationToken);
+    });
+
 app.Run();
 
 static async IAsyncEnumerable<T> Enumerate<T>(ITenantObjectRepositoryFactory repositoryFactory, string tenant, Func<IObjectRepository, IAsyncEnumerable<T>> producer, [EnumeratorCancellation] CancellationToken cancellationToken)
