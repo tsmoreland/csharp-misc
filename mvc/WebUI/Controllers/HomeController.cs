@@ -222,11 +222,12 @@ namespace WebUI.Controllers
                 // redirect to e-mail sent page
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
-                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userId}", Sanitize(resetUrl), user.Id);
+                _ = resetUrl; // we'd typically e-mail this
+                _logger.LogInformation("ToDo: send the '{token}' to {userId}", token, user.Id);
             }
             else
             {
-                _logger.LogInformation("ToDo: send message to {modelEmail} informing them that they do not have an account", Sanitize(model.Email));
+                _logger.LogInformation("ToDo: send message to the given e-mail informing them that they do not have an account, basically respond the same as if the account did exist");
             }
 
             return View("ResetPasswordRequestSuccess");
