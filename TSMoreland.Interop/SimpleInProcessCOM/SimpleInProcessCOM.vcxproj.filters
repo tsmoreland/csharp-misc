@@ -17,51 +17,60 @@
       <UniqueIdentifier>{c32dad82-9324-4a18-9bdb-260ec3f9fabc}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Infrastructure">
+      <UniqueIdentifier>{dc0c2ac2-06e0-4866-af64-3570d8e880ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Infrastructure\Header Files">
+      <UniqueIdentifier>{1a9d2ff8-40d4-48bf-9bae-4eb54fdbe3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Infrastructure\Source Files">
+      <UniqueIdentifier>{463591d7-f626-4b93-85bf-49f8d2eed13b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dllmain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xdlldata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleInProcessCOM_i.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dllmain.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xdlldata.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Infrastructure\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dll_exports.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xdlldata.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleInProcessCOM_i.c">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dll_exports.cpp">
+      <Filter>Infrastructure\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Infrastructure\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Infrastructure\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xdlldata.c">
+      <Filter>Infrastructure\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,11 +82,11 @@
     <None Include="SimpleInProcessCOM.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="dll_exports.def">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="SimpleObject.rgs">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="dll_exports.def">
+      <Filter>Infrastructure\Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
