@@ -105,7 +105,7 @@ namespace WebUI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
-            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userEmail}",  Sanitize(confirmEmailUrl), Sanitize(user.Email));
+            _logger.LogInformation("Todo: send {confirmEmailUrl} to {userId}",  Sanitize(confirmEmailUrl), user.Id);
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
 
             return Redirect(nameof(RegisterSuccess));
@@ -179,7 +179,7 @@ namespace WebUI.Controllers
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    _logger.LogInformation("ToDo: send {token} to {userEmail}", Sanitize(token), Sanitize(user.Email));
+                    _logger.LogInformation("ToDo: send {token} to {userId}", Sanitize(token), user.Id);
                     return await RedirectToTwoFactor("Email");
                 }
             }
@@ -222,7 +222,7 @@ namespace WebUI.Controllers
                 // redirect to e-mail sent page
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
-                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userEmail}", Sanitize(resetUrl), Sanitize(user.Email));
+                _logger.LogInformation("ToDo: send the '{resetUrl}' to {userId}", Sanitize(resetUrl), user.Id);
             }
             else
             {
