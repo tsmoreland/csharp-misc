@@ -223,7 +223,8 @@ namespace WebUI.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
                 _ = resetUrl; // we'd typically e-mail this
-                _logger.LogInformation("ToDo: send the '{token}' to {userId}", token, user.Id);
+                _logger.LogInformation("ToDo: send the '{token}' ", token);
+                _logger.LogInformation("ToDo: send to {userId}", user.Id);
             }
             else
             {
