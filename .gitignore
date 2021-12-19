@@ -66,6 +66,7 @@ StyleCopReport.xml
 
 # Files built by Visual Studio
 *_i.c
+*_i.h
 *_p.c
 *_h.h
 *.ilk
@@ -356,3 +357,4 @@ MigrationBackup/
 *.db
 *.db-wal
 *.db-shm
+
