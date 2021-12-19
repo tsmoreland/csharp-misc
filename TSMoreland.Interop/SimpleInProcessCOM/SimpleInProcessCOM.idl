@@ -1,0 +1,47 @@
+// SimpleInProcessCOM.idl : IDL source for SimpleInProcessCOM
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SimpleInProcessCOM.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(f2b23b2b-e773-457a-b277-36b21e562fd5),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISimpleObject : IDispatch
+{
+    [id(1), helpstring("Id"), propget]
+    HRESULT Id([ out, retval ] GUID * result);
+
+    [id(2), helpstring("Name"), propget]
+    HRESULT Name([ out, retval ] BSTR * result);
+
+    /*
+    [id(3), helpstring("Convert string to lowercase")]
+    HRESULT ToLowercase([in] BSTR input, [ out, retval ] BSTR * result);
+    */
+};
+
+[
+	uuid(580185ad-317a-4eb7-a6ab-48ebd08c8407),
+	version(1.0),
+]
+library SimpleInProcessCOMLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(e3d3572d-9e25-4cf3-82f5-45b6f0035a82)
+	]
+	coclass SimpleObject
+	{
+		[default] interface ISimpleObject;
+	};
+};
+
+import "shobjidl.idl";
