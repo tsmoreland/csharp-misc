@@ -80,7 +80,7 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null)
             {
-                _logger.LogError("{modelUserName} already exists, returning success to user without taking action", Sanitize(model.UserName));
+                _logger.LogError("{modelUserName} already exists, returning success to user without taking action", Sanitize(user.UserName));
                 return Redirect(nameof(RegisterSuccess));
             }
 
@@ -179,7 +179,7 @@ namespace WebUI.Controllers
                 if (providers.Contains("Email"))
                 {
                     var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    _logger.LogInformation("ToDo: send {token} to {userId}", Sanitize(token), user.Id);
+                    Console.WriteLine($"ToDo: send {token} to {user.Id}");
                     return await RedirectToTwoFactor("Email");
                 }
             }
