@@ -80,7 +80,7 @@ namespace WebUI.Controllers
             var user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null)
             {
-                _logger.LogError("{modelUserName} already exists, returning success to user without taking action", Sanitize(user.UserName));
+                _logger.LogError("{userId} already exists, returning success to user without taking action", user.Id);
                 return Redirect(nameof(RegisterSuccess));
             }
 
