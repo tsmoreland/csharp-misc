@@ -20,7 +20,34 @@ class ATL_NO_VTABLE CSimpleObject : public CComObjectRootEx<CComMultiThreadModel
                                     public CComCoClass<CSimpleObject, &CLSID_SimpleObject>,
                                     public IDispatchImpl<ISimpleObject, &IID_ISimpleObject,
                                         &LIBID_SimpleInProcessCOMLib, /*wMajor =*/1, /*wMinor =*/0> {
+    LONG numeric_{0};
+
 public:
+
+    /// <summary>
+    /// Returns the name of this object
+    /// </summary>
+    /// <param name="result">on success stores the name of this object</param>
+    /// <returns>
+    /// S_OK on success, otherwise E_INVALIDARG if <paramref name="result"/> is nullptr
+    /// </returns>
+    STDMETHOD(get_Name)(BSTR* result) noexcept override;
+
+    /// <summary>
+    /// returns the current numeric value
+    /// </summary>
+    /// <param name="result">on success stores the current numeric value</param>
+    /// <returns>
+    /// S_OK on success, otherwise E_INVALIDARG if <paramref name="result"/> is nullptr
+    /// </returns>
+    STDMETHOD(get_Numeric)(LONG* result) noexcept override;
+
+    /// <summary>
+    /// updates the numeric value
+    /// </summary>
+    /// <param name="value">value to update</param>
+    /// <returns>S_OK</returns>a
+    STDMETHOD(put_Numeric)(LONG value) noexcept override;
 
     /// <summary>
     /// Returns the unique id of this object
@@ -32,7 +59,13 @@ public:
     /// </returns>
     STDMETHOD(get_Id)(GUID* result) noexcept override;
 
-    STDMETHOD(get_Name)(BSTR* result) noexcept override;
+    /// <summary>
+    /// Returns string representation of <paramref name="input"/>
+    /// </summary>
+    /// <param name="input">GUID to convert</param>
+    /// <param name="result">on success stores the string representation</param>
+    /// <returns>S_OK on success; otherwise, E_INVALIDARG if result is nullptr, and E_FAIL for any other failure</returns>
+    STDMETHOD(ConvertToString)(GUID input, BSTR* result) noexcept override;
 
     CSimpleObject() = default;
 

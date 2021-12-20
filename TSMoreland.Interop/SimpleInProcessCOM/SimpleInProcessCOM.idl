@@ -7,6 +7,21 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
+
+typedef
+[
+    uuid(C868E4C5-4139-4961-A643-D8DC28264504),
+    version(1.0),
+    helpstring("formally defined GUID UDT")
+]
+struct UDTGuid {
+
+    LONG Data1;
+    SHORT Data2;
+    SHORT Data3;
+    LONGLONG Data4;
+} UDTGuid;
+
 [
 	object,
 	uuid(f2b23b2b-e773-457a-b277-36b21e562fd5),
@@ -16,16 +31,20 @@ import "ocidl.idl";
 ]
 interface ISimpleObject : IDispatch
 {
-    [id(1), helpstring("Id"), propget]
-    HRESULT Id([ out, retval ] GUID * result);
-
-    [id(2), helpstring("Name"), propget]
+    [id(1), helpstring("Name"), propget]
     HRESULT Name([ out, retval ] BSTR * result);
 
-    /*
-    [id(3), helpstring("Convert string to lowercase")]
-    HRESULT ToLowercase([in] BSTR input, [ out, retval ] BSTR * result);
-    */
+    [id(2), helpstring("abitrary mutable integer"), propget]
+    HRESULT Numeric([ out, retval ] LONG * result);
+
+    [id(2), helpstring("abitrary mutable integer"), propput]
+    HRESULT Numeric([in] LONG result);
+
+    [id(3), helpstring("Id"), propget]
+    HRESULT Id([ out, retval ] GUID * result);
+
+    [id(4), helpstring("Convert string to lowercase")]
+    HRESULT ConvertToString([in] GUID input, [ out, retval ] BSTR * result);
 };
 
 [
