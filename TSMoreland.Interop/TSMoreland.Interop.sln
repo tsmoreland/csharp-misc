@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Interop.NetFrame
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleOutOfProcessCOM", "SimpleOutOfProcessCOM\SimpleOutOfProcessCOM.vcxproj", "{6EEB4822-E5D8-4105-A2EE-1B723B772C26}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSMoreland.Interop.Cpp.App", "TSMoreland.Interop.Cpp.App\TSMoreland.Interop.Cpp.App.vcxproj", "{36A9A005-96A8-4900-8412-287211815A0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{6EEB4822-E5D8-4105-A2EE-1B723B772C26}.Release|x64.Build.0 = Release|x64
 		{6EEB4822-E5D8-4105-A2EE-1B723B772C26}.Release|x86.ActiveCfg = Release|Win32
 		{6EEB4822-E5D8-4105-A2EE-1B723B772C26}.Release|x86.Build.0 = Release|Win32
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|Any CPU.Build.0 = Debug|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|x64.ActiveCfg = Debug|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|x64.Build.0 = Debug|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|x86.ActiveCfg = Debug|Win32
+		{36A9A005-96A8-4900-8412-287211815A0F}.Debug|x86.Build.0 = Debug|Win32
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|Any CPU.ActiveCfg = Release|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|Any CPU.Build.0 = Release|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|x64.ActiveCfg = Release|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|x64.Build.0 = Release|x64
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|x86.ActiveCfg = Release|Win32
+		{36A9A005-96A8-4900-8412-287211815A0F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
