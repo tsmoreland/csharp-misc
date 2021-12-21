@@ -1,0 +1,16 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {972b85e9-b7c9-467e-9c38-da5423ebcb1e} = s 'SimpleOOPObject class'
+		{
+			ForceRemove Programmable
+			LocalServer32 = s '%MODULE%'
+			{
+				val ServerExecutable = s '%MODULE_RAW%'
+			}
+			TypeLib = s '{4faab4cd-f38e-4709-a0e3-b15763ec7452}'
+			Version = s '1.0'
+		}
+	}
+}

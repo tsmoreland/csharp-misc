@@ -1,0 +1,71 @@
+// SimpleOutOfProcessCOM.idl : IDL source for SimpleOutOfProcessCOM
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SimpleOutOfProcessCOM.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(cb7b9586-3efb-47e4-a6fa-60f0db4df1e5),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISimpleOOPObject : IDispatch
+{
+    [id(1), helpstring("Name"), propget]
+    HRESULT Name([out, retval]BSTR * result);
+
+    [id(2), helpstring("Id"), propget]
+    HRESULT Id([out, retval]GUID * result);
+
+    [id(3), helpstring("Id"), propget]
+    HRESULT Numeric([out, retval]LONG * result);
+
+    [id(3), helpstring("Id"), propput]
+    HRESULT Numeric([in]LONG value);
+};
+
+[
+	object,
+	uuid(8B4CA025-89A6-4499-907F-35102A7757AC),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISimpleOOPObject2 : ISimpleOOPObject
+{
+    [id(4), helpstring("Description"), propget]
+    HRESULT Description([out, retval]BSTR * result);
+}
+
+[
+	uuid(4faab4cd-f38e-4709-a0e3-b15763ec7452),
+	version(1.0),
+]
+library SimpleOutOfProcessCOMLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(8363fcc0-80d3-4968-82cb-c2121d1df9b5)
+	]
+	dispinterface _ISimpleOOPObjectEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(972b85e9-b7c9-467e-9c38-da5423ebcb1e)
+	]
+	coclass SimpleOOPObject
+	{
+		interface ISimpleOOPObject;
+		[default] interface ISimpleOOPObject2;
+		[default, source] dispinterface _ISimpleOOPObjectEvents;
+	};
+};
+
+import "shobjidl.idl";
