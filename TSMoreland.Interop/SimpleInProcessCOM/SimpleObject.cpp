@@ -1,7 +1,20 @@
-// SimpleObject.cpp : Implementation of CSimpleObject
+//
+// Copyright © 2021 Terry Moreland
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 #include "pch.h"
 #include "SimpleObject.h"
+
+#include <memory>
 
 
 // CSimpleObject
@@ -22,8 +35,12 @@ STDMETHODIMP CSimpleObject::get_Id(GUID* result) noexcept {
         return E_INVALIDARG;
     }
 
+    constexpr auto source = "E3FF39CC-D456-4A43-A799-8B19A6139908";
+    auto const uuid       = std::make_unique<char[]>(37);
+    strcpy_s(uuid.get(), 36, source);
+
     if (GUID id{};
-        RPC_S_OK == UuidFromStringA(reinterpret_cast<RPC_CSTR>("E3FF39CC-D456-4A43-A799-8B19A6139908"), &id)) {
+        RPC_S_OK == UuidFromStringA(reinterpret_cast<RPC_CSTR>(uuid.get()), &id)) {
         *result = id;
         return S_OK;
     }
