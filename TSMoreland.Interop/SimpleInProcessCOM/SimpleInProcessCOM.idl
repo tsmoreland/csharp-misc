@@ -48,6 +48,20 @@ interface ISimpleObject : IDispatch
 };
 
 [
+	object,
+	uuid(40EF1B4A-2C28-414E-8831-B28A1234911E),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISimpleObject2 : ISimpleObject
+{
+    [id(5), helpstring("Name"), propget]
+    HRESULT Description([ out, retval ] BSTR * result);
+}
+
+
+[
 	uuid(580185ad-317a-4eb7-a6ab-48ebd08c8407),
 	version(1.0),
 ]
@@ -59,7 +73,8 @@ library SimpleInProcessCOMLib
 	]
 	coclass SimpleObject
 	{
-		[default] interface ISimpleObject;
+		interface ISimpleObject;
+		[default] interface ISimpleObject2;
 	};
 };
 

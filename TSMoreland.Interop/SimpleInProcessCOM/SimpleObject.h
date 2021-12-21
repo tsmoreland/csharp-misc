@@ -18,8 +18,7 @@ using namespace ATL;
 
 class ATL_NO_VTABLE CSimpleObject : public CComObjectRootEx<CComMultiThreadModel>,    // NOLINT(clang-diagnostic-non-virtual-dtor)
                                     public CComCoClass<CSimpleObject, &CLSID_SimpleObject>,
-                                    public IDispatchImpl<ISimpleObject, &IID_ISimpleObject,
-                                        &LIBID_SimpleInProcessCOMLib, /*wMajor =*/1, /*wMinor =*/0> {
+                                    public IDispatchImpl<ISimpleObject2, &IID_ISimpleObject2, &LIBID_SimpleInProcessCOMLib, /*wMajor =*/1, /*wMinor =*/0> {
     LONG numeric_{0};
 
 public:
@@ -67,6 +66,16 @@ public:
     /// <returns>S_OK on success; otherwise, E_INVALIDARG if result is nullptr, and E_FAIL for any other failure</returns>
     STDMETHOD(ConvertToString)(GUID input, BSTR* result) noexcept override;
 
+
+    /// <summary>
+    /// Returns description
+    /// </summary>
+    /// <param name="result">on success stores the description</param>
+    /// <returns>
+    /// S_OK on success, otherwise E_INVALIDARG if <paramref name="result"/> is nullptr
+    /// </returns>
+    STDMETHOD(get_Description)(BSTR* result) noexcept;
+
     CSimpleObject() = default;
 
     DECLARE_REGISTRY_RESOURCEID(106)
@@ -75,6 +84,7 @@ public:
 
     BEGIN_COM_MAP(CSimpleObject)
     COM_INTERFACE_ENTRY(ISimpleObject)
+    COM_INTERFACE_ENTRY(ISimpleObject2)
     COM_INTERFACE_ENTRY(IDispatch)
     END_COM_MAP()
 

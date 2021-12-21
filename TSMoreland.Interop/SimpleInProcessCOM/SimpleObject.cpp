@@ -22,9 +22,8 @@ STDMETHODIMP CSimpleObject::get_Id(GUID* result) noexcept {
         return E_INVALIDARG;
     }
 
-    GUID id{};
-
-    if (RPC_S_OK == UuidFromStringA(reinterpret_cast<RPC_CSTR>("E3FF39CC-D456-4A43-A799-8B19A6139908"), &id)) {
+    if (GUID id{};
+        RPC_S_OK == UuidFromStringA(reinterpret_cast<RPC_CSTR>("E3FF39CC-D456-4A43-A799-8B19A6139908"), &id)) {
         *result = id;
         return S_OK;
     }
@@ -78,5 +77,17 @@ STDMETHODIMP CSimpleObject::ConvertToString(GUID input, BSTR* result) noexcept {
     *result = output.Detach();
 
     RpcStringFreeW(reinterpret_cast<RPC_WSTR*>(&stringified));
+    return S_OK;
+}
+
+STDMETHODIMP CSimpleObject::get_Description(BSTR* result) noexcept {
+
+    if (result == nullptr) {
+        return E_INVALIDARG;
+    }
+
+    CComBSTR value(L"Simple Description");
+    *result = value.Detach();
+
     return S_OK;
 }
