@@ -36,8 +36,8 @@ STDMETHODIMP CSimpleObject::get_Id(GUID* result) noexcept {
     }
 
     constexpr auto source = "E3FF39CC-D456-4A43-A799-8B19A6139908";
-    auto const uuid       = std::make_unique<char[]>(37);
-    strcpy_s(uuid.get(), 36, source);
+    auto const uuid       = std::make_unique<char[]>(64);
+    strcpy_s(uuid.get(), 64, source);
 
     if (GUID id{};
         RPC_S_OK == UuidFromStringA(reinterpret_cast<RPC_CSTR>(uuid.get()), &id)) {
