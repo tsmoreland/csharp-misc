@@ -30,50 +30,51 @@ using namespace ATL;
 
 // CSimpleOOPObject
 
-class ATL_NO_VTABLE CSimpleOOPObject :
-	public CComObjectRootEx<CComMultiThreadModel>,
-	public CComCoClass<CSimpleOOPObject, &CLSID_SimpleOOPObject>,
-	public IConnectionPointContainerImpl<CSimpleOOPObject>,
-	public CProxy_ISimpleOOPObjectEvents<CSimpleOOPObject>,
-	public IDispatchImpl<ISimpleOOPObject2, &IID_ISimpleOOPObject2, &LIBID_SimpleOutOfProcessCOMLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
-{
+class ATL_NO_VTABLE CSimpleOOPObject : public CComObjectRootEx<CComMultiThreadModel>,
+                                       public CComCoClass<CSimpleOOPObject, &CLSID_SimpleOOPObject>,
+                                       public IConnectionPointContainerImpl<CSimpleOOPObject>,
+                                       public CProxy_ISimpleOOPObjectEvents<CSimpleOOPObject>,
+                                       public IDispatchImpl<ISimpleOOPObject2, &IID_ISimpleOOPObject2,
+                                           &LIBID_SimpleOutOfProcessCOMLib, /*wMajor =*/1, /*wMinor =*/0> {
     LONG numeric_{0};
 
 public:
+    STDMETHOD(get_Name)(BSTR* result) noexcept override;
+    STDMETHOD(get_Id)(GUID* result) noexcept override;
+    STDMETHOD(get_Numeric)(LONG* result) noexcept override;
+    STDMETHOD(put_Numeric)(LONG value) noexcept override;
+    STDMETHOD(get_Description)(BSTR* result) noexcept override;
 
-    STDMETHOD(get_Name)(BSTR* result) noexcept;
-    STDMETHOD(get_Id)(GUID* result) noexcept;
-    STDMETHOD(get_Numeric)(LONG* result) noexcept;
-    STDMETHOD(put_Numeric)(LONG value) noexcept;
-    STDMETHOD(get_Description)(BSTR *result) noexcept;
-
-    #pragma region infrastructure
+#pragma region infrastructure
 
     CSimpleOOPObject() = default;
 
-DECLARE_REGISTRY_RESOURCEID(106)
+    DECLARE_REGISTRY_RESOURCEID(106)
 
-DECLARE_NOT_AGGREGATABLE(CSimpleOOPObject)
+    DECLARE_NOT_AGGREGATABLE(CSimpleOOPObject)
 
-BEGIN_COM_MAP(CSimpleOOPObject)
-	COM_INTERFACE_ENTRY(ISimpleOOPObject)
-	COM_INTERFACE_ENTRY(IDispatch)
-	COM_INTERFACE_ENTRY(IConnectionPointContainer)
-END_COM_MAP()
+    BEGIN_COM_MAP(CSimpleOOPObject)
+    COM_INTERFACE_ENTRY(ISimpleOOPObject)
+    COM_INTERFACE_ENTRY(IDispatch)
+    COM_INTERFACE_ENTRY(IConnectionPointContainer)
 
-BEGIN_CONNECTION_POINT_MAP(CSimpleOOPObject)
-	CONNECTION_POINT_ENTRY(__uuidof(_ISimpleOOPObjectEvents))
-END_CONNECTION_POINT_MAP()
+    // N.B. required for events (Connection point impl)
+    COM_INTERFACE_ENTRY(IConnectionPointContainer)
+    COM_INTERFACE_ENTRY_IMPL(IConnectionPointContainer)
+    END_COM_MAP()
+
+    BEGIN_CONNECTION_POINT_MAP(CSimpleOOPObject)
+    CONNECTION_POINT_ENTRY(__uuidof(_ISimpleOOPObjectEvents))
+    END_CONNECTION_POINT_MAP()
 
 
-	DECLARE_PROTECT_FINAL_CONSTRUCT()
+    DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct();
+    HRESULT FinalConstruct();
 
     void FinalRelease();
 
-    #pragma endregion
-
+#pragma endregion
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(SimpleOOPObject), CSimpleOOPObject)

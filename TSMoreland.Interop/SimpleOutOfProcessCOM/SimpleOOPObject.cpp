@@ -60,6 +60,7 @@ STDMETHODIMP CSimpleOOPObject::get_Numeric(LONG* result) noexcept {
 STDMETHODIMP CSimpleOOPObject::put_Numeric(LONG value) noexcept {
 
     numeric_ = value;
+    Fire_OnPropertyChanaged(CComBSTR{L"Numeric"}.Detach());
     return S_OK;
 }
 STDMETHODIMP CSimpleOOPObject::get_Description(BSTR *result) noexcept  {
