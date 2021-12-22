@@ -24,15 +24,23 @@ internal static class OutOfProcessTest
             Console.WriteLine($"Class {classId} not found");
             return;
         }
-        object? instance = Activator.CreateInstance(classType);
-        if (instance == null)
+        object? @object = Activator.CreateInstance(classType);
+        if (@object == null)
         {
             Console.WriteLine($"Class {classType} returned null on creation");
             return;
         }
-        dynamic dynamicInstance = instance;
+        dynamic instance = @object;
 
-        string name = dynamicInstance.Name;
+        string name = instance.Name;
         Console.WriteLine($"(OOP) Name = {name}");
+
+        instance.Numeric = 42;
+        int numeric = instance.Numeric;
+        Console.WriteLine($"(OOP) Numeric = {numeric}");
+
+        string description = instance.Description;
+        Console.WriteLine($"(OOP) Description = {description}");
+
     }
 }

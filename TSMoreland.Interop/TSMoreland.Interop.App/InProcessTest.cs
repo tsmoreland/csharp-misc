@@ -31,33 +31,115 @@ internal static class InProcessTest
             return;
         }
 
-        object? inprocesInstance = Activator.CreateInstance(classType);
-        if (inprocesInstance == null)
+        object? @object = Activator.CreateInstance(classType);
+        if (@object == null)
         {
             Console.WriteLine($"Class {classType} returned null on creation");
             return;
         }
 
-        dynamic dynamicInProcessInstance = inprocesInstance;
+        dynamic instance = @object;
 
-        string name = dynamicInProcessInstance.Name;
+        string name = instance.Name;
         Console.WriteLine($"Name = {name}");
+
+        if (instance is IConnectionPointContainer container)
+        {
+            container.EnumConnectionPoints(out IEnumConnectionPoints connectionPoints);
+
+            IConnectionPoint[] points = new IConnectionPoint[10];
+
+            IntPtr countPtr = IntPtr.Zero;
+            int count = 0;
+            try
+            {
+                countPtr = Marshal.AllocHGlobal(sizeof(int));
+                connectionPoints.Next(10, points, countPtr);
+                count = Marshal.ReadInt32(countPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(countPtr);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                IConnectionPoint point = points[i];
+                if (point == null!)
+                {
+                    continue;
+                }
+
+                point.GetConnectionInterface(out Guid iid);
+                if (iid == new Guid("71A4D526-4FAD-4D4B-8A6E-78AFCABD7F63"))
+                {
+                    // ...
+                }
+            }
+        }
+
+
 
         _ISimpleObjectEvents_OnPropertyChangedEventHandler callbackDelegate =
             new(InProcessInstance_OnPropertyChanged);
-        IntPtr callback = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
-        dynamicInProcessInstance.add_OnPropertyChanged(callback);
-        dynamicInProcessInstance.Numeric = 42;
-        int numeric = dynamicInProcessInstance.Numeric;
-        Console.WriteLine($"Numeric = {numeric}");
 
-        string description = dynamicInProcessInstance.Description;
+        int added = 0;
+        try
+        {
+            instance.add_PropertyChanged(callbackDelegate);
+            added = 1;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        IntPtr callback = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
+
+        if (added == 0)
+        {
+            try
+            {
+                instance.add_PropertyChanged(callback);
+                added = 2;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        instance.add_OnPropertyChanged(callback);
+        instance.Numeric = 42;
+        int numeric = instance.Numeric;
+        Console.WriteLine($"Numeric = {numeric}");
+        if (added != 0)
+        {
+            try
+            {
+                if (added == 1)
+                {
+                    instance.remove_PropertyChanged(callbackDelegate);
+                }
+
+                if (added == 2)
+                {
+                    instance.remove_PropertyChanged(callback);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+
+        string description = instance.Description;
         Console.WriteLine(description);
 
         // Beginning of Out of Process, should move elsewhere 
 
 
-        if (inprocesInstance is ISimpleObject simpleObject)
+        if (@object is ISimpleObject simpleObject)
         {
             dynamic dynamicSimpleObject = simpleObject;
 
@@ -81,7 +163,7 @@ internal static class InProcessTest
             Console.WriteLine($"Converted {converted}");
         }
 
-        if (inprocesInstance is IMinimalSimpleObject simpleObject2)
+        if (@object is IMinimalSimpleObject simpleObject2)
         {
             Guid instanceId = simpleObject2.Id;
             Console.WriteLine($"Id from manually implemented C# interface {instanceId}");
@@ -89,7 +171,7 @@ internal static class InProcessTest
 
         try
         {
-            string converted = dynamicInProcessInstance.ConvertToString(Guid.Empty);
+            string converted = instance.ConvertToString(Guid.Empty);
             Console.WriteLine($"Converted {converted}");
         }
         catch (Exception ex)
@@ -98,7 +180,7 @@ internal static class InProcessTest
         }
 
 
-        if (inprocesInstance is IDispatch dispatch)
+        if (@object is IDispatch dispatch)
         {
             Guid empty = Guid.Empty;
 
@@ -149,7 +231,7 @@ internal static class InProcessTest
         }
 
 
-        Guid id = dynamicInProcessInstance.Id;
+        Guid id = instance.Id;
         Console.WriteLine($"Id = {id}");
 
         Console.Out.WriteLine($"{id} {name}");
