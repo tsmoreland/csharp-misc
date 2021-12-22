@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TSMoreland.Interop.App": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

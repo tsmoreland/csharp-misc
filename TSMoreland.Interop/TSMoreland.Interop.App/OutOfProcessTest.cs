@@ -10,30 +10,29 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using TSMoreland.Interop.App;
 
-if (!OperatingSystem.IsWindows())
-{
-    Console.WriteLine("Application not supported on any platform other than Windows");
-    return;
-}
+namespace TSMoreland.Interop.App;
 
-try
+internal static class OutOfProcessTest
 {
-    InProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing in process COM: " + ex);
-}
+    public static void Verify()
+    {
+        Guid classId = new ("972B85E9-B7C9-467E-9C38-DA5423EBCB1E");
+        Type? classType = TypeHelper.GetClassTypeFromId(classId);
+        if (classType == null)
+        {
+            Console.WriteLine($"Class {classId} not found");
+            return;
+        }
+        object? instance = Activator.CreateInstance(classType);
+        if (instance == null)
+        {
+            Console.WriteLine($"Class {classType} returned null on creation");
+            return;
+        }
+        dynamic dynamicInstance = instance;
 
-
-try
-{
-    OutOfProcessTest.Verify();
+        string name = dynamicInstance.Name;
+        Console.WriteLine($"(OOP) Name = {name}");
+    }
 }
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing out of process COM: " + ex);
-}
-

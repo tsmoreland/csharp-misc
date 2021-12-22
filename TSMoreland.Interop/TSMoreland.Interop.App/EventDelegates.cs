@@ -10,30 +10,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using TSMoreland.Interop.App;
 
-if (!OperatingSystem.IsWindows())
-{
-    Console.WriteLine("Application not supported on any platform other than Windows");
-    return;
-}
+using System.Runtime.InteropServices;
 
-try
-{
-    InProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing in process COM: " + ex);
-}
+namespace TSMoreland.Interop.App;
 
-
-try
-{
-    OutOfProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing out of process COM: " + ex);
-}
-
+delegate void _ISimpleObjectEvents_OnPropertyChangedEventHandler([MarshalAs(UnmanagedType.BStr), In] string propertyName);

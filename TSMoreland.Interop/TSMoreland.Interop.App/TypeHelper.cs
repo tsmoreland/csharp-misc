@@ -10,30 +10,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using TSMoreland.Interop.App;
 
-if (!OperatingSystem.IsWindows())
-{
-    Console.WriteLine("Application not supported on any platform other than Windows");
-    return;
-}
+using System.Runtime.Versioning;
 
-try
-{
-    InProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing in process COM: " + ex);
-}
+namespace TSMoreland.Interop.App;
 
-
-try
+internal static class TypeHelper
 {
-    OutOfProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing out of process COM: " + ex);
-}
+    public static Type? GetClassTypeFromId(Guid classId)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return GetWindowsClassTypeFromId(classId);
+        }
 
+        throw new NotSupportedException();
+    }
+
+    [SupportedOSPlatform("Windows")]
+    private static Type? GetWindowsClassTypeFromId(Guid classId)
+    {
+        return Type.GetTypeFromCLSID(classId);
+    }
+}

@@ -10,30 +10,40 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using TSMoreland.Interop.App;
 
-if (!OperatingSystem.IsWindows())
-{
-    Console.WriteLine("Application not supported on any platform other than Windows");
-    return;
-}
+using System.Runtime.InteropServices;
 
-try
-{
-    InProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing in process COM: " + ex);
-}
+namespace TSMoreland.Interop.App;
 
-
-try
+internal class GuidMarshaler : ICustomMarshaler 
 {
-    OutOfProcessTest.Verify();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("error occurred testing out of process COM: " + ex);
-}
+    /// <inheritdoc />
+    public void CleanUpManagedData(object managedObj)
+    {
+        throw new NotImplementedException();
+    }
 
+    /// <inheritdoc />
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public int GetNativeDataSize()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        throw new NotImplementedException();
+    }
+}
