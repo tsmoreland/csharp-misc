@@ -1,8 +1,15 @@
-// SimpleInProcessCOM.idl : IDL source for SimpleInProcessCOM
 //
-
-// This file will be processed by the MIDL tool to
-// produce the type library (SimpleInProcessCOM.tlb) and marshalling code.
+// Copyright © 2021 Terry Moreland
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// 
 
 import "oaidl.idl";
 import "ocidl.idl";
@@ -69,12 +76,25 @@ library SimpleInProcessCOMLib
 {
 	importlib("stdole2.tlb");
 	[
+		uuid(71A4D526-4FAD-4D4B-8A6E-78AFCABD7F63)
+	]
+	dispinterface _ISimpleObjectEvents
+	{
+		properties:
+		methods:
+            [id(1), helpstring("simple property changed notification")]
+            HRESULT OnPropertyChanged([in] BSTR propertyName);
+	};
+	[
 		uuid(e3d3572d-9e25-4cf3-82f5-45b6f0035a82)
 	]
 	coclass SimpleObject
 	{
 		interface ISimpleObject;
-		[default] interface ISimpleObject2;
+		[default]
+        interface ISimpleObject2;
+        [ default, source ]
+        dispinterface _ISimpleObjectEvents;
 	};
 };
 

@@ -52,6 +52,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Infrastructure\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="_ISimpleObjectEvents_CP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimpleInProcessCOM_i.c">

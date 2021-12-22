@@ -230,6 +230,7 @@
     <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="xdlldata.h" />
+    <ClInclude Include="_ISimpleObjectEvents_CP.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

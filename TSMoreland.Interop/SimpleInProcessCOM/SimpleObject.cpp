@@ -75,6 +75,9 @@ STDMETHODIMP CSimpleObject::get_Numeric(LONG* result) noexcept {
 STDMETHODIMP CSimpleObject::put_Numeric(LONG value) noexcept {
 
     numeric_ = value;
+
+    Fire_OnPropertyChanaged(CComBSTR{L"Numeric"}.Detach());
+
     return S_OK;
 }
 

@@ -14,6 +14,7 @@
 #pragma once
 #include "pch.h"
 #include "SimpleInProcessCOM_i.h"
+#include "_ISimpleObjectEvents_CP.h"
 #include "resource.h" // main symbols
 
 
@@ -29,6 +30,8 @@ using namespace ATL;
 
 class ATL_NO_VTABLE CSimpleObject : public CComObjectRootEx<CComMultiThreadModel>,    // NOLINT(clang-diagnostic-non-virtual-dtor)
                                     public CComCoClass<CSimpleObject, &CLSID_SimpleObject>,
+                                    public IConnectionPointContainerImpl<CSimpleObject>,
+                                    public CProxy_ISimpleObjectEvents<CSimpleObject>,
                                     public IDispatchImpl<ISimpleObject2, &IID_ISimpleObject2, &LIBID_SimpleInProcessCOMLib, /*wMajor =*/1, /*wMinor =*/0> {
     LONG numeric_{0};
 
@@ -85,7 +88,7 @@ public:
     /// <returns>
     /// S_OK on success, otherwise E_INVALIDARG if <paramref name="result"/> is nullptr
     /// </returns>
-    STDMETHOD(get_Description)(BSTR* result) noexcept;
+    STDMETHOD(get_Description)(BSTR* result) noexcept override;
 
     CSimpleObject() = default;
 
@@ -97,8 +100,15 @@ public:
     COM_INTERFACE_ENTRY(ISimpleObject)
     COM_INTERFACE_ENTRY(ISimpleObject2)
     COM_INTERFACE_ENTRY(IDispatch)
+
+    // N.B. required for events (Connection point impl)
+    COM_INTERFACE_ENTRY(IConnectionPointContainer)
+    COM_INTERFACE_ENTRY_IMPL(IConnectionPointContainer)
     END_COM_MAP()
 
+    BEGIN_CONNECTION_POINT_MAP(CSimpleObject)
+    CONNECTION_POINT_ENTRY(__uuidof(_ISimpleObjectEvents))
+    END_CONNECTION_POINT_MAP()
 
     DECLARE_PROTECT_FINAL_CONSTRUCT()
 
