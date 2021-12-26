@@ -241,12 +241,23 @@ internal static class InProcessTest
             new(InProcessInstance_OnPropertyChanged);
         try
         {
-
             eventProducer.add_OnPropertyChanged(callbackDelegate);
-
             instance.Numeric = 27;
-
+            Console.WriteLine(instance.Numeric);
             eventProducer.remove_OnPropertyChanged(callbackDelegate);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        try
+        {
+            using var provider = new SimpleComWrappers.SimpleObjectEventProvider(@object);
+            provider.PropertyChanged += InProcessInstance_OnPropertyChanged;
+            instance.Numeric = 53;
+            Console.WriteLine(instance.Numeric);
+            provider.PropertyChanged -= InProcessInstance_OnPropertyChanged;
         }
         catch (Exception ex)
         {
