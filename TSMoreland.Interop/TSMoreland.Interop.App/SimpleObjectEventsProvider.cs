@@ -19,9 +19,16 @@ namespace TSMoreland.Interop.App;
 
 public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisposable
 {
-    private IConnectionPointContainer _connectionPointContainer;
+    private readonly IConnectionPointContainer _connectionPointContainer;
     private ArrayList? _eventSinkHelpers;
     private IConnectionPoint? _connectionPoint;
+    private readonly object _lock = new ();
+
+//public _ISimpleObjectEvents_EventProvider([In] object obj0) => this.m_ConnectionPointContainer = (IConnectionPointContainer) obj0;
+    public SimpleObjectEventsProvider([In] object connectionPointContainer)
+    {
+        _connectionPointContainer = (IConnectionPointContainer)connectionPointContainer;
+    }
 
     private void Init()
     {
@@ -34,19 +41,18 @@ public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisp
     /// <inheritdoc />
     public void add_OnPropertyChanged([In] SimpleObjectEventsPropertyChangedEventHandler handler)
     {
-        bool lockTaken = false;
-        lock (this)
+        lock (_lock)
         {
             if (_connectionPoint == null)
             {
-                this.Init();
+                Init();
             }
 
-            ISimpleObjectEventsSinkHelper sink = new ();
-            _connectionPoint.Advise((object)sink, out int cookie);
-            pUnkSink.m_dwCookie = cookie;
-            pUnkSink.m_OnPropertyChangedDelegate = handler;
-            this._eventSinkHelpers.Add((object)sink);
+            SimpleObjectEventsSinkHelper sink = new ();
+            _connectionPoint!.Advise((object)sink, out int cookie);
+            sink.Cookie = cookie;
+            sink.OnPropertyChangedDelegate = handler;
+            _eventSinkHelpers!.Add((object)sink);
         }
     }
 
@@ -55,7 +61,7 @@ public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisp
     {
         bool lockTaken = false;
 
-        try
+        lock (_lock)
         {
             Monitor.Enter((object)this, ref lockTaken);
             if (_eventSinkHelpers == null)
@@ -72,33 +78,23 @@ public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisp
 
             do
             {
-                ISimpleObjectEventsSinkHelper aEventSinkHelper = (ISimpleObjectEventsSinkHelper)_eventSinkHelpers[index];
-                if (aEventSinkHelper.OnPropertyChangedDelegate != null && ((aEventSinkHelper.m_OnPropertyChangedDelegate.Equals((object)handler) ? 1 : 0) & (int)byte.MaxValue) != 0)
+                var sinkHelper = (SimpleObjectEventsSinkHelper)_eventSinkHelpers[index]!;
+                if (sinkHelper.OnPropertyChangedDelegate != null && ((sinkHelper.OnPropertyChangedDelegate.Equals((object)handler) ? 1 : 0) & (int)byte.MaxValue) != 0)
                 {
                     _eventSinkHelpers.RemoveAt(index);
-                    _connectionPoint.Unadvise(aEventSinkHelper.m_dwCookie);
+                    _connectionPoint!.Unadvise(sinkHelper.Cookie);
                     if (count <= 1)
                     {
                         //Marshal.ReleaseComObject((object)this._connectionPoint);
                         _connectionPoint = null;
                         _eventSinkHelpers = null;
-                        return;
                     }
-                    goto label_11;
+                    break;
                 }
                 else
                     ++index;
             }
             while (index < count);
-            goto label_12;
-        label_11:
-            return;
-        label_12:;
-        }
-        finally
-        {
-            if (lockTaken)
-                Monitor.Exit((object)this);
         }
     }
 
@@ -115,38 +111,33 @@ public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisp
     {
         _ = disposing;
 
-        bool lockTaken = false;
         try
         {
-            Monitor.Enter((object)this, ref lockTaken);
-            if (_connectionPoint == null)
+            lock (_lock)
             {
-                return;
-            }
+                if (_connectionPoint == null || _eventSinkHelpers == null)
+                {
+                    return;
+                }
 
-            int count = _eventSinkHelpers.Count;
-            int index = 0;
-            if (0 < count)
-            {
+                int count = _eventSinkHelpers.Count;
+                int index = 0;
+                if (0 >= count)
+                {
+                    return;
+                }
+
                 do
                 {
-                    _connectionPoint.Unadvise(((ISimpleObjectEventsSinkHelper)_eventSinkHelpers[index]).m_dwCookie);
+                    _connectionPoint.Unadvise(((SimpleObjectEventsSinkHelper)_eventSinkHelpers[index]!).Cookie);
                     ++index;
-                }
-                while (index < count);
+                } while (index < count);
+                //Marshal.ReleaseComObject((object)_connectionPoint);
             }
-            //Marshal.ReleaseComObject((object)_connectionPoint);
         }
         catch (Exception)
         {
             // ... ignore error ...
-        }
-        finally
-        {
-            if (lockTaken)
-            {
-                Monitor.Exit((object)this);
-            }
         }
     }
 
