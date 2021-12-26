@@ -24,7 +24,6 @@ public sealed class SimpleObjectEventsProvider : ISimpleObjectEventsEvent, IDisp
     private IConnectionPoint? _connectionPoint;
     private readonly object _lock = new ();
 
-//public _ISimpleObjectEvents_EventProvider([In] object obj0) => this.m_ConnectionPointContainer = (IConnectionPointContainer) obj0;
     public SimpleObjectEventsProvider([In] object connectionPointContainer)
     {
         _connectionPointContainer = (IConnectionPointContainer)connectionPointContainer;

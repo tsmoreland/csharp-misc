@@ -235,6 +235,23 @@ internal static class InProcessTest
             return;
         }
 
+        dynamic instance = @object;
+
+        SimpleObjectEventsPropertyChangedEventHandler callbackDelegate =
+            new(InProcessInstance_OnPropertyChanged);
+        try
+        {
+
+            eventProducer.add_OnPropertyChanged(callbackDelegate);
+
+            instance.Numeric = 27;
+
+            eventProducer.remove_OnPropertyChanged(callbackDelegate);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private static void DispatchTest(object @object)
