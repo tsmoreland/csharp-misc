@@ -358,3 +358,4 @@ MigrationBackup/
 *.db-wal
 *.db-shm
 
+**/Generated/
