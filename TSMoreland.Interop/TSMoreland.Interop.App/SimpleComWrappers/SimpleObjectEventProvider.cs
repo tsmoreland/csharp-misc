@@ -84,7 +84,7 @@ public sealed class SimpleObjectEventProvider : SimpleObjectEventProvider.IComEv
 
     private void Init()
     {
-        Guid riid = new Guid(new byte[16] { (byte)38, (byte)213, (byte)164, (byte)113, (byte)173, (byte)79, (byte)75, (byte)77, (byte)138, (byte)110, (byte)120, (byte)175, (byte)202, (byte)189, (byte)127, (byte)99 });
+        Guid riid = new ("71a4d526-4fad-4d4b-8a6e-78afcabd7f63");
         _connectionPointContainer.FindConnectionPoint(ref riid, out IConnectionPoint? connectionPoint);
         _connectionPoint = connectionPoint;
         _sinkHelpers = new List<SinkHelper>();
