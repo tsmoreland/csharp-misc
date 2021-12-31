@@ -36,6 +36,12 @@ internal class Generator : ISourceGenerator
             return;
         }
 
+        receiver.Log.Add("===================================");
+        foreach (MethodItem method in receiver.Methods)
+        {
+            receiver.Log.Add(method.ToString());
+        }
+
         context.AddSource("GeneratorLogs", SourceText.From($@"/*{ Environment.NewLine + string.Join(Environment.NewLine, receiver.Log) + Environment.NewLine}*/", Encoding.UTF8));
     }
 
