@@ -12,6 +12,7 @@
 //
 
 using System.Collections.Immutable;
+using System.Text;
 
 namespace TSMoreland.Interop.EventProviderGenerator;
 
@@ -21,19 +22,20 @@ internal record struct MethodItem(
     string Type,
     ImmutableArray<ParameterItem> Parameters)
 {
-    /// <inheritdoc />
-    public override string ToString()
-    {
 
-        if (!Parameters.Any())
-        {
-            return $"{Type} {Name}();";
-        }
+    public string DelegateName = $"{Name}Handler";
 
-        string parameters = Parameters
+    public string Delegate => new StringBuilder()
+        .AppendLine("    [ComVisible(false)]")
+        .AppendLine($"    public delegate void {DelegateName}({FormattedParameters});")
+        .ToString();
+
+    private string FormattedParameters => Parameters.Any()
+        ? Parameters
             .Select(p => p.ToString())
-            .Aggregate((a, b) => $"{a}, {b}");
-        return $"{Type} {Name}({parameters});";
+            .Aggregate((a, b) => $"{a}, {b}")
+        : string.Empty;
 
-    }
+    /// <inheritdoc />
+    public override string ToString() => $"{Name}({FormattedParameters});";
 }
