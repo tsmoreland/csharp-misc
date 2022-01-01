@@ -76,10 +76,10 @@ public sealed class SimpleObjectEventProvider : SimpleObjectEventProvider.IComEv
     public interface IComEvents
     {
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        void add_OnPropertyChanged([MarshalAs(UnmanagedType.BStr), In] ComEventHandler handler);
+        void add_OnPropertyChanged([In] ComEventHandler handler);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        void remove_OnPropertyChanged([MarshalAs(UnmanagedType.BStr), In] ComEventHandler handler);
+        void remove_OnPropertyChanged([In] ComEventHandler handler);
     }
 
     private void Init()
