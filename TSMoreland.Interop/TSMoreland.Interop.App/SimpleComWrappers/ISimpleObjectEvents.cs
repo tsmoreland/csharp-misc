@@ -23,7 +23,7 @@ namespace TSMoreland.Interop.App.SimpleComWrappers;
 [InterfaceType(2)]
 [ComImport]
 [ComEventProvider]
-public interface ISimpleComEventHandlers
+public interface ISimpleObjectEvents
 {
     [DispId(1)]
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
