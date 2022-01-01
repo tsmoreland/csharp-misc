@@ -19,10 +19,10 @@ namespace TSMoreland.Interop.EventProviderGenerator;
 internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
 {
     private const string GeneratorAttributeName = "TSMoreland.Interop.EventProviderGenerator.Abstractions.ComEventProviderAttribute";
-    private readonly List<MethodItem> _methods = new();
+    private readonly List<EventsItem> _events = new();
 
     public List<string> Log { get; } = new();
-    public IEnumerable<MethodItem> Methods => _methods.AsEnumerable();
+    public IEnumerable<EventsItem> Events => _events.AsEnumerable();
 
     private void SafeVisitSyntaxNode(GeneratorSyntaxContext context)
     {
@@ -40,6 +40,7 @@ internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
             return;
         }
 
+        List<MethodItem> methods = new();
         string interfaceName = testInterface.Name;
 
         Log.Add("Namespace: " + @namespace);
@@ -112,8 +113,10 @@ internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
                 }
             }
 
-            _methods.Add(new MethodItem(dispId, member.Name, returnType, parameters.ToImmutableArray()));
+            methods.Add(new MethodItem(dispId, member.Name, returnType, parameters.ToImmutableArray()));
         }
+
+        _events.Add(new EventsItem(interfaceName, @namespace, methods.ToImmutableArray()));
     }
 
     private bool IsGeneratorAttributePresent(INamedTypeSymbol @interface)
