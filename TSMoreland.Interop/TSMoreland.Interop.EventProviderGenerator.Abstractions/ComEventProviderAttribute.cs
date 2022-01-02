@@ -15,5 +15,4 @@ namespace TSMoreland.Interop.EventProviderGenerator.Abstractions;
 
 public sealed class ComEventProviderAttribute : Attribute
 {
-
 }
