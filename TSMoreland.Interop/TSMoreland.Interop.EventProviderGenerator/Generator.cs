@@ -39,12 +39,22 @@ internal class Generator : ISourceGenerator
         receiver.Log.Add("===================================");
         foreach (EventsItem @event in receiver.Events)
         {
-            receiver.Log.Add($"{@event.Namespace}.{@event.ClassName}");
+            receiver.Log.Add($"{@event.Namespace}.{@event.InterfaceName}");
             foreach (MethodItem method in @event.Methods)
             {
                 receiver.Log.Add("\t" + method);
             }
+
+            receiver.Log.Add("============= delegates ===================");
+            receiver.Log.Add(@event.BuildEventDelegates());
+
+            receiver.Log.Add("============= bridge ===================");
+            receiver.Log.Add(@event.BuildEventsBridgeInterface());
+
+            receiver.Log.Add("============= sink helper ===================");
+            receiver.Log.Add(@event.BuildEventSink());
         }
+
 
         context.AddSource("GeneratorLogs", SourceText.From($@"/*{ Environment.NewLine + string.Join(Environment.NewLine, receiver.Log) + Environment.NewLine}*/", Encoding.UTF8));
     }
