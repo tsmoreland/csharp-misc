@@ -17,14 +17,14 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace TSMoreland.Interop.App.SimpleComWrappers;
 
-public sealed class SimpleObjectEventProvider : SimpleObjectEventProvider.IComEvents, IDisposable
+public sealed class ManualSimpleObjectEventProvider : ManualSimpleObjectEventProvider.IComEvents, IDisposable
 {
     private readonly IConnectionPointContainer _connectionPointContainer;
     private List<SinkHelper>? _sinkHelpers;
     private IConnectionPoint? _connectionPoint;
     private readonly object _lock = new();
 
-    public SimpleObjectEventProvider(object? @object)
+    public ManualSimpleObjectEventProvider(object? @object)
     {
         if (@object is not IConnectionPointContainer connectionPointContainer)
         {
@@ -71,7 +71,7 @@ public sealed class SimpleObjectEventProvider : SimpleObjectEventProvider.IComEv
     }
 
     [TypeLibType(16)]
-    [ComEventInterface(typeof(IComEventHandler), typeof(SimpleObjectEventProvider))]
+    [ComEventInterface(typeof(IComEventHandler), typeof(ManualSimpleObjectEventProvider))]
     [ComVisible(false)]
     public interface IComEvents
     {
@@ -139,14 +139,16 @@ public sealed class SimpleObjectEventProvider : SimpleObjectEventProvider.IComEv
                     break;
                 }
                 else
+                {
                     ++index;
+                }
             }
             while (index < count);
         }
     }
 
 
-    ~SimpleObjectEventProvider() => Dispose(false);
+    ~ManualSimpleObjectEventProvider() => Dispose(false);
 
     /// <inheritdoc/>
     public void Dispose()
