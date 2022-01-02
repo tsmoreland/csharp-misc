@@ -25,17 +25,48 @@ internal record struct MethodItem(
 
     public string DelegateName = $"{Name}Handler";
 
+
+    public void AppendDelegateImplementation(StringBuilder builder)
+    {
+        builder.AppendLine($"        public {DelegateName}? {DelegateName}Delegate {{ get; set; }}");
+    }
+
+    public void AppendEventBridgeImplementation(StringBuilder builder)
+    {
+        string arguments = Parameters.Any()
+            ? Parameters
+                .Select(p => p.Name)
+                .Aggregate((a, b) => $"{a}, {b}")
+            : string.Empty;
+
+        builder
+            .AppendLine($"        public void {Name}({FormatParameters()}) =>")
+            .AppendLine($"            {DelegateName}Delegate?.Invoke({arguments});");
+
+    }
+
+    public string ParametersAsArgumentsForCaller =>
+        $"({FormatParametersAsArgumentsForCaller()})";
+
+    private string FormatParametersAsArgumentsForCaller() => Parameters.Any()
+        ? Parameters
+            .Select(p => p.Name)
+            .Aggregate((a, b) => $"{a}, {b}")
+        : string.Empty;
+
+
     public string Delegate => new StringBuilder()
         .AppendLine("    [ComVisible(false)]")
-        .AppendLine($"    public delegate void {DelegateName}({FormattedParameters});")
+        .AppendLine($"    public delegate void {DelegateName}({FormatParameters()});")
         .ToString();
 
-    private string FormattedParameters => Parameters.Any()
+
+    private string FormatParameters() => Parameters.Any()
         ? Parameters
             .Select(p => p.ToString())
             .Aggregate((a, b) => $"{a}, {b}")
         : string.Empty;
 
     /// <inheritdoc />
-    public override string ToString() => $"{Name}({FormattedParameters});";
+    public override string ToString() => $"{Name}({FormatParameters()});";
 }
