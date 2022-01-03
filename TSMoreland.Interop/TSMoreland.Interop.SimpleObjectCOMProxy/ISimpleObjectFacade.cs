@@ -12,7 +12,7 @@
 
 namespace TSMoreland.Interop.SimpleObjectCOMProxy;
 
-public interface ISimpleObjectFacade
+public interface ISimpleObjectFacade : IDisposable
 {
     event OnPropertyChangedHandler PropertyChanged;
     string Name { get; }

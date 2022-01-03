@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>10</LangVersion>
@@ -17,14 +17,17 @@
   </ItemGroup>
  <!--  -->
 
+             
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' or '$(TargetFramework)' == 'net72'">
+    <Reference Include="Microsoft.CSharp"/>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator.Abstractions\TSMoreland.Interop.EventProviderGenerator.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj" 
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"/>
+    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

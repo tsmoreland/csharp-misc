@@ -12,11 +12,13 @@
 //
 
 using System.Runtime.InteropServices;
+#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
+#endif
 
 namespace TSMoreland.Interop.SimpleObjectCOMProxy;
 
-public class SimpleObjectFacade : ISimpleObjectFacade, IDisposable
+public class SimpleObjectFacade : ISimpleObjectFacade
 {
     private readonly SimpleObjectEventsProvider _provider;
     private readonly dynamic _object;
@@ -90,20 +92,26 @@ public class SimpleObjectFacade : ISimpleObjectFacade, IDisposable
 
     private static Type? GetClassTypeFromId(Guid classId)
     {
+#if NET6_0_OR_GREATER
         if (OperatingSystem.IsWindows())
         {
             return GetWindowsClassTypeFromId(classId);
         }
         throw new NotSupportedException();
+#else
+        return GetWindowsClassTypeFromId(classId);
+#endif
     }
 
+#if NET6_0_OR_GREATER
     [SupportedOSPlatform("Windows")]
+#endif
     private static Type? GetWindowsClassTypeFromId(Guid classId)
     {
         return Type.GetTypeFromCLSID(classId);
     }
 
-    #region IDisposable
+#region IDisposable
     ///<summary>Finalize</summary>
     ~SimpleObjectFacade() => Dispose(false);
 
@@ -123,6 +131,6 @@ public class SimpleObjectFacade : ISimpleObjectFacade, IDisposable
             _provider.Dispose();
         }
     }
-    #endregion
+#endregion
 
 }
