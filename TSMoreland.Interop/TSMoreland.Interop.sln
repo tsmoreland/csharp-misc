@@ -19,9 +19,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleOutOfProcessCOM", "Si
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSMoreland.Interop.Cpp.App", "TSMoreland.Interop.Cpp.App\TSMoreland.Interop.Cpp.App.vcxproj", "{36A9A005-96A8-4900-8412-287211815A0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Interop.EventProviderGenerator", "TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj", "{73D9B05C-E15B-4804-81BE-9D6EE624879C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Interop.EventProviderGenerator", "TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj", "{73D9B05C-E15B-4804-81BE-9D6EE624879C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Interop.EventProviderGenerator.Abstractions", "TSMoreland.Interop.EventProviderGenerator.Abstractions\TSMoreland.Interop.EventProviderGenerator.Abstractions.csproj", "{8C87C7C1-196B-4695-B68F-320F8BE8A868}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Interop.EventProviderGenerator.Abstractions", "TSMoreland.Interop.EventProviderGenerator.Abstractions\TSMoreland.Interop.EventProviderGenerator.Abstractions.csproj", "{8C87C7C1-196B-4695-B68F-320F8BE8A868}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Interop.SimpleObjectCOMProxy", "TSMoreland.Interop.SimpleObjectCOMProxy\TSMoreland.Interop.SimpleObjectCOMProxy.csproj", "{9CCF7394-65FB-41C9-9D65-410B67F4CB13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +119,18 @@ Global
 		{8C87C7C1-196B-4695-B68F-320F8BE8A868}.Release|x64.Build.0 = Release|Any CPU
 		{8C87C7C1-196B-4695-B68F-320F8BE8A868}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C87C7C1-196B-4695-B68F-320F8BE8A868}.Release|x86.Build.0 = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|x64.Build.0 = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Debug|x86.Build.0 = Debug|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|x64.ActiveCfg = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|x64.Build.0 = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|x86.ActiveCfg = Release|Any CPU
+		{9CCF7394-65FB-41C9-9D65-410B67F4CB13}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

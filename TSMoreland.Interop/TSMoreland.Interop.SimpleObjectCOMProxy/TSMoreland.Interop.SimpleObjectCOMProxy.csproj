@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
+  </PropertyGroup>
+
+  <!-- useful for debugging purposes -->
+  <PropertyGroup>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="$(CompilerGeneratedFilesOutputPath)/*/**/*.cs" />
+  </ItemGroup>
+ <!--  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator.Abstractions\TSMoreland.Interop.EventProviderGenerator.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj" 
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"/>
+  </ItemGroup>
+
+</Project>

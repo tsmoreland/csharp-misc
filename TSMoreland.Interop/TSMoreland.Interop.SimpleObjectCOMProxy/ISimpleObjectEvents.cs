@@ -11,37 +11,20 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using SimpleInProcessCOMLib;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using TSMoreland.Interop.EventProviderGenerator.Abstractions;
 
-namespace TSMoreland.Interop.NetFramework.App;
+namespace TSMoreland.Interop.SimpleObjectCOMProxy;
 
-internal static class Program
+[TypeLibType(4096)]
+[Guid("71A4D526-4FAD-4D4B-8A6E-78AFCABD7F63")]
+[InterfaceType(2)]
+[ComImport]
+[ComEventProvider("71A4D526-4FAD-4D4B-8A6E-78AFCABD7F63")]
+public interface ISimpleObjectEvents
 {
-    [STAThread]
-    public static void Main(string[] args)
-    {
-        SimpleObject instance = new SimpleObjectClass();
-
-        instance.OnPropertyChanged += Instance_OnPropertyChanged;
-
-        instance.Numeric = 37;
-        (Guid id, string name, int numeric) = (instance.Id, instance.Name, instance.Numeric);
-
-        Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
-
-        string result = instance.ConvertToString(Guid.Empty);
-        Console.WriteLine(result);
-    }
-
-    private static void Instance_OnPropertyChanged(string propertyName)
-    {
-        Console.WriteLine($"'{propertyName}' has changed");
-    }
-
-    private static Type GetClassTypeFromId(Guid classId)
-    {
-        return Type.GetTypeFromCLSID(classId);
-    }
-
+    [DispId(1)]
+    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+    void OnPropertyChanged([MarshalAs(UnmanagedType.BStr), In] string propertyName);
 }

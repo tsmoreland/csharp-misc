@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Terry Moreland
+// Copyright ï¿½2022 Terryy Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
@@ -36,7 +36,7 @@ public:
             p_this->Lock();
             ATL::CComPtr<IUnknown> const unknown = base::m_vec.GetAt(i);
             p_this->Unlock();
-            
+
             if (auto const dispatch = reinterpret_cast<IDispatch*>(unknown.p);
                 dispatch != nullptr) {
 
