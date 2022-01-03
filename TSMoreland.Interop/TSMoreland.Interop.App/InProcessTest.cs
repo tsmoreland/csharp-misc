@@ -1,18 +1,19 @@
 ﻿//
-// Copyright © 2021 Terry Moreland
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
-// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// Copyright © 2022 Terry Moreland
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using TSMoreland.Interop.SimpleObjectCOMProxy;
 
 namespace TSMoreland.Interop.App;
 
@@ -21,6 +22,8 @@ internal static class InProcessTest
 
     public static void Verify()
     {
+        VerifySimpleObjectFacade();
+
         if (!TryCreateComObject(out object? @object))
         {
             return;
@@ -42,7 +45,7 @@ internal static class InProcessTest
         string description = instance.Description;
         Console.WriteLine(description);
 
-        // Beginning of Out of Process, should move elsewhere 
+        // Beginning of Out of Process, should move elsewhere
 
         SimpleObjectTest(@object!);
         MinimalSimpleObjectTest(@object!);
@@ -55,6 +58,23 @@ internal static class InProcessTest
         Console.WriteLine($"Id = {id}");
 
         Console.Out.WriteLine($"{id} {name}");
+    }
+
+    private static void VerifySimpleObjectFacade()
+    {
+        ISimpleObjectFacade facade = new SimpleObjectFacade();
+
+        string name = facade.Name;
+        Console.WriteLine($"Name = {name}");
+
+        facade.PropertyChanged += InProcessInstance_OnPropertyChanged;
+        facade.Numeric = 24;
+        int numeric = facade.Numeric;
+        Console.WriteLine($"Numeric = {numeric}");
+        facade.PropertyChanged -= InProcessInstance_OnPropertyChanged;
+
+        string description = facade.Description;
+        Console.WriteLine(description);
     }
 
     private static bool TryCreateComObject(out object? @object)
@@ -80,6 +100,10 @@ internal static class InProcessTest
         return true;
     }
 
+    /// <summary>
+    /// the following attempt does not work, left for future reference but not to be seen as
+    /// a working solution
+    /// </summary>
     private static void ConnectionPointContainerTest(dynamic instance)
     {
         if (instance is IConnectionPointContainer container)
@@ -171,6 +195,10 @@ internal static class InProcessTest
 
     }
 
+    /// <summary>
+    /// Another failed attempt, dynamic uses IDispatch to make these calls which means all
+    /// the types used must be a valid form of COM Variant - GUID Is not
+    /// </summary>
     private static void TryAccessGuidMethod(dynamic instance)
     {
         try
@@ -185,6 +213,11 @@ internal static class InProcessTest
 
     }
 
+    /// <summary>
+    /// this simply verifies that we can access members of ISimpleObject2 using an interfade reference
+    /// to ISimpleObject - because it's using IDispatch it'll eventually see what the instance
+    /// is actually capable of
+    /// </summary>
     private static void SimpleObjectTest(object @object)
     {
         if (@object is not ISimpleObject simpleObject)
@@ -215,6 +248,11 @@ internal static class InProcessTest
 
     }
 
+    /// <summary>
+    /// experient to see how small a 'working' interface for the COM type would need to be
+    /// it does pass the first check but the second will throw an exception because we can't
+    /// work with GUID
+    /// </summary>
     private static void MinimalSimpleObjectTest(object @object)
     {
         if (@object is not IMinimalSimpleObject simpleObject2)
@@ -227,6 +265,9 @@ internal static class InProcessTest
 
     }
 
+    /// <summary>
+    /// testing ways to work with events, this was the ground work for the generator
+    /// </summary>
     private static void MinimalEventTest(object @object)
     {
         if (@object is not ISimpleObjectEventsEvent eventProducer)
@@ -253,7 +294,7 @@ internal static class InProcessTest
 
         try
         {
-            using var provider = new SimpleComWrappers.SimpleObjectEventProvider(@object);
+            using var provider = new SimpleComWrappers.ManualSimpleObjectEventProvider(@object);
             provider.PropertyChanged += InProcessInstance_OnPropertyChanged;
             instance.Numeric = 53;
             Console.WriteLine(instance.Numeric);
@@ -263,8 +304,29 @@ internal static class InProcessTest
         {
             Console.WriteLine(ex);
         }
+
+        SimpleObjectCOMProxy.OnPropertyChangedHandler handler =
+            new (InProcessInstance_OnPropertyChanged);
+        try
+        {
+            Console.WriteLine("Generated Event Provider:");
+            using var provider = new SimpleObjectCOMProxy.SimpleObjectEventsProvider(@object);
+            provider.add_OnPropertyChanged(handler);
+            instance.Numeric = 42;
+            Console.WriteLine(instance.Numeric);
+            provider.remove_OnPropertyChanged(handler);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
     }
 
+    /// <summary>
+    /// attempts to use IDispatch directly to get access to GUID but of course we can't
+    /// because that requires the inputs/outputs to be valid COM variants
+    /// </summary>
     private static void DispatchTest(object @object)
     {
         if (@object is not IDispatch dispatch)
@@ -320,6 +382,9 @@ internal static class InProcessTest
     }
 
 
+    /// <summary>
+    /// the handler used in all evnet tests
+    /// </summary>
     private static void InProcessInstance_OnPropertyChanged(string propertyName)
     {
         Console.WriteLine($"'{propertyName}' has changed");

@@ -1,11 +1,11 @@
-﻿// 
-// Copyright © 2021 Terry Moreland
+﻿//
+// Copyright © 2022 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -42,14 +42,23 @@ internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
 
         List<MethodItem> methods = new();
         string interfaceName = testInterface.Name;
+        string interfaceId = string.Empty;
 
         Log.Add("Namespace: " + @namespace);
         Log.Add("Class: " + interfaceName);
 
-        if (!IsGeneratorAttributePresent(testInterface))
+        ImmutableArray<AttributeData> allAttributes = testInterface.GetAttributes();
+        if (!IsGeneratorAttributePresent(allAttributes))
         {
             return;
         }
+
+        (bool found, interfaceId) = GetInterfaceId(allAttributes);
+        if (!found)
+        {
+            return;
+        }
+
 
         Log.Add($"Found attribute on {@namespace}.{interfaceName}");
 
@@ -116,16 +125,29 @@ internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
             methods.Add(new MethodItem(dispId, member.Name, returnType, parameters.ToImmutableArray()));
         }
 
-        _events.Add(new EventsItem(interfaceName, @namespace, methods.ToImmutableArray()));
+        _events.Add(new EventsItem(interfaceName, interfaceId, @namespace, methods.ToImmutableArray()));
     }
 
-    private bool IsGeneratorAttributePresent(INamedTypeSymbol @interface)
+    private bool IsGeneratorAttributePresent(ImmutableArray<AttributeData> allAttributes)
     {
-        ImmutableArray<AttributeData> allAttributes = @interface.GetAttributes();
         Log.AddRange(allAttributes.Select(attribute => $"Found {attribute.AttributeClass!.ContainingNamespace}.{attribute.AttributeClass!.Name}, looking for {GeneratorAttributeName}"));
         AttributeData[] attributes = allAttributes.Where(a => $"{a.AttributeClass!.ContainingNamespace}.{a.AttributeClass!.Name}" == GeneratorAttributeName).ToArray();
         return attributes.Any();
     }
+
+    private (bool Found, string Id) GetInterfaceId(ImmutableArray<AttributeData> allAttributes)
+    {
+        AttributeData? guidAttribute = allAttributes.FirstOrDefault(a => a.AttributeClass?.Name == "GuidAttribute");
+        if (guidAttribute == null || !guidAttribute.ConstructorArguments.Any())
+        {
+            return (false, string.Empty);
+        }
+
+        string? idValue = guidAttribute.ConstructorArguments.First().Value?.ToString();
+
+        return (idValue is {Length: >0}, idValue ?? string.Empty);
+    }
+
     private static bool IsGlobalNamespace(string @namepsace)
     {
         // bit of a simple check that could be improved
