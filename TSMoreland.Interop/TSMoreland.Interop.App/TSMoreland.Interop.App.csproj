@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,28 +8,12 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <!-- useful for debugging purposes -->
-  <PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="$(CompilerGeneratedFilesOutputPath)/*/**/*.cs" />
-  </ItemGroup>
- <!--  -->
-
   <ItemGroup>
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator.Abstractions\TSMoreland.Interop.EventProviderGenerator.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TSMoreland.Interop.EventProviderGenerator\TSMoreland.Interop.EventProviderGenerator.csproj" 
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"/>
+    <ProjectReference Include="..\TSMoreland.Interop.SimpleObjectCOMProxy\TSMoreland.Interop.SimpleObjectCOMProxy.csproj" />
   </ItemGroup>
 
 </Project>
