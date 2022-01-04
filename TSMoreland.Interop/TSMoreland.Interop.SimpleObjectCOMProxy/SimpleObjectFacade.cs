@@ -111,7 +111,7 @@ public class SimpleObjectFacade : ISimpleObjectFacade
         return Type.GetTypeFromCLSID(classId);
     }
 
-#region IDisposable
+    #region IDisposable
     ///<summary>Finalize</summary>
     ~SimpleObjectFacade() => Dispose(false);
 
@@ -131,6 +131,6 @@ public class SimpleObjectFacade : ISimpleObjectFacade
             _provider.Dispose();
         }
     }
-#endregion
+    #endregion
 
 }
