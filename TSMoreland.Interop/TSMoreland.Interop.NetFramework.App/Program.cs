@@ -13,6 +13,7 @@
 
 using System;
 using SimpleInProcessCOMLib;
+using TSMoreland.Interop.SimpleObjectCOMProxy;
 
 namespace TSMoreland.Interop.NetFramework.App;
 
@@ -21,6 +22,7 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        Console.WriteLine("=============== Old style generated interop =============");
         SimpleObject instance = new SimpleObjectClass();
 
         instance.OnPropertyChanged += Instance_OnPropertyChanged;
@@ -32,16 +34,22 @@ internal static class Program
 
         string result = instance.ConvertToString(Guid.Empty);
         Console.WriteLine(result);
+
+        Console.WriteLine("=============== Facade Approach =============");
+        using ISimpleObjectFacade facade = new SimpleObjectFacade();
+        facade.PropertyChanged += Instance_OnPropertyChanged;
+        facade.PropertyChanged -= Instance_OnPropertyChanged;
+
+        instance.Numeric = 96;
+        (id, name, numeric) = (instance.Id, instance.Name, instance.Numeric);
+
+        Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
+
     }
 
     private static void Instance_OnPropertyChanged(string propertyName)
     {
         Console.WriteLine($"'{propertyName}' has changed");
-    }
-
-    private static Type GetClassTypeFromId(Guid classId)
-    {
-        return Type.GetTypeFromCLSID(classId);
     }
 
 }

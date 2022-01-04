@@ -62,5 +62,11 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TSMoreland.Interop.SimpleObjectCOMProxy\TSMoreland.Interop.SimpleObjectCOMProxy.csproj">
+      <Project>{9ccf7394-65fb-41c9-9d65-410b67f4cb13}</Project>
+      <Name>TSMoreland.Interop.SimpleObjectCOMProxy</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
