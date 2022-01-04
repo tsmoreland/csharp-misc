@@ -62,7 +62,7 @@ internal static class InProcessTest
 
     private static void VerifySimpleObjectFacade()
     {
-        ISimpleObjectFacade facade = new SimpleObjectFacade();
+        using ISimpleObjectFacade facade = new SimpleObjectFacade();
 
         string name = facade.Name;
         Console.WriteLine($"Name = {name}");
