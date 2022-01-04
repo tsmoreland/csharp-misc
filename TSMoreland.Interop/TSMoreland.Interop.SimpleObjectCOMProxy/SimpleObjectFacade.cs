@@ -20,6 +20,11 @@ namespace TSMoreland.Interop.SimpleObjectCOMProxy;
 
 public class SimpleObjectFacade : ISimpleObjectFacade
 {
+    /// <summary>
+    /// Generated class using seperatar library, requires an attribute to be placed
+    /// on the event interface (a C# interface matching the dispinterface in the IDL)
+    /// from there we can generate the rest for provider, event sink, ...
+    /// </summary>
     private readonly SimpleObjectEventsProvider _provider;
     private readonly dynamic _object;
 
@@ -59,7 +64,7 @@ public class SimpleObjectFacade : ISimpleObjectFacade
             try
             {
                 // this will throw an exception because dynamic seems to rely on IDispatch to call these properties/methods
-                // while MIDL can work some dark magic to support GUID IDispatch requires output/input but a valid COM Variant type
+                // while MIDL can work some dark magic to support GUID IDispatch requires output/input to be a valid COM Variant type
                 // for which GUID is not
                 return _object.Id;
             }
