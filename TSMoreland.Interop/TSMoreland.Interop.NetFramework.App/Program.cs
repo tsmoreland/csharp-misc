@@ -47,11 +47,13 @@ internal static class Program
         using ISimpleObjectFacade facade = new SimpleObjectFacade();
         facade.PropertyChanged += Instance_OnPropertyChanged;
 
-        instance.Numeric = 96;
-        (id, name, numeric) = (instance.Id, instance.Name, instance.Numeric);
+        facade.Numeric = 96;
+        // skip id because we know it'll throw an exception, without knowing the exact interface we rely
+        // on IDispatch which only works with variant types
+        (name, numeric) = (facade.Name, facade.Numeric);
         facade.PropertyChanged -= Instance_OnPropertyChanged;
 
-        Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
+        Console.WriteLine($"name = {name} numeric = {numeric}");
     }
 
     private static void OutOfProcessTest()
@@ -67,6 +69,25 @@ internal static class Program
         Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
         instance.OnPropertyChanged -= Instance_OnPropertyChanged;
 
+        try
+        {
+            Console.WriteLine("=============== Facade Approach =============");
+            using ISimpleOopObjectFacade facade = new SimpleOopObjectFacade();
+            facade.PropertyChanged += Instance_OnPropertyChanged;
+
+            instance.Numeric = 96;
+            // skip id because we know it'll throw an exception, without knowing the exact interface we rely
+            // on IDispatch which only works with variant types
+            (name, numeric) = (facade.Name, facade.Numeric);
+            facade.PropertyChanged -= Instance_OnPropertyChanged;
+
+            Console.WriteLine($"name = {name} numeric = {numeric}");
+        }
+        catch (Exception ex)
+        {
+            // still trying to get the connection point worked out, something's not right in the setup of generated code
+            Console.WriteLine(ex);
+        }
     }
 
 
