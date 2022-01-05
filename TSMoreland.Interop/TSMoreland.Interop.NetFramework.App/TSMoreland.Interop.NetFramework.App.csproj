@@ -61,6 +61,15 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
+    <COMReference Include="SimpleOutOfProcessCOMLib">
+      <Guid>{4FAAB4CD-F38E-4709-A0E3-B15763EC7452}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TSMoreland.Interop.SimpleObjectCOMProxy\TSMoreland.Interop.SimpleObjectCOMProxy.csproj">

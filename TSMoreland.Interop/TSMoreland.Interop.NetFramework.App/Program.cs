@@ -13,6 +13,7 @@
 
 using System;
 using SimpleInProcessCOMLib;
+using SimpleOutOfProcessCOMLib;
 using TSMoreland.Interop.SimpleObjectCOMProxy;
 
 namespace TSMoreland.Interop.NetFramework.App;
@@ -22,6 +23,12 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        InProcessTest();
+        OutOfProcessTest();
+    }
+
+    private static void InProcessTest()
+    {
         Console.WriteLine("=============== Old style generated interop =============");
         SimpleObject instance = new SimpleObjectClass();
 
@@ -29,6 +36,7 @@ internal static class Program
 
         instance.Numeric = 37;
         (Guid id, string name, int numeric) = (instance.Id, instance.Name, instance.Numeric);
+        instance.OnPropertyChanged -= Instance_OnPropertyChanged;
 
         Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
 
@@ -38,14 +46,29 @@ internal static class Program
         Console.WriteLine("=============== Facade Approach =============");
         using ISimpleObjectFacade facade = new SimpleObjectFacade();
         facade.PropertyChanged += Instance_OnPropertyChanged;
-        facade.PropertyChanged -= Instance_OnPropertyChanged;
 
         instance.Numeric = 96;
         (id, name, numeric) = (instance.Id, instance.Name, instance.Numeric);
+        facade.PropertyChanged -= Instance_OnPropertyChanged;
 
         Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
+    }
+
+    private static void OutOfProcessTest()
+    {
+        Console.WriteLine("=============== Old style generated interop =============");
+        SimpleOOPObject instance = new SimpleOOPObjectClass();
+
+        instance.OnPropertyChanged += Instance_OnPropertyChanged;
+
+        instance.Numeric = 37;
+        (Guid id, string name, int numeric) = (instance.Id, instance.Name, instance.Numeric);
+
+        Console.WriteLine($"Id = {id}, name = {name} numeric = {numeric}");
+        instance.OnPropertyChanged -= Instance_OnPropertyChanged;
 
     }
+
 
     private static void Instance_OnPropertyChanged(string propertyName)
     {
