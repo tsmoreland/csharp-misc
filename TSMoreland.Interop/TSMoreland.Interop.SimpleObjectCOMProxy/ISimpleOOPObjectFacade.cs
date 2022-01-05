@@ -15,6 +15,13 @@ namespace TSMoreland.Interop.SimpleObjectCOMProxy;
 public interface ISimpleOopObjectFacade : IDisposable
 {
     event OOPOnPropertyChangedHandler PropertyChanged;
+
+    /// <summary>
+    /// not part of the COM interface, just helpful for diagnosing issues even if they do end up
+    /// being a typo
+    /// </summary>
+    public object Object { get; }
+
     string Name { get; }
     int Numeric { get; set; }
     Guid Id { get; }

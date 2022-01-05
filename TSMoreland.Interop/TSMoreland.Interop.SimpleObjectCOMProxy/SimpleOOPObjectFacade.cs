@@ -26,7 +26,7 @@ public sealed class SimpleOopObjectFacade : ISimpleOopObjectFacade
 
     public SimpleOopObjectFacade()
     {
-        Guid classId = new("E3D3572D-9E25-4CF3-82F5-45B6F0035A82");
+        Guid classId = new("972b85e9-b7c9-467e-9c38-da5423ebcb1e");
         Type? classType = GetClassTypeFromId(classId);
 
         if (classType == null)

@@ -52,8 +52,8 @@ internal static class OutOfProcessTest
 
     private static void VerifySimpleObjectFacade()
     {
-        //using ISimpleOopObjectFacade facade = new SimpleOopObjectFacade();
-        using SimpleOopObjectFacade facade = new ();
+        using ISimpleOopObjectFacade facade = new SimpleOopObjectFacade();
+        const int ok = 0;
 
         string name = facade.Name;
         Console.WriteLine($"Name = {name}");
@@ -61,19 +61,15 @@ internal static class OutOfProcessTest
         object comObject = facade.Object;
         if (comObject is IConnectionPointContainer container)
         {
-            //container.EnumConnections(out IEnumConnections connections);
             container.EnumConnectionPoints(out IEnumConnectionPoints connections);
-
             connections.Reset();
             IConnectionPoint[] data = new IConnectionPoint[1];
             IntPtr ptr = IntPtr.Zero;
-            if (0 == connections.Next(1, data!, ptr))
+            if (connections.Next(1, data!, ptr) == ok)
             {
                 IConnectionPoint point = data[0];
-                Type type = point.GetType();
-
-                Console.WriteLine("Connection Point type: " + type.FullName);
-
+                point.GetConnectionInterface(out Guid connectionInterface);
+                Console.WriteLine($"Connection Point interface: {connectionInterface}");
             }
         }
 
