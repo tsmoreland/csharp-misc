@@ -55,8 +55,8 @@ public:
 
     BEGIN_COM_MAP(CSimpleOOPObject)
     COM_INTERFACE_ENTRY(ISimpleOOPObject)
+    COM_INTERFACE_ENTRY(ISimpleOOPObject2)
     COM_INTERFACE_ENTRY(IDispatch)
-    COM_INTERFACE_ENTRY(IConnectionPointContainer)
 
     // N.B. required for events (Connection point impl)
     COM_INTERFACE_ENTRY(IConnectionPointContainer)
