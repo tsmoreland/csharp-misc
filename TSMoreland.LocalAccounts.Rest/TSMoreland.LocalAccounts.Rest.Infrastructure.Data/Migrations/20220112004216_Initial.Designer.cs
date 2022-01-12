@@ -11,7 +11,7 @@ using TSMoreland.LocalAccounts.Rest.Infrastructure.Data;
 namespace TSMoreland.LocalAccounts.Rest.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220111225302_Initial")]
+    [Migration("20220112004216_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
