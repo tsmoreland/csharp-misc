@@ -13,7 +13,6 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TSMoreland.LocalAccounts.Rest.Infrastructure.Abstractions.Entities;
 using TSMoreland.LocalAccounts.Rest.Infrastructure.Data;
 
@@ -22,11 +21,13 @@ namespace TSMoreland.LocalAccounts.Rest.Cli;
 public sealed class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly UserManager<User> _userManager;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserRepository(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher)
+    public UserRepository(ApplicationDbContext dbContext, UserManager<User> userManager, IPasswordHasher<User> passwordHasher)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _dbContext.Database.Migrate();
         _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
     }
@@ -44,10 +45,24 @@ public sealed class UserRepository : IUserRepository
     public void Add(string username, string password)
     {
         User newUser = new() { UserName = username, };
-        EntityEntry<User> user = _dbContext.Users.Add(newUser);
-        _dbContext.SaveChanges();
-        Update(user.Entity, password);
-        Console.WriteLine("User added");
+        IdentityResult result = _userManager.CreateAsync(newUser).Result;
+        if (!result.Succeeded)
+        {
+            PrintErrors(result.Errors);
+            return;
+        }
+
+        string normalizedUsername = username.ToUpperInvariant();
+        User? user = _dbContext.Users.FirstOrDefault(u => u.NormalizedUserName == normalizedUsername);
+        if (user is not null)
+        {
+            Update(user, password);
+            Console.WriteLine("User Added");
+        }
+        else
+        {
+            Console.WriteLine("User Added, but failed to update password (couldn't find record after add");
+        }
     }
 
     public void Upsert(int id, string username, string password)
@@ -83,4 +98,11 @@ public sealed class UserRepository : IUserRepository
         Console.WriteLine("User deleted");
     }
 
+    private static void PrintErrors(IEnumerable<IdentityError> errors)
+    {
+        foreach (IdentityError error in errors)
+        {
+            Console.WriteLine(error);
+        }
+    }
 }

@@ -32,7 +32,9 @@ public static class ServiceCollectionExtensions
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.User.RequireUniqueEmail = false;
         });
-        services.AddIdentityCore<User>();
+        services
+            .AddIdentityCore<User>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         return services;
     }

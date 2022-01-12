@@ -42,5 +42,11 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, int>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<User>(b =>
+        {
+            b.HasIndex(u => u.NormalizedUserName).IsUnique();
+            b.Property(p => p.UserName).IsRequired();
+        });
     }
+
 }
