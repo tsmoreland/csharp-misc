@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TSMoreland.LocalAccounts.Rest.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "-o add -u admin"
+    }
+  }
+}
