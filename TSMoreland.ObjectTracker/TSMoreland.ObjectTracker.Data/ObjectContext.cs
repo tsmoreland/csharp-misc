@@ -12,15 +12,20 @@
 //
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
+using TSMoreland.ObjectTracker.Data.Abstractions;
 using TSMoreland.ObjectTracker.Data.Abstractions.Entities;
 
 namespace TSMoreland.ObjectTracker.Data;
 
 public sealed class ObjectContext : DbContext
 {
-    public ObjectContext(DbContextOptions<ObjectContext> options)
+    private readonly IConfiguration _configuration;
+
+    public ObjectContext(DbContextOptions<ObjectContext> options, IConfiguration configuration)
         : base(options)
     {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public DbSet<ObjectEntity> Objects { get; set; } = null!; // initialization will be handled by EF
@@ -38,7 +43,15 @@ COMMIT;", new object[] { id }, cancellationToken);
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlite("Data Source=objectTracker.db", b =>
+            DataBaseConnectionOptions options = _configuration
+                .GetRequiredSection(DataBaseConnectionOptions.SectionName)
+                .Get<DataBaseConnectionOptions>();
+
+            string connectionString = options.Pooling
+                ? "Data Source=objectTracker.db; Pooling = True;"
+                : "Data Source=objectTracker.db";
+
+            optionsBuilder.UseSqlite(connectionString, b =>
                 b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
         }
 
@@ -54,6 +67,9 @@ COMMIT;", new object[] { id }, cancellationToken);
 
         static void ConfigureObject(EntityTypeBuilder<ObjectEntity> entity)
         {
+            entity
+                .HasIndex(t => t.Name)
+                .IsUnique();
             entity.Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(200)
