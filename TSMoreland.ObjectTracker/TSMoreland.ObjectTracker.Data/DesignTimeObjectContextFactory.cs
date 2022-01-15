@@ -10,13 +10,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace TSMoreland.ObjectTracker.Data;
 
-public sealed class ObjectContextFactory : IDesignTimeDbContextFactory<ObjectContext>
+public sealed class DesignTimeObjectContextFactory : IDesignTimeDbContextFactory<ObjectContext>
 {
+
     /// <inheritdoc />
     public ObjectContext CreateDbContext(string[] args)
     {
@@ -24,6 +28,18 @@ public sealed class ObjectContextFactory : IDesignTimeDbContextFactory<ObjectCon
         optionsBuilder.UseSqlite("Data Source=objectTracker.db", b =>
             b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
 
-        return new ObjectContext(optionsBuilder.Options);
+        using MemoryStream stream = new();
+        using (StreamWriter streamWriter = new(stream, new UTF8Encoding(false), 8196, true))
+        {
+            streamWriter.Write(@"{""databaseOptions"":{""pooling"":false}}");
+            streamWriter.Flush();
+        }
+        stream.Seek(0, SeekOrigin.Begin);
+
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .AddJsonStream(stream)
+            .Build();
+
+        return new ObjectContext(optionsBuilder.Options, configuration);
     }
 }

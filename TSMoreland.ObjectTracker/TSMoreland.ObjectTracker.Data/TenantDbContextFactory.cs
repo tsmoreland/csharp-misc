@@ -12,11 +12,19 @@
 //
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace TSMoreland.ObjectTracker.Data;
 
 public sealed class TenantDbContextFactory : ITenantDbContextFactory
 {
+    private readonly IConfiguration _configuration;
+
+    public TenantDbContextFactory(IConfiguration configuration)
+    {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
+
     /// <inheritdoc />
     public ObjectContext CreateDbContext(string tenantName)
     {
@@ -25,7 +33,7 @@ public sealed class TenantDbContextFactory : ITenantDbContextFactory
         optionsBuilder.UseSqlite($"Data Source={filename}", b =>
             b.MigrationsAssembly(typeof(ObjectContext).Assembly.FullName));
 
-        var context = new ObjectContext(optionsBuilder.Options);
+        var context = new ObjectContext(optionsBuilder.Options, _configuration);
 
         // no need to migrate here, these are intended as short-lived databases so migration "shouldn't" be necessary
         // on the other hand if they live longer than intended then migration may be needed but that would mean
