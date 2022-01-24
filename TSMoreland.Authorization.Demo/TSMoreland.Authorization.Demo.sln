@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers", "TSMoreland.Authorization.Demo.LocalUsers\TSMoreland.Authorization.Demo.LocalUsers.csproj", "{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection", "TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj", "{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
