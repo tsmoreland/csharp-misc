@@ -11,7 +11,38 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+IServiceCollection services = builder.Services;
+
+services
+    .AddAuthorization(authorizationOptions =>
+    {
+    })
+    .AddLocalUsersWithIdentity(identityOptions =>
+    {
+        // not a secure choice of options
+        identityOptions.SignIn.RequireConfirmedPhoneNumber = false;
+        identityOptions.SignIn.RequireConfirmedEmail = false;
+        identityOptions.SignIn.RequireConfirmedAccount = false;
+
+        identityOptions.Password.RequireUppercase = false;
+        identityOptions.Password.RequireLowercase = true;
+        identityOptions.Password.RequireDigit = true;
+        identityOptions.Password.RequireNonAlphanumeric = false;
+        identityOptions.Password.RequiredLength = 8;
+    });
+
+services
+    .AddAuthentication(authenticationOptions =>
+    {
+        // update with something, anything once we have something
+        authenticationOptions.DefaultChallengeScheme = "";
+        authenticationOptions.DefaultAuthenticateScheme = "";
+    });
+
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");

@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj" />
+  </ItemGroup>
+
 </Project>

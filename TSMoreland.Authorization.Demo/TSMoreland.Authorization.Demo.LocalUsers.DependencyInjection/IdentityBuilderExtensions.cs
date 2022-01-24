@@ -13,23 +13,17 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
 namespace TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 
-public static class ServiceCollectionExtensions
+public static class IdentityBuilderExtensions
 {
-    public static IServiceCollection AddLocalUsersWithIdentity(this IServiceCollection services, Action<IdentityOptions> setupAction)
+    public static IdentityBuilder AddLocalUserStore(this IdentityBuilder builder)
     {
-        ArgumentNullException.ThrowIfNull(services, nameof(services));
+        ArgumentNullException.ThrowIfNull(builder, nameof(builder));
+        builder
+            .AddEntityFrameworkStores<AuthenticationDbContext>();
 
-        services.AddSingleton<UserManager<DemoUser>>();
-        services.AddSingleton<RoleManager<DemoRole>>();
-
-        services
-            .AddIdentityCore<DemoUser>(setupAction)
-            .AddLocalUserStore();
-
-        return services;
+        return builder;
     }
 }
