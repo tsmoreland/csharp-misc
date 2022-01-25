@@ -19,19 +19,17 @@ namespace TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddLocalUsersWithIdentity(this IServiceCollection services, Action<IdentityOptions> setupAction)
+    public static IdentityBuilder AddLocalUsersWithIdentity(this IServiceCollection services, Action<IdentityOptions> setupAction)
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         services.AddSingleton<UserManager<DemoUser>>();
         services.AddSingleton<RoleManager<DemoRole>>();
         
-        services
+        return services
             .AddDbContext<AuthenticationDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<AuthenticationDbContext>()
             .AddIdentityCore<DemoUser>(setupAction)
             .AddLocalUserStore();
-
-        return services;
     }
 }
