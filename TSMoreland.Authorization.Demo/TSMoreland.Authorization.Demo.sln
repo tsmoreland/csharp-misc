@@ -10,11 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.App", "src\TSMoreland.Authorization.Demo.App\TSMoreland.Authorization.Demo.App.csproj", "{4CDD50EF-337B-4A05-8478-A63DB703E714}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers.Abstractions", "TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj", "{C3A5AB27-DB00-4E3C-8505-E62A7A242E9C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers.Abstractions", "src\TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj", "{C3A5AB27-DB00-4E3C-8505-E62A7A242E9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers", "TSMoreland.Authorization.Demo.LocalUsers\TSMoreland.Authorization.Demo.LocalUsers.csproj", "{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers", "src\TSMoreland.Authorization.Demo.LocalUsers\TSMoreland.Authorization.Demo.LocalUsers.csproj", "{C1C7B7F7-7514-44FF-81DF-5217E52ADA61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection", "TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj", "{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection", "src\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj", "{FA422DB9-2B06-48AD-8509-637DD9CEC9EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
