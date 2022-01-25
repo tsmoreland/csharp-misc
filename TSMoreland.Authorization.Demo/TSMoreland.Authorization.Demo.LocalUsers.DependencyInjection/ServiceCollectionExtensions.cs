@@ -25,8 +25,10 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<UserManager<DemoUser>>();
         services.AddSingleton<RoleManager<DemoRole>>();
-
+        
         services
+            .AddDbContext<AuthenticationDbContext>(optionsLifetime: ServiceLifetime.Singleton)
+            .AddDbContextFactory<AuthenticationDbContext>()
             .AddIdentityCore<DemoUser>(setupAction)
             .AddLocalUserStore();
 
