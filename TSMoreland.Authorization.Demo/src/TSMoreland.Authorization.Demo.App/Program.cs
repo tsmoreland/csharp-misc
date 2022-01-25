@@ -18,9 +18,17 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 IServiceCollection services = builder.Services;
 
+const string defaultAuthenticationScheme = ""; // TODO
+const string defaultChallengeScheme = "";
 services
+    .Configure<DataProtectionTokenProvider>(tokenProviderOptions =>
+    {
+        tokenProviderOptions.TokeLifespan = TimeSpan.FromHours(1);
+    })
     .AddAuthorization(authorizationOptions =>
     {
+        authorizationOptions.DefaultAuthenticationScheme = defaultAuthenticationScheme;
+        authorizationOptions.DefaultChallengeScheme = defaultChallengeScheme;
     })
     .AddLocalUsersWithIdentity(identityOptions =>
     {
