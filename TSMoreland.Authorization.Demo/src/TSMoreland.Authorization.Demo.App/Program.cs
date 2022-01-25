@@ -13,22 +13,45 @@
 
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+LoggerConfiguration loggerConfiguration = new ();
+loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
+builder.Logging.AddSerilog(loggerConfiguration.CreateLogger());
 
 IServiceCollection services = builder.Services;
 
+const string defaultPolicy = ""; // TODO - this policy should match the default scheme
+const string requiredScope = ""; // this should match some scope we expected to fin
 const string defaultAuthenticationScheme = ""; // TODO
 const string defaultChallengeScheme = "";
+
 services
-    .Configure<DataProtectionTokenProvider>(tokenProviderOptions =>
+    .AddControllers();
+
+services
+    .Configure<DataProtectionTokenProviderOptions>(tokenProviderOptions =>
     {
-        tokenProviderOptions.TokeLifespan = TimeSpan.FromHours(1);
+        tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
     })
     .AddAuthorization(authorizationOptions =>
     {
-        authorizationOptions.DefaultAuthenticationScheme = defaultAuthenticationScheme;
-        authorizationOptions.DefaultChallengeScheme = defaultChallengeScheme;
+        authorizationOptions.AddPolicy(defaultPolicy, policy =>
+        {
+            // this will only work if we are requiring one scope, similar idea
+            // for multiple but we'd need to check if all required items are in this collection
+            // we'd likely need to make it a list then something like requiredScopes.All(s => scopes.Contains)
+            policy
+                .RequireAuthenticatedUser()
+                .RequireAssertion(context => 
+                    context.User.Claims
+                        .Where(c => c.Type.Equals("scope"))
+                        .SelectMany(c => c.Value.Split(' '))
+                        .Select(s => s.ToUpperInvariant())
+                        .Contains(requiredScope.ToUpperInvariant()));
+        });
+
     })
     .AddLocalUsersWithIdentity(identityOptions =>
     {
@@ -49,12 +72,13 @@ services
     .AddAuthentication(authenticationOptions =>
     {
         // update with something, anything once we have something
-        authenticationOptions.DefaultChallengeScheme = "";
-        authenticationOptions.DefaultAuthenticateScheme = "";
+        authenticationOptions.DefaultAuthenticateScheme = defaultAuthenticationScheme;
+        authenticationOptions.DefaultChallengeScheme = defaultChallengeScheme;
     });
 
 WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();
