@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Terry Moreland
+// Copyright Â© 2022 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -12,6 +12,7 @@
 //
 
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,8 @@ services
         identityOptions.Password.RequireDigit = true;
         identityOptions.Password.RequireNonAlphanumeric = false;
         identityOptions.Password.RequiredLength = 8;
-    });
+    })
+    .AddDefaultTokenProviders();
 
 services
     .AddAuthentication(authenticationOptions =>
