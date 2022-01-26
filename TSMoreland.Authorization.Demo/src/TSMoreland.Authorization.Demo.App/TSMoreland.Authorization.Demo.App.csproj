@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj" />
+    <ProjectReference Include="..\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj" />
   </ItemGroup>
 
 </Project>
