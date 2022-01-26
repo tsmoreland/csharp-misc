@@ -14,11 +14,18 @@
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using TSMoreland.Authorization.Demo.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 LoggerConfiguration loggerConfiguration = new ();
 loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
 builder.Logging.AddSerilog(loggerConfiguration.CreateLogger());
+
+builder.WebHost
+    .ConfigureKestrel(kestrelServerOptions =>
+    {
+        kestrelServerOptions.AddServerHeader = false;
+    });
 
 IServiceCollection services = builder.Services;
 
@@ -68,7 +75,32 @@ services
     })
     .AddDefaultTokenProviders();
 
+SecurityHeadersOptions securityHeadersOptions = builder.Configuration
+    .GetSection(SecurityHeadersOptions.SectionName)
+    .Get<SecurityHeadersOptions>();
+
+if (securityHeadersOptions?.EnableCors is true)
+{
+    services
+        .AddCors(corsOptions =>
+        {
+            corsOptions.AddPolicy("AllowAllOrigins", policy =>
+                policy
+                    .AllowAnyOrigin()
+                    .WithMethods("GET", "PUT", "POST", "DELETE")
+                    .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
+                    .DisallowCredentials());
+            corsOptions.AddPolicy("RestrictedOrigins", policy =>
+                policy
+                    .WithOrigins(securityHeadersOptions.AllowedOrigins.ToArray())
+                    .WithMethods("GET", "PUT", "POST", "DELETE")
+                    .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
+                    .DisallowCredentials());
+        });
+}
+
 services
+    .AddSecurityHeaders()
     .AddAuthentication(authenticationOptions =>
     {
         // update with something, anything once we have something
@@ -77,6 +109,20 @@ services
     });
 
 WebApplication app = builder.Build();
+
+IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
+
+app.UseSecurityHeaders();
+app.UseCors("AllowAllOrigins");
+
+if (environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
+{
+    app.UseHsts();
+}
 
 app.MapGet("/", () => "Hello World!");
 app.UseEndpoints(endpoints => endpoints.MapControllers());

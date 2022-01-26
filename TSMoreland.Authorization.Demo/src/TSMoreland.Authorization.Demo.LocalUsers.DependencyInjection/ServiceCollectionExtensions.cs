@@ -23,8 +23,8 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-        services.AddSingleton<UserManager<DemoUser>>();
-        services.AddSingleton<RoleManager<DemoRole>>();
+        services.AddScoped<UserManager<DemoUser>>();
+        services.AddScoped<RoleManager<DemoRole>>();
         
         return services
             .AddDbContext<AuthenticationDbContext>(optionsLifetime: ServiceLifetime.Singleton)
