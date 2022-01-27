@@ -10,3 +10,6 @@ taken from [OWASP REST Security Cheat sheat](https://cheatsheetseries.owasp.org/
 | Strict-Transport-Security	                        | To require connections over HTTPS and to protect against spoofed certificates.                        |
 | X-Content-Type-Options: nosniff	                | To prevent browsers from performing MIME sniffing, and inappropriately interpreting responses as HTML.|
 | X-Frame-Options: DENY	                            | To protect against drag-and-drop style clickjacking attacks.                                          |
+| Content-Security-Policy: default-src 'none'	    | The majority of CSP functionality only affects pages rendered as HTML.                                |
+| Feature-Policy: 'none'	                        | Feature policies only affect pages rendered as HTML.                                                  |
+| Referrer-Policy: no-referrer	                    | Non-HTML responses should not trigger additional requests.                                            |

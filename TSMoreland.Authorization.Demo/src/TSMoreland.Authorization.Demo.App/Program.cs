@@ -11,7 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Configuration;
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
@@ -85,33 +84,25 @@ SecurityHeadersOptions securityHeadersOptions = builder.Configuration
     .GetSection(SecurityHeadersOptions.SectionName)
     .Get<SecurityHeadersOptions>();
 
-if (securityHeadersOptions?.EnableCors is true)
+services
+.AddCors(corsOptions =>
 {
-    services
-        .AddCors(corsOptions =>
-        {
-            corsOptions.AddPolicy("AllowAllOrigins", policy =>
-                policy
-                    .AllowAnyOrigin()
-                    .WithMethods("GET", "PUT", "POST", "DELETE")
-                    .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
-                    .DisallowCredentials());
-            if (!securityHeadersOptions.UseCorsRestrictedPolicy)
-            {
-                return;
-            }
-            if (!securityHeadersOptions.AllowedOrigins.Any())
-            {
-                throw new ConfigurationErrorsException("Missing allowed origins, required when UseCorsRestrictedPolicy is enabled");
-            }
-            corsOptions.AddPolicy("RestrictedOrigins", policy =>
-                policy
-                    .WithOrigins(securityHeadersOptions.AllowedOrigins.ToArray())
-                    .WithMethods("GET", "PUT", "POST", "DELETE")
-                    .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
-                    .DisallowCredentials());
-        });
-}
+    corsOptions.AddDefaultPolicy(policy =>
+        policy
+            .AllowAnyOrigin()
+            .WithMethods("GET", "PUT", "POST", "DELETE")
+            .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
+            .DisallowCredentials());
+    if (securityHeadersOptions?.AllowedOrigins.Any() is true)
+    {
+        corsOptions.AddPolicy("RestrictedOrigins", policy =>
+            policy
+                .WithOrigins(securityHeadersOptions.AllowedOrigins.ToArray())
+                .WithMethods("GET", "PUT", "POST", "DELETE")
+                .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
+                .DisallowCredentials());
+    }
+});
 
 services
     .AddSecurityHeaders()
@@ -127,10 +118,6 @@ WebApplication app = builder.Build();
 IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
 
 app.UseSecurityHeaders();
-if (securityHeadersOptions?.EnableCors == true)
-{
-    app.UseCors("AllowAllOrigins");
-}
 
 if (environment.IsDevelopment())
 {
@@ -142,6 +129,8 @@ else
 }
 
 app.UseRouting();
+app.UseCors();
+
 app.UseAuthorization();
 app.UseAuthentication();
 

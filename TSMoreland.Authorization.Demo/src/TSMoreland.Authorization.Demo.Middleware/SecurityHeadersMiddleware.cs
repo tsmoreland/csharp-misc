@@ -48,17 +48,22 @@ public sealed class SecurityHeadersMiddleware
         AddHeaderIfNotPresent(response, "Cache-Control", "no-store");
         AddHeaderIfNotPresent(response, "X-Content-Type-Options", "nosniff");
         AddHeaderIfNotPresent(response, "X-Frame-Options", "DENY");
+
+        // may want to consider something in security options for these as they may be overkill
+        AddHeaderIfNotPresent(response, "Content-Security-Policy",
+            "default-src: 'none'; FeaturePolicy: 'none'; Referrer-Policy: no-referrer");
     }
 
     private static void AddHeaderIfNotPresent(HttpResponse response, string header, params string[] values)
     {
-        if (values.Length > 1)
+        switch (values.Length)
         {
-            response.Headers.Add(header, new StringValues(values));
-        }
-        else if (values.Length > 0)
-        {
-            response.Headers.Add(header, new StringValues(values.First()));
+            case > 1:
+                response.Headers.Add(header, new StringValues(values));
+                break;
+            case > 0:
+                response.Headers.Add(header, new StringValues(values.First()));
+                break;
         }
     }
 
