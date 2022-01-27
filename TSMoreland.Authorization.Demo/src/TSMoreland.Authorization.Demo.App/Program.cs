@@ -70,8 +70,11 @@ services
         identityOptions.Password.RequireUppercase = false;
         identityOptions.Password.RequireLowercase = true;
         identityOptions.Password.RequireDigit = true;
-        identityOptions.Password.RequireNonAlphanumeric = false;
+        identityOptions.Password.RequireNonAlphanumeric = false;        
         identityOptions.Password.RequiredLength = 8;
+        
+        identityOptions.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        identityOptions.User.RequireUniqueEmail = false;
     })
     .AddDefaultTokenProviders();
 
@@ -90,6 +93,14 @@ if (securityHeadersOptions?.EnableCors is true)
                     .WithMethods("GET", "PUT", "POST", "DELETE")
                     .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
                     .DisallowCredentials());
+            if (!securityOptions.UseCorsRestrictedPolicy)
+            {
+                return;
+            }
+            if (!securityHeadersOptions.AllowedOrigins.Any())
+            {
+                throw new ConfigurationErrorsException("Missing allowed origins, required when UseCorsRestrictedPolicy is enabled");
+            }
             corsOptions.AddPolicy("RestrictedOrigins", policy =>
                 policy
                     .WithOrigins(securityHeadersOptions.AllowedOrigins.ToArray())
