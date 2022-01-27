@@ -13,6 +13,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
 namespace TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;

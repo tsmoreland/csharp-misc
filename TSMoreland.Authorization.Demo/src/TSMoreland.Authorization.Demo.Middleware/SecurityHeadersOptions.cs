@@ -17,6 +17,20 @@ public sealed class SecurityHeadersOptions
 {
     public static readonly string SectionName = nameof(SecurityHeadersOptions);
 
+    /// <summary>
+    /// if <see langword="true"/> CORS will be enabled
+    /// </summary>
     public bool EnableCors { get; set; } = true;
+
+
+    /// <summary>
+    /// Allowed origins used if <see cref="UseCorsRestrictedPolicy"/> is <see langword="true"/>
+    /// </summary>
     public List<string> AllowedOrigins { get; set; } = new();
+
+    /// <summary>
+    /// if enabled "RestrictedOrigins" policy will be used and <see cref="AllowedOrigins"/>
+    /// must contain at least one item
+    /// </summary>
+    public bool UseCorsRestrictedPolicy { get; set; } = false;
 }
