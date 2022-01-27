@@ -13,7 +13,6 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
 namespace TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
@@ -24,9 +23,6 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-        services.TryAddScoped<SignInManager<DemoUser>>();
-        services.TryAddScoped<RoleManager<DemoRole>>();
-        
         return services
             .AddDbContext<AuthenticationDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<AuthenticationDbContext>()

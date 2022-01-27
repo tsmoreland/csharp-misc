@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Configuration;
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
@@ -38,6 +39,8 @@ services
     .AddControllers();
 
 services
+    .AddRouting()
+    .AddHttpContextAccessor()
     .Configure<DataProtectionTokenProviderOptions>(tokenProviderOptions =>
     {
         tokenProviderOptions.TokenLifespan = TimeSpan.FromHours(1);
@@ -93,7 +96,7 @@ if (securityHeadersOptions?.EnableCors is true)
                     .WithMethods("GET", "PUT", "POST", "DELETE")
                     .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
                     .DisallowCredentials());
-            if (!securityOptions.UseCorsRestrictedPolicy)
+            if (!securityHeadersOptions.UseCorsRestrictedPolicy)
             {
                 return;
             }
@@ -124,7 +127,10 @@ WebApplication app = builder.Build();
 IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
 
 app.UseSecurityHeaders();
-app.UseCors("AllowAllOrigins");
+if (securityHeadersOptions?.EnableCors == true)
+{
+    app.UseCors("AllowAllOrigins");
+}
 
 if (environment.IsDevelopment())
 {
@@ -135,7 +141,11 @@ else
     app.UseHsts();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.UseRouting();
+app.UseAuthorization();
+app.UseAuthentication();
+
+app.MapGet("/", () => new { message =  "Hello World!" });
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();

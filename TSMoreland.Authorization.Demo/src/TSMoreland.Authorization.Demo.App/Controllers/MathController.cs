@@ -11,22 +11,27 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Mvc;
 
-namespace TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
+namespace TSMoreland.Authorization.Demo.App.Controllers;
 
-public static class IdentityBuilderExtensions
+[Route("api/[controller]")]
+[ApiController]
+public class MathController : ControllerBase
 {
-    public static IdentityBuilder AddLocalUserStore(this IdentityBuilder builder)
-    {
-        ArgumentNullException.ThrowIfNull(builder, nameof(builder));
-        builder
-            .AddSignInManager<SignInManager<DemoUser>>()
-            .AddRoles<DemoRole>()
-            .AddEntityFrameworkStores<AuthenticationDbContext>();
+    public record IntegerMathResult(int Result);
 
-        return builder;
+    public record IntegerMathInputDto([Required] int X, [Required] int Y);
+
+    [HttpPost]
+    [Produces(typeof(IntegerMathResult))]
+    [Consumes(typeof(IntegerMathResult), MediaTypeNames.Application.Json)]
+    [Route("add")]
+    public IActionResult Add([FromBody] IntegerMathInputDto model)
+    {
+        (int x, int y) = model;
+        return Ok(new IntegerMathResult(x + y));
     }
 }
