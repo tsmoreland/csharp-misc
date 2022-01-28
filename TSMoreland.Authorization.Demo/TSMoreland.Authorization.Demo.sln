@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.Middleware", "src\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj", "{64F3125B-9F04-4050-B7EE-52D7360C868A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.BaiscAuthentication", "src\TSMoreland.Authorization.Demo.BaiscAuthentication\TSMoreland.Authorization.Demo.BaiscAuthentication.csproj", "{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.BasicAuthentication", "src\TSMoreland.Authorization.Demo.BasicAuthentication\TSMoreland.Authorization.Demo.BasicAuthentication.csproj", "{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
