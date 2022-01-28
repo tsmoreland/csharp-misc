@@ -15,5 +15,7 @@ namespace TSMoreland.Authorization.Demo.BaiscAuthentication;
 
 public static class BasicAuthenticationDefaults
 {
-    public static readonly string SchemeName = "BasicAuthentication";
+    public static readonly string SchemeName = "Basic";
+       
+    public static readonly string WWWAuthenticateHeader = @"Basic realm=""Authorized personnel only.""";
 }
