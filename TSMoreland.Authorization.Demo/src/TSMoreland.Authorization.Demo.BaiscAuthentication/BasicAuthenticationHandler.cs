@@ -13,6 +13,7 @@
 
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -20,25 +21,76 @@ namespace TSMoreland.Authorization.Demo.BaiscAuthentication;
 
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
+    private readonly SignInManager<DemoUser> _signInManager;
+    private readonly IUserClaimsPrincipalFactory _userClaimsPrincipalFactory;
+    
     /// <inheritdoc />
     public BasicAuthenticationHandler(
+        SignInManager<DemoUser> signInManager,
+        IUserCLaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory;
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
         ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
+        _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+        _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory);
     }
 
     /// <inheritdoc />
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            (string Username, string Password) = Response.Headers[HeaderNames.Authorization].GetBasicUsernameAndPasswordOrThrow();
+            DemoUser user = await GetUserFromUsernameOrThrow();
+            
+            await ValidateUserCredentialsOrThrow(user, Password);
+            
+            ClaimsPrincipal claimsPrincipal = await CreateClaimsPrincipalFromUserOrThrow(user);            
+            
+            Context.User = claimsPrincipal;
+            await _signInManager.ResetAccessFailedCountAsync(user);
+            
+            Logger.LogInformation("User {UserId} successfully logged in", user.Id);
+            return AuthenticationResult.Success(new AuthenticationTicket(claimsPrincipal, Schema.Name));            
+        }
+        catch (AuthenticationFailedException ex)
+        {
+            Logger.LogError(ex, "Authentication was not valid for basic authentication or credentials were invalid.");
+            return ex.Result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error occurred, returning no result to allow other handlers to attempt authorization");
+            return AuthenticationResult.NoResult();
+        }
     }
 
     /// <inheritdoc />
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        return base.HandleChallengeAsync(properties);
+        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.WWWAuthenticateHeader;
+        return base.HandleAuthenticateAsync(properties);
+    }
+    
+    private ValueTask<DemoUser> GetUserFromUsernameOrThrow(string username)
+    {
+        throw new NotImplementedException();
+    }
+    private Task ValidateUserCredentialsOrThrow(DemoUser user, string password)
+    {
+        return _signInManager.CheckPasswordSignInAsync(user, password)
+            .ContinueWith(task => 
+            {
+                // 1. if task cancelled return or throw OperationCanceledException
+                // 2. if task faulted, wrap in a failure
+                // 3. otherwise check task.Result.Succeeded and throw an exception if it's false
+            });
+    }
+    private ValueTask<ClaimsPrincipal> CreateClaimsPrincipalFromUserOrThrow(DemoUser user)
+    {
+        throw new NotImplementedException();
     }
 }
