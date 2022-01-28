@@ -14,8 +14,9 @@
 using Microsoft.AspNetCore.Authentication;
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
-using TSMoreland.Authorization.Demo.BaiscAuthentication;
+using TSMoreland.Authorization.Demo.BasicAuthentication;
 using TSMoreland.Authorization.Demo.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,13 @@ services
 
 services
     .AddRouting()
+    .AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+    })   
+    .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal)
     .AddHttpContextAccessor()
     .Configure<DataProtectionTokenProviderOptions>(tokenProviderOptions =>
     {
