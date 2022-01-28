@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.Middleware", "src\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj", "{64F3125B-9F04-4050-B7EE-52D7360C868A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSMoreland.Authorization.Demo.BaiscAuthentication", "src\TSMoreland.Authorization.Demo.BaiscAuthentication\TSMoreland.Authorization.Demo.BaiscAuthentication.csproj", "{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{64F3125B-9F04-4050-B7EE-52D7360C868A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64F3125B-9F04-4050-B7EE-52D7360C868A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64F3125B-9F04-4050-B7EE-52D7360C868A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FBF1C29-1F4B-4B6F-88A3-98A5D5C097A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
