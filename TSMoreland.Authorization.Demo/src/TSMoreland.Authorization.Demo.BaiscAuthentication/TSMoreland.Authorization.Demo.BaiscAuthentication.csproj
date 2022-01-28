@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj" />
   </ItemGroup>
 </Project>

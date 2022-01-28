@@ -11,34 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
 namespace TSMoreland.Authorization.Demo.BaiscAuthentication;
 
-public sealed class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public static class BasicAuthenticationDefaults
 {
-    /// <inheritdoc />
-    public BasicAuthenticationHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock)
-        : base(options, logger, encoder, clock)
-    {
-    }
-
-    /// <inheritdoc />
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc />
-    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
-    {
-        return base.HandleChallengeAsync(properties);
-    }
+    public static readonly string SchemeName = "BasicAuthentication";
 }
