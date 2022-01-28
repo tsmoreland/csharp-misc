@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TSMoreland.Authorization.Demo.BaiscAuthentication\TSMoreland.Authorization.Demo.BaiscAuthentication.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj" />
   </ItemGroup>

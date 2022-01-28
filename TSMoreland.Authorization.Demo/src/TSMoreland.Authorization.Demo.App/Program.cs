@@ -11,9 +11,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.AspNetCore.Authentication;
 using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using TSMoreland.Authorization.Demo.BaiscAuthentication;
 using TSMoreland.Authorization.Demo.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -111,7 +113,8 @@ services
         // update with something, anything once we have something
         authenticationOptions.DefaultAuthenticateScheme = defaultAuthenticationScheme;
         authenticationOptions.DefaultChallengeScheme = defaultChallengeScheme;
-    });
+    })
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationDefaults.SchemeName, _ => { });
 
 WebApplication app = builder.Build();
 
