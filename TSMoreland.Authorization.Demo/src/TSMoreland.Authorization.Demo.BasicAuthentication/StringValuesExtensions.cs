@@ -11,11 +11,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace TSMoreland.Authorization.Demo.BaiscAuthentication;
+using Microsoft.Extensions.Primitives;
 
-public static class BasicAuthenticationDefaults
+namespace TSMoreland.Authorization.Demo.BasicAuthentication;
+
+internal static class StringValuesExtensions
 {
-    public static readonly string SchemeName = "Basic";
-       
-    public static readonly string WWWAuthenticateHeader = @"Basic realm=""Authorized personnel only.""";
+    public static (string username, string password) GetBasicUsernameAndPasswordOrThrow(this in StringValues values)
+    {
+        throw new NotImplementedException();
+    }
+
 }

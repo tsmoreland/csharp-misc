@@ -11,23 +11,26 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
+using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
-namespace TSMoreland.Authorization.Demo.BaiscAuthentication;
+namespace TSMoreland.Authorization.Demo.BasicAuthentication;
 
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly SignInManager<DemoUser> _signInManager;
-    private readonly IUserClaimsPrincipalFactory _userClaimsPrincipalFactory;
+    private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
     
     /// <inheritdoc />
     public BasicAuthenticationHandler(
         SignInManager<DemoUser> signInManager,
-        IUserCLaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory;
+        IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
@@ -35,7 +38,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
         : base(options, logger, encoder, clock)
     {
         _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-        _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory);
+        _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
     }
 
     /// <inheritdoc />
@@ -43,18 +46,18 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
     {
         try
         {
-            (string Username, string Password) = Response.Headers[HeaderNames.Authorization].GetBasicUsernameAndPasswordOrThrow();
-            DemoUser user = await GetUserFromUsernameOrThrow();
+            (string username, string password) = Response.Headers[HeaderNames.Authorization].GetBasicUsernameAndPasswordOrThrow();
+            DemoUser user = await GetUserFromUsernameOrThrow(username);
             
-            await ValidateUserCredentialsOrThrow(user, Password);
+            await ValidateUserCredentialsOrThrow(user, password);
             
             ClaimsPrincipal claimsPrincipal = await CreateClaimsPrincipalFromUserOrThrow(user);            
             
             Context.User = claimsPrincipal;
-            await _signInManager.ResetAccessFailedCountAsync(user);
+            await _signInManager.UserManager.ResetAccessFailedCountAsync(user);
             
             Logger.LogInformation("User {UserId} successfully logged in", user.Id);
-            return AuthenticationResult.Success(new AuthenticationTicket(claimsPrincipal, Schema.Name));            
+            return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, BasicAuthenticationDefaults.SchemeName));            
         }
         catch (AuthenticationFailedException ex)
         {
@@ -64,15 +67,15 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
         catch (Exception ex)
         {
             Logger.LogError(ex, "Unexpected error occurred, returning no result to allow other handlers to attempt authorization");
-            return AuthenticationResult.NoResult();
+            return AuthenticateResult.NoResult();
         }
     }
 
     /// <inheritdoc />
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.WWWAuthenticateHeader;
-        return base.HandleAuthenticateAsync(properties);
+        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.WwwAuthenticateHeader;
+        return base.HandleChallengeAsync(properties);
     }
     
     private ValueTask<DemoUser> GetUserFromUsernameOrThrow(string username)
@@ -81,7 +84,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
     }
     private Task ValidateUserCredentialsOrThrow(DemoUser user, string password)
     {
-        return _signInManager.CheckPasswordSignInAsync(user, password)
+        return _signInManager.CheckPasswordSignInAsync(user, password, true)
             .ContinueWith(task => 
             {
                 // 1. if task cancelled return or throw OperationCanceledException
