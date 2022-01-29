@@ -26,6 +26,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
 {
     private readonly SignInManager<DemoUser> _signInManager;
     private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
+    private const string AuthenticationFailedMessage = "Not Authorized.";
     
     /// <inheritdoc />
     public BasicAuthenticationHandler(
@@ -77,23 +78,53 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
         Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.WwwAuthenticateHeader;
         return base.HandleChallengeAsync(properties);
     }
-    
-    private ValueTask<DemoUser> GetUserFromUsernameOrThrow(string username)
+
+    private Task<DemoUser> GetUserFromUsernameOrThrow(string username)
     {
-        throw new NotImplementedException();
+        return _signInManager.UserManager.FindByNameAsync(username)
+            .ContinueWith(findTask =>
+            {
+                DemoUser? user = findTask.Result;
+                findTask.Dispose();
+
+                return user ??
+                       throw new AuthenticationFailedException(AuthenticateResult.Fail(AuthenticationFailedMessage));
+
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
     }
     private Task ValidateUserCredentialsOrThrow(DemoUser user, string password)
     {
-        return _signInManager.CheckPasswordSignInAsync(user, password, true)
-            .ContinueWith(task => 
+        Task task = _signInManager.CheckPasswordSignInAsync(user, password, true)
+            .ContinueWith(signInTask => 
             {
-                // 1. if task cancelled return or throw OperationCanceledException
-                // 2. if task faulted, wrap in a failure
-                // 3. otherwise check task.Result.Succeeded and throw an exception if it's false
-            });
+                SignInResult result = signInTask.Result;
+                signInTask.Dispose();
+
+                // TODO: add logger extension that logs result (if not succsessful) - looking for the reason if it's due to lockout, ...
+
+                if (result.Succeeded)
+                {
+                    return;
+                }
+
+                Logger.LogInformation("Unable to sign in {UserId}, invalid crednetials.", user.Id);
+                throw new AuthenticationFailedException(AuthenticateResult.Fail(AuthenticationFailedMessage));
+
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+        return task;
     }
-    private ValueTask<ClaimsPrincipal> CreateClaimsPrincipalFromUserOrThrow(DemoUser user)
+    private Task<ClaimsPrincipal> CreateClaimsPrincipalFromUserOrThrow(DemoUser user)
     {
-        throw new NotImplementedException();
+        return _userClaimsPrincipalFactory.CreateAsync(user)
+            .ContinueWith(createTask =>
+            {
+                ClaimsPrincipal principal = createTask.Result;
+                createTask.Dispose();
+
+                // ... maybe unnecessary
+
+                return principal;
+
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
     }
 }
