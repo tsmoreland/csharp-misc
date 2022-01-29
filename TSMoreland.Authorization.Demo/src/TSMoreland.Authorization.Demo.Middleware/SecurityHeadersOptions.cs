@@ -18,8 +18,9 @@ public sealed class SecurityHeadersOptions
     public static readonly string SectionName = nameof(SecurityHeadersOptions);
 
     /// <summary>
-    /// Allowed origins used for restricted origins policy
+    /// Override value for content security policy, if not <see langword="null"/>
+    /// then this value will be used instead of the default.
     /// </summary>
-    public List<string> AllowedOrigins { get; set; } = new();
+    public string? ContentSecurityPolicyOverride { get; set; }
 
 }

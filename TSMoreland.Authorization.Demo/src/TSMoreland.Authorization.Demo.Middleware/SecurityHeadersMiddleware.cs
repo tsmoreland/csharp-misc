@@ -12,7 +12,6 @@
 //
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
@@ -22,26 +21,20 @@ public sealed class SecurityHeadersMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IOptions<SecurityHeadersOptions> _options;
-    private readonly ILogger<SecurityHeadersMiddleware> _logger;
 
-    public SecurityHeadersMiddleware(RequestDelegate next, IOptions<SecurityHeadersOptions> options, ILoggerFactory loggerFactory)
+    public SecurityHeadersMiddleware(RequestDelegate next, IOptions<SecurityHeadersOptions> options)
     {
-        ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
-
         _next = next ?? throw new ArgumentNullException(nameof(next));
         _options = options ?? throw new ArgumentNullException(nameof(options));
-
-        _logger = loggerFactory.CreateLogger<SecurityHeadersMiddleware>();
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        AddHeadersIfNotPresent(context.Response);
-        
+        AddHeadersIfNotPresent(context.Response, _options.Value.ContentSecurityPolicyOverride);
         await _next(context);
     }
 
-    private static void AddHeadersIfNotPresent(HttpResponse response)
+    private static void AddHeadersIfNotPresent(HttpResponse response, string? contentSecurityPolicy)
     {
         ArgumentNullException.ThrowIfNull(response, nameof(response));
 
@@ -50,8 +43,8 @@ public sealed class SecurityHeadersMiddleware
         AddHeaderIfNotPresent(response, "X-Frame-Options", "DENY");
 
         // may want to consider something in security options for these as they may be overkill
-        AddHeaderIfNotPresent(response, "Content-Security-Policy",
-            "default-src: 'none'; FeaturePolicy: 'none'; Referrer-Policy: no-referrer");
+        AddHeaderIfNotPresent(response, "Content-Security-Policy", 
+            contentSecurityPolicy ?? "default-src: 'none'; FeaturePolicy: 'none'; Referrer-Policy: no-referrer");
     }
 
     private static void AddHeaderIfNotPresent(HttpResponse response, string header, params string[] values)
