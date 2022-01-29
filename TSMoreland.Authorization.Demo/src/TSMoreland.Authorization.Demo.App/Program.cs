@@ -91,9 +91,9 @@ services
     })
     .AddDefaultTokenProviders();
 
-SecurityHeadersOptions securityHeadersOptions = builder.Configuration
-    .GetSection(SecurityHeadersOptions.SectionName)
-    .Get<SecurityHeadersOptions>();
+AdditionalCorsOptions? additionalCorsOptions = builder.Configuration
+    .GetSection(AdditionalCorsOptions.SectionName)
+    .Get<AdditionalCorsOptions>();
 
 services
 .AddCors(corsOptions =>
@@ -104,11 +104,11 @@ services
             .WithMethods("GET", "PUT", "POST", "DELETE")
             .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
             .DisallowCredentials());
-    if (securityHeadersOptions?.AllowedOrigins.Any() is true)
+    if (additionalCorsOptions?.AllowedOrigins.Any() is true)
     {
         corsOptions.AddPolicy("RestrictedOrigins", policy =>
             policy
-                .WithOrigins(securityHeadersOptions.AllowedOrigins.ToArray())
+                .WithOrigins(additionalCorsOptions.AllowedOrigins.ToArray())
                 .WithMethods("GET", "PUT", "POST", "DELETE")
                 .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
                 .DisallowCredentials());
@@ -130,6 +130,7 @@ WebApplication app = builder.Build();
 IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
 
 app.UseSecurityHeaders();
+app.UseExceptionHandler();
 
 if (environment.IsDevelopment())
 {
