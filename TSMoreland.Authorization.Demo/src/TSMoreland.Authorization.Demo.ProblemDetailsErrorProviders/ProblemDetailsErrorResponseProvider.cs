@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using TSMoreland.Authorization.Demo.Middleware.Abstractions;
 
+using HttpStatusCode = System.Net.HttpStatusCode;
+
 namespace TSMoreland.Authorization.Demo.ProblemDetailsErrorProviders;
 
 public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
@@ -68,14 +70,11 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
                             instance:  instance);
                     return JsonSerializer.SerializeAsync(httpContext.Response.Body, problem);
                 }
-            case EndpointNotFoundException endpointNotFoundException:
+            case HttpRequestException requestException:
                 {
-                    httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-                    ProblemDetails problem = _problemDetailsFactory
-                        .CreateProblemDetails(
-                            httpContext,
-                            statusCode: StatusCodes.Status404NotFound,
-                            instance: endpointNotFoundException.Endpoint?.ToString());
+                    (int statusCode, ProblemDetails problem) = BuildProblemDetailsFrom(instance, httpContext,
+                        requestException.StatusCode ?? HttpStatusCode.InternalServerError);
+                    httpContext.Response.StatusCode = statusCode;
                     return JsonSerializer.SerializeAsync(httpContext.Response.Body, problem);
                 }
             default:
@@ -93,5 +92,16 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
                     return JsonSerializer.SerializeAsync(httpContext.Response.Body, problem);
                 }
         }
+    }
+
+    private (int StatusCode, ProblemDetails Problem) BuildProblemDetailsFrom(string? instance, HttpContext httpContext, HttpStatusCode statusCode)
+    {
+        ProblemDetails problem = _problemDetailsFactory
+            .CreateProblemDetails(
+                httpContext,
+                statusCode: (int) statusCode,
+                instance: instance);
+
+        return ((int)statusCode, problem);
     }
 }

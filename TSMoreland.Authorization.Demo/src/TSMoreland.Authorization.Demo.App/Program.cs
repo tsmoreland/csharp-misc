@@ -39,7 +39,14 @@ string defaultAuthenticationScheme = BasicAuthenticationDefaults.SchemeName;
 string defaultChallengeScheme = BasicAuthenticationDefaults.SchemeName;
 
 services
-    .AddControllers();
+    .AddControllers()
+    .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
+    {
+        apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
+        apiBehaviourOptions.SuppressInferBindingSourcesForParameters = true;
+        //apiBehaviourOptions.SuppressMapClientErrors = true;
+        apiBehaviourOptions.SuppressModelStateInvalidFilter = true;
+    });
 
 services
     .AddRouting()

@@ -39,7 +39,5 @@ public sealed class StatusCodeErrorMiddleware
 
             throw new HttpRequestException(null, null, statusCode);
         }
-
-        EndpointNotFoundException.ThrowIfStatusCodeIs404(context);
     }
 }
