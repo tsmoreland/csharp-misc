@@ -24,6 +24,7 @@
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.BasicAuthentication\TSMoreland.Authorization.Demo.BasicAuthentication.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection\TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.Middleware\TSMoreland.Authorization.Demo.Middleware.csproj" />
+    <ProjectReference Include="..\TSMoreland.Authorization.Demo.ProblemDetailsErrorProviders\TSMoreland.Authorization.Demo.ProblemDetailsErrorProviders.csproj" />
   </ItemGroup>
 
 </Project>

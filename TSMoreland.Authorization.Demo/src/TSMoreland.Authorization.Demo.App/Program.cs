@@ -35,14 +35,15 @@ IServiceCollection services = builder.Services;
 
 const string defaultPolicy = ""; // TODO - this policy should match the default scheme
 const string requiredScope = ""; // this should match some scope we expected to fin
-const string defaultAuthenticationScheme = ""; // TODO
-const string defaultChallengeScheme = "";
+string defaultAuthenticationScheme = BasicAuthenticationDefaults.SchemeName; 
+string defaultChallengeScheme = BasicAuthenticationDefaults.SchemeName;
 
 services
     .AddControllers();
 
 services
     .AddRouting()
+    .AddProblemDetailsErrorProvider()
     .AddResponseCompression(options =>
     {
         options.EnableForHttps = true;
@@ -96,26 +97,24 @@ AdditionalCorsOptions? additionalCorsOptions = builder.Configuration
     .Get<AdditionalCorsOptions>();
 
 services
-.AddCors(corsOptions =>
-{
-    corsOptions.AddDefaultPolicy(policy =>
-        policy
-            .AllowAnyOrigin()
-            .WithMethods("GET", "PUT", "POST", "DELETE")
-            .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
-            .DisallowCredentials());
-    if (additionalCorsOptions?.AllowedOrigins.Any() is true)
+    .AddCors(corsOptions =>
     {
-        corsOptions.AddPolicy("RestrictedOrigins", policy =>
+        corsOptions.AddDefaultPolicy(policy =>
             policy
-                .WithOrigins(additionalCorsOptions.AllowedOrigins.ToArray())
+                .AllowAnyOrigin()
                 .WithMethods("GET", "PUT", "POST", "DELETE")
                 .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
                 .DisallowCredentials());
-    }
-});
-
-services
+        if (additionalCorsOptions?.AllowedOrigins.Any() is true)
+        {
+            corsOptions.AddPolicy("RestrictedOrigins", policy =>
+                policy
+                    .WithOrigins(additionalCorsOptions.AllowedOrigins.ToArray())
+                    .WithMethods("GET", "PUT", "POST", "DELETE")
+                    .WithHeaders("Content-Type", "Accept", "Authorization", "Accept-Encoding")
+                    .DisallowCredentials());
+        }
+    })
     .AddSecurityHeaders()
     .AddAuthentication(authenticationOptions =>
     {
@@ -130,7 +129,7 @@ WebApplication app = builder.Build();
 IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
 
 app.UseSecurityHeaders();
-app.UseExceptionHandler();
+app.UseErrorRepsonseProvidedExceptionHandler();
 
 if (environment.IsDevelopment())
 {
@@ -147,7 +146,6 @@ app.UseCors();
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapGet("/", () => new { message =  "Hello World!" });
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();
