@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -68,6 +69,7 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
                             "Invalid Entity",
                             detail: detail,
                             instance:  instance);
+                    problem.Extensions["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
                     return JsonSerializer.SerializeAsync(httpContext.Response.Body, problem);
                 }
             case HttpRequestException requestException:
@@ -89,6 +91,7 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
                             title: "Internal Server Error",
                             detail: detail,
                             instance: instance);
+                    problem.Extensions["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
                     return JsonSerializer.SerializeAsync(httpContext.Response.Body, problem);
                 }
         }
