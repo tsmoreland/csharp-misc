@@ -44,7 +44,7 @@ services
     {
         apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
         apiBehaviourOptions.SuppressInferBindingSourcesForParameters = true;
-        //apiBehaviourOptions.SuppressMapClientErrors = true;
+        apiBehaviourOptions.SuppressMapClientErrors = true;
         apiBehaviourOptions.SuppressModelStateInvalidFilter = true;
     });
 
