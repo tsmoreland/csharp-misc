@@ -11,6 +11,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using TSMoreland.Authorization.Demo.Middleware.Abstractions;
 
 namespace TSMoreland.Authorization.Demo.Middleware;
 
@@ -22,6 +25,42 @@ public static class ApplicationBuilderExtensions
 
         app.UseMiddleware<SecurityHeadersMiddleware>();
 
+        return app;
+    }
+
+    public static void UseErrorReponseProvider(this IApplicationBuilder app)
+    {
+        ArgumentNullException.ThrowIfNull(app, nameof(app));
+        IHostEnvironment environment = app.ApplicationServices.GetRequiredService<IHostEnvironment>();
+        UseErrorReponseProvider(app, environment);
+    }
+
+    public static void UseErrorReponseProvider(this IApplicationBuilder app, IHostEnvironment environment)
+    {
+        ArgumentNullException.ThrowIfNull(app, nameof(app));
+        IErrorResponseProvider provider = app.ApplicationServices.GetRequiredService<IErrorResponseProvider>();
+
+        if (environment.IsDevelopment())
+        {
+            app.Use((context, next) => provider.WriteDebugErrorResponse(context, next));
+        }
+        else
+        {
+            app.Use((context, next) => provider.WriteErrorResponse(context, next));
+        }
+    }
+
+    public static IApplicationBuilder UseStatusCodeErrorToException(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<StatusCodeErrorMiddleware>();
+    }
+
+    public static IApplicationBuilder UseErrorRepsonseProvidedExceptionHandler(this IApplicationBuilder app)
+    {
+        ArgumentNullException.ThrowIfNull(app, nameof(app));
+
+        app.UseExceptionHandler(appBuilder => appBuilder.UseErrorReponseProvider());
+        app.UseStatusCodeErrorToException();
         return app;
     }
 }
