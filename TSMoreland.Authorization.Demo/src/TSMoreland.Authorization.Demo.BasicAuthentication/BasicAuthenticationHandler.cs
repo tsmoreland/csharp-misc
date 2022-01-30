@@ -120,8 +120,12 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
             {
                 ClaimsPrincipal principal = createTask.Result;
                 createTask.Dispose();
-
-                // ... maybe unnecessary
+                ClaimsIdentity? identity = principal.Identities.FirstOrDefault();
+                if (identity is not null)
+                {
+                    identity.AddClaim(new Claim("amr", "pwd")); // TODO: move these constants to some abstractions class to be shared between authenticaiton projects
+                    identity.AddClaim(new Claim(ClaimTypes.AuthenticationMethod, BasicAuthenticationDefaults.SchemeName));
+                }
 
                 return principal;
 
