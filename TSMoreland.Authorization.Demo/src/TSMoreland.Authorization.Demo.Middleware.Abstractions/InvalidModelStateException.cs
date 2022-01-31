@@ -11,6 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -46,6 +48,8 @@ public sealed class InvalidModelStateException : Exception
     /// </summary>
     public ModelStateDictionary ModelState { get; }
 
+    [DoesNotReturn]
+    [StackTraceHidden]
     public static void ThrowIfNotValid(ModelStateDictionary modelState, string? message = null)
     {
         ArgumentNullException.ThrowIfNull(modelState, nameof(modelState));
