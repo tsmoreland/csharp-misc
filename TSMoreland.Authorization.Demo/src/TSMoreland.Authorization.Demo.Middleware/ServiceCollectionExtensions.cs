@@ -19,7 +19,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddSecurityHeaders(this IServiceCollection servics)
     {
-        return AddSecurityHeaders(servics, static options => { });
+        return servics.Configure<SecurityHeadersOptions>(options =>
+        {
+        });
     }
 
     public static IServiceCollection AddSecurityHeaders(this IServiceCollection servics, Action<SecurityHeadersOptions> setupAction)
