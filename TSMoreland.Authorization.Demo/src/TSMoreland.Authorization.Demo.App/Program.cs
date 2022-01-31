@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using TSMoreland.Authorization.Demo.BasicAuthentication;
 using TSMoreland.Authorization.Demo.Middleware;
+using TSMoreland.Authorization.Demo.Middleware.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 LoggerConfiguration loggerConfiguration = new ();
@@ -39,7 +40,10 @@ string defaultAuthenticationScheme = BasicAuthenticationDefaults.SchemeName;
 string defaultChallengeScheme = BasicAuthenticationDefaults.SchemeName;
 
 services
-    .AddControllers()
+    .AddControllers(mvcOptions =>
+    {
+        mvcOptions.Filters.Add(new ValidateModelStateActionFilter());
+    })
     .ConfigureApiBehaviorOptions(apiBehaviourOptions =>
     {
         apiBehaviourOptions.SuppressConsumesConstraintForFormFileParameters = true;
@@ -136,7 +140,8 @@ WebApplication app = builder.Build();
 IHostEnvironment environment = app.Services.GetRequiredService<IHostEnvironment>();
 
 app.UseSecurityHeaders();
-app.UseErrorRepsonseProvidedExceptionHandler();
+app.UseExceptionHandler("/error");
+app.UseStatusCodePagesWithRedirects("/error/{0}");
 
 if (environment.IsDevelopment())
 {
