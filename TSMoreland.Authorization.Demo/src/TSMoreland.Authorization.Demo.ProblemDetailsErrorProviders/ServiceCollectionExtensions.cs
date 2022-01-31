@@ -24,6 +24,9 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         services.AddSingleton<IErrorResponseProvider, ProblemDetailsErrorResponseProvider>();
+        services
+            .AddTransient<IExceptionToProblemDetailsConverter<InvalidModelStateException>,
+                InvalidStateExceptionToProblemDetailsConverter>();
 
         return services;
     }

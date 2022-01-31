@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using TSMoreland.Authorization.Demo.Middleware.Abstractions;
 
 using HttpStatusCode = System.Net.HttpStatusCode;
@@ -27,16 +31,95 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
 {
 
     private readonly ProblemDetailsFactory _problemDetailsFactory;
+    private readonly ApiBehaviorOptions _options;
+    private readonly ILogger<ProblemDetailsErrorResponseProvider> _logger;
     private const string ProblemJsonType = "application/problem+json; charset=UTF-8";
+    private sealed record class PartialProblemDetails(int StatusCode, string Title, string Description);
 
-    public ProblemDetailsErrorResponseProvider(ProblemDetailsFactory problemDetailsFactory)
+    public ProblemDetailsErrorResponseProvider(
+        ProblemDetailsFactory problemDetailsFactory,
+        IOptions<ApiBehaviorOptions> options,
+        ILoggerFactory loggerFactory)
     {
+        ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
         _problemDetailsFactory = problemDetailsFactory ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
+        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _logger = loggerFactory.CreateLogger<ProblemDetailsErrorResponseProvider>();
     }
 
     /// <inheritdoc />
     public Task WriteDebugErrorResponse(HttpContext httpContext, Func<Task> next) =>
         WriteErrorResponse(httpContext, next, true);
+
+    /// <inheritdoc />
+    public ValueTask<IActionResult> BuildResponse(ControllerBase controller)
+    {
+        if (controller == null!)
+        {
+            return ValueTask.FromException<IActionResult>(new ArgumentNullException(nameof(controller)));
+        }
+        HttpContext context = controller.HttpContext;
+        IHostEnvironment? env = context.RequestServices.GetService<IHostEnvironment>();
+        bool isDevelopment = env?.IsDevelopment() == true;
+
+        IExceptionHandlerFeature? exceptionDetails = controller.HttpContext.Features.Get<IExceptionHandlerFeature>();
+        Exception? ex = exceptionDetails?.Error;
+        ProblemDetails problem = ex is not null &&
+                  TryGetExceptionToProblemDetailsConverter(context, ex) is { } converter
+            ? converter.Convert(context, ex)
+            : new ProblemDetails();
+
+        ApplyProblemDetailsDefaults(
+            context,
+            problem,
+            problem is ValidationProblemDetails
+                ? StatusCodes.Status400BadRequest
+                : StatusCodes.Status500InternalServerError,
+            ex,
+            isDevelopment);
+
+        return ValueTask.FromResult<IActionResult>(new ObjectResult(problem));
+    }
+
+    private IExceptionToProblemDetailsConverter? TryGetExceptionToProblemDetailsConverter(
+        HttpContext context,
+        Exception exception)
+    {
+        Type type = typeof(IExceptionToProblemDetailsConverter<>);
+        Type[] genericType = new[] {exception.GetType()};
+        Type converterType = type.MakeGenericType(genericType);
+        return context.RequestServices.GetService(converterType) as IExceptionToProblemDetailsConverter;
+    }
+
+    private void ApplyProblemDetailsDefaults(
+        HttpContext httpContext,
+        ProblemDetails problemDetails,
+        int statusCode,
+        Exception? ex,
+        bool isDevelopment)
+    {
+        problemDetails.Status ??= statusCode;
+
+        if (_options.ClientErrorMapping.TryGetValue(statusCode, out ClientErrorData? clientErrorData))
+        {
+            problemDetails.Title ??= clientErrorData.Title;
+            problemDetails.Type ??= clientErrorData.Link;
+        }
+
+        string? traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
+        if (traceId != null)
+        {
+            problemDetails.Extensions["traceId"] = traceId;
+        }
+
+        if (!isDevelopment || ex is null)
+        {
+            return;
+        }
+
+        problemDetails.Extensions["exceptionMessage"] = ex.Message;
+        problemDetails.Extensions["exceptionTrace"] = ex.StackTrace;
+    }
 
     /// <inheritdoc/>
     public Task WriteErrorResponse(HttpContext httpContext, Func<Task> next) =>

@@ -16,10 +16,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TSMoreland.Authorization.Demo.Middleware.Abstractions;
 
-public interface IErrorResponseProvider
+public interface IExceptionToProblemDetailsConverter
 {
-    Task WriteErrorResponse(HttpContext httpContext, Func<Task> next);
-    Task WriteDebugErrorResponse(HttpContext httpContext, Func<Task> next);
+    ProblemDetails Convert(HttpContext context, Exception ex);
+}
 
-    ValueTask<IActionResult> BuildResponse(ControllerBase controller);
+public interface IExceptionToProblemDetailsConverter<in TException> : IExceptionToProblemDetailsConverter
+    where TException : Exception
+{
+    ProblemDetails Convert(HttpContext context, TException ex);
 }
