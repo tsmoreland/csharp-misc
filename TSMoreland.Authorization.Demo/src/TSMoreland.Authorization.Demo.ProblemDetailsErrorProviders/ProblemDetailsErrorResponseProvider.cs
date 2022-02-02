@@ -78,10 +78,15 @@ public sealed class ProblemDetailsErrorResponseProvider : IErrorResponseProvider
             ex,
             isDevelopment);
 
+        ObjectResult result = new (problem);
+        result.ContentTypes.Clear();
+        result.ContentTypes.Add("application/problem+json");
+        result.ContentTypes.Add("application/problem+xml");
+
         return ValueTask.FromResult<IActionResult>(new ObjectResult(problem));
     }
 
-    private IExceptionToProblemDetailsConverter? TryGetExceptionToProblemDetailsConverter(
+    private static IExceptionToProblemDetailsConverter? TryGetExceptionToProblemDetailsConverter(
         HttpContext context,
         Exception exception)
     {
