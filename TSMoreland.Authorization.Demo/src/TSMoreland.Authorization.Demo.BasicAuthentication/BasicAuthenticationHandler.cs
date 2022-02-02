@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using TSMoreland.Authorization.Demo.Authentication.Abstractions;
 using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
 namespace TSMoreland.Authorization.Demo.BasicAuthentication;

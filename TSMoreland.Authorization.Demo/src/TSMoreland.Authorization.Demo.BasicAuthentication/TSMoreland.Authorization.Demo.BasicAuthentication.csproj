@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TSMoreland.Authorization.Demo.Authentication.Abstractions\TSMoreland.Authorization.Demo.Authentication.Abstractions.csproj" />
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj" />
   </ItemGroup>
 </Project>
