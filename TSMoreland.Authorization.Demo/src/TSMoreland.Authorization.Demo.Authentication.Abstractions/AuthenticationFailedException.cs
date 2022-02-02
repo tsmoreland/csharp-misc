@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 
-namespace TSMoreland.Authorization.Demo.BasicAuthentication;
+namespace TSMoreland.Authorization.Demo.Authentication.Abstractions;
 
 [Serializable]
 public class AuthenticationFailedException : Exception
