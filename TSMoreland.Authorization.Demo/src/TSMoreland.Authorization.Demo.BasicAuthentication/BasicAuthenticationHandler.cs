@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
@@ -76,7 +77,12 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
     /// <inheritdoc />
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.AuthenticationChallenge;
+        string headerValue = Context.RequestServices
+            .GetServices<IChallengeSchemeProvider>()
+            .Select(p => p.Challenge)
+            .Aggregate((a, b) => string.Join(',', a, b));
+
+        Response.Headers[HeaderNames.WWWAuthenticate] = headerValue;
         return base.HandleChallengeAsync(properties);
     }
 
