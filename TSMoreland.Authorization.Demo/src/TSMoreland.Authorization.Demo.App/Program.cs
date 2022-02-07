@@ -17,6 +17,7 @@ using TSMoreland.Authorization.Demo.LocalUsers.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
+using TSMoreland.Authorization.Demo.Authentication.Abstractions;
 using TSMoreland.Authorization.Demo.BasicAuthentication;
 using TSMoreland.Authorization.Demo.Middleware;
 using TSMoreland.Authorization.Demo.Middleware.Filters;
@@ -134,6 +135,8 @@ services
         authenticationOptions.DefaultChallengeScheme = defaultChallengeScheme;
     })
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationDefaults.SchemeName, _ => { });
+
+services.AddSingleton<IChallengeSchemeProvider, BasicChallengeSchemeProvider>();
 
 WebApplication app = builder.Build();
 

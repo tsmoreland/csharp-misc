@@ -17,5 +17,5 @@ public static class BasicAuthenticationDefaults
 {
     public static readonly string SchemeName = "Basic";
        
-    public static readonly string WwwAuthenticateHeader = @"Basic realm=""Authorized personnel only.""";
+    public static readonly string AuthenticationChallenge = @"Basic realm=""Authorized personnel only.""";
 }

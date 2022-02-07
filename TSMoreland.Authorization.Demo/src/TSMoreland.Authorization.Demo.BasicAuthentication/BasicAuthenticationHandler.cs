@@ -76,7 +76,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
     /// <inheritdoc />
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.WwwAuthenticateHeader;
+        Response.Headers[HeaderNames.WWWAuthenticate] = BasicAuthenticationDefaults.AuthenticationChallenge;
         return base.HandleChallengeAsync(properties);
     }
 

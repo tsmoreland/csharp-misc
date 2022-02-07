@@ -11,13 +11,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace TSMoreland.Authorization.Demo.ApiKeyAuthentication;
+using TSMoreland.Authorization.Demo.Authentication.Abstractions;
 
-public static class ApiKeyAuthenticationDefaults
+namespace TSMoreland.Authorization.Demo.BasicAuthentication;
+
+public sealed class BasicChallengeSchemeProvider : IChallengeSchemeProvider
 {
-    public static readonly string SchemeName = "ApiKey";
-       
-    public static readonly string AuthenticationChallenge = @"ApiKey realm=""Authorized personnel only.""";
-
-    public static readonly string HeaderName = "X-Api-Key";
+    /// <inheritdoc />
+    public string Challenge => BasicAuthenticationDefaults.AuthenticationChallenge;
 }
