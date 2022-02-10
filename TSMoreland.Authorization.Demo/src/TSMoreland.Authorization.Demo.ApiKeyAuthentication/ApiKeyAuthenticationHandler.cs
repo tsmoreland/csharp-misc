@@ -34,9 +34,29 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
     }
 
     /// <inheritdoc />
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+
+            await ValueTask.CompletedTask;
+
+            string apiKey = Response.Headers[HeaderNames.Authorization].GetApiKeyOrThrow();
+            await ValidateApiKeyOrThrow(apiKey);
+
+
+            throw new NotImplementedException();
+        }
+        catch (AuthenticationFailedException ex)
+        {
+            Logger.LogError(ex, "Authentication was not valid for basic authentication or credentials were invalid.");
+            return ex.Result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error occurred, returning no result to allow other handlers to attempt authorization");
+            return AuthenticateResult.NoResult();
+        }
     }
 
     /// <inheritdoc />
@@ -49,5 +69,10 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
 
         Response.Headers[HeaderNames.WWWAuthenticate] = headerValue;
         return base.HandleChallengeAsync(properties);
+    }
+
+    private ValueTask ValidateApiKeyOrThrow(string apiKey)
+    {
+        return ValueTask.FromException(new NotImplementedException());
     }
 }
