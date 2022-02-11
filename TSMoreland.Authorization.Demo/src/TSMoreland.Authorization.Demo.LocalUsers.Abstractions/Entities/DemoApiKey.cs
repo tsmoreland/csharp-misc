@@ -15,7 +15,7 @@ using System.Text;
 
 namespace TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
-internal class DemoApiKey
+public sealed class DemoApiKey
 {
     public DemoApiKey(string name, DemoUser user, DateTime? notAfter = null)
         : this(name, user?.Id ?? throw new ArgumentNullException(nameof(user)), notAfter)
