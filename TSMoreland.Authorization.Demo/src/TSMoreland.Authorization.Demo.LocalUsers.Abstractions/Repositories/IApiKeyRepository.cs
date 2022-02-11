@@ -17,7 +17,7 @@ namespace TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Repositories;
 
 public interface IApiKeyRepository
 {
-    ValueTask<DemoUser> GetUserFromApiKeyAsync(string apiKey);
-    ValueTask<DemoUser> AddApiKeyForUser(DemoUser user, string name, DateTime? notAfter);
-    ValueTask<DemoUser> RemoveApiKeyForUser(string name);
+    ValueTask<DemoUser> GetUserFromApiKeyAsync(string apiKey, CancellationToken cancellationToken);
+    ValueTask<DemoApiKey> AddApiKeyForUserAsync(DemoUser user, string name, DateTime? notAfter, CancellationToken cancellationToken);
+    ValueTask RemoveApiKeyForUserAsync(string name, CancellationToken cancellationToken);
 }
