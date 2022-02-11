@@ -30,6 +30,8 @@ public sealed class AuthenticationDbContext : IdentityDbContext<DemoUser, DemoRo
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
+    public DbSet<DemoApiKey> ApiKeys { get; init; } = null!;
+
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -58,5 +60,27 @@ public sealed class AuthenticationDbContext : IdentityDbContext<DemoUser, DemoRo
 
         builder.Entity<IdentityUserRole<Guid>>().ToTable("DemoUserRoles");
         builder.Entity<IdentityRoleClaim<Guid>>().ToTable("DemoRoleClaims");
+
+        EntityTypeBuilder<DemoApiKey> apiKeysEntity = builder.Entity<DemoApiKey>();
+        apiKeysEntity.ToTable("DemoApiKeys");
+        apiKeysEntity.HasKey(nameof(DemoApiKey.Id));
+        apiKeysEntity.HasIndex(nameof(DemoApiKey.ApiKey));
+        apiKeysEntity.HasIndex(nameof(DemoApiKey.Name));
+
+        apiKeysEntity.Property(e => e.Id).IsRequired();
+        apiKeysEntity.Property(e => e.Name).HasMaxLength(50).IsRequired().IsUnicode(false);
+        apiKeysEntity.Property(e => e.UserId).IsRequired();
+        apiKeysEntity
+            .Property(e => e.NotBefore)
+            .HasConversion(dateTime => dateTime.Ticks, ticks => new DateTime(ticks))
+            .IsRequired();
+
+        apiKeysEntity
+            .Property(e => e.NotAfter)
+            .HasConversion(
+                dateTime =>
+                    dateTime.HasValue ? dateTime.Value.Ticks : 0,
+                ticks => ticks != 0 ? new DateTime(ticks) : null)
+            .IsRequired(false);
     }
 }

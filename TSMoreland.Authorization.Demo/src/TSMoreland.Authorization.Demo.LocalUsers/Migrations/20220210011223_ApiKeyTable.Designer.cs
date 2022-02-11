@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TSMoreland.Authorization.Demo.LocalUsers;
 
@@ -10,9 +11,10 @@ using TSMoreland.Authorization.Demo.LocalUsers;
 namespace TSMoreland.Authorization.Demo.LocalUsers.Migrations
 {
     [DbContext(typeof(AuthenticationDbContext))]
-    partial class AuthenticationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220210011223_ApiKeyTable")]
+    partial class ApiKeyTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -144,8 +146,6 @@ namespace TSMoreland.Authorization.Demo.LocalUsers.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApiKey");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("DemoApiKeys", (string)null);
                 });
