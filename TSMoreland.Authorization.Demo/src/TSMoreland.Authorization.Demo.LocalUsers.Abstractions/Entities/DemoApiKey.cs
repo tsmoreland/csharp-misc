@@ -31,6 +31,7 @@ public sealed class DemoApiKey
 
         Id = Guid.NewGuid();
         Name = name;
+        NormalizedName = name.ToUpperInvariant();
         UserId = userId;
         ApiKey = BuildApiKey();
         NotBefore = DateTime.UtcNow;
@@ -45,6 +46,7 @@ public sealed class DemoApiKey
     public Guid Id { get; init; }
 
     public string Name { get; init; } = string.Empty;
+    public string NormalizedName { get; init; } = string.Empty;
 
     public Guid UserId { get; init; }
 
