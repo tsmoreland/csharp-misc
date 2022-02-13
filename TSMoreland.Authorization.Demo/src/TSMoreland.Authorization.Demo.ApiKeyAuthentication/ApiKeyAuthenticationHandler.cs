@@ -18,19 +18,26 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using TSMoreland.Authorization.Demo.Authentication.Abstractions;
+using TSMoreland.Authorization.Demo.LocalUsers.Abstractions;
+using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
+using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Repositories;
 
 namespace TSMoreland.Authorization.Demo.ApiKeyAuthentication;
 
 public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
+    private readonly IApiKeyRepository _repository;
+
     /// <inheritdoc />
     public ApiKeyAuthenticationHandler(
+        IApiKeyRepository repository,
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
         ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     /// <inheritdoc />
@@ -38,23 +45,32 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
     {
         try
         {
-
             await ValueTask.CompletedTask;
-
             string apiKey = Response.Headers[HeaderNames.Authorization].GetApiKeyOrThrow();
             await ValidateApiKeyOrThrow(apiKey);
 
+            DemoUser user = await _repository.GetUserFromApiKeyAsync(apiKey, CancellationToken.None);
 
-            throw new NotImplementedException();
         }
         catch (AuthenticationFailedException ex)
         {
             Logger.LogError(ex, "Authentication was not valid for basic authentication or credentials were invalid.");
             return ex.Result;
         }
+        catch (UserNotFoundException ex)
+        {
+            Logger.LogError(ex, "user for provided api key not found");
+            return AuthenticateResult.NoResult();
+        }
+        catch (ApiKeyNotFoundException ex) 
+        {
+            Logger.LogError(ex, "api key not found");
+            return AuthenticateResult.NoResult();
+        }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Unexpected error occurred, returning no result to allow other handlers to attempt authorization");
+            Logger.LogError(ex,
+                "Unexpected error occurred, returning no result to allow other handlers to attempt authorization");
             return AuthenticateResult.NoResult();
         }
     }
