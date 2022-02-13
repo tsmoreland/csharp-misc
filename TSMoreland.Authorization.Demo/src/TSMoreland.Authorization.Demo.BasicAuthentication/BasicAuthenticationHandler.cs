@@ -130,7 +130,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
                 ClaimsIdentity? identity = principal.Identities.FirstOrDefault();
                 if (identity is not null)
                 {
-                    identity.AddClaim(new Claim("amr", "pwd")); // TODO: move these constants to some abstractions class to be shared between authenticaiton projects
+                    identity.AddClaim(new Claim(ClaimDefinitions.AuthenticationMethod, ClaimDefinitions.PasswordBased)); 
                     identity.AddClaim(new Claim(ClaimTypes.AuthenticationMethod, BasicAuthenticationDefaults.SchemeName));
                 }
 
