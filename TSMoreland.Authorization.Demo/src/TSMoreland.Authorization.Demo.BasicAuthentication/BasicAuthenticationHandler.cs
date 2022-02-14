@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using TSMoreland.Authorization.Demo.Authentication.Abstractions;
+using TSMoreland.Authorization.Demo.Authentication.Abstractions.Extensions;
 using TSMoreland.Authorization.Demo.LocalUsers.Abstractions.Entities;
 
 namespace TSMoreland.Authorization.Demo.BasicAuthentication;
@@ -106,9 +107,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
             {
                 SignInResult result = signInTask.Result;
                 signInTask.Dispose();
-
-                // TODO: add logger extension that logs result (if not succsessful) - looking for the reason if it's due to lockout, ...
-
+                Logger.LogFailureReason(result);
                 if (result.Succeeded)
                 {
                     return;
