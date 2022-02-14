@@ -11,8 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,10 +29,12 @@ namespace TSMoreland.Authorization.Demo.ApiKeyAuthentication;
 public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IApiKeyRepository _repository;
+    private readonly IUserClaimsPrincipalFactory<DemoUser> _userClaimsPrincipalFactory;
 
     /// <inheritdoc />
     public ApiKeyAuthenticationHandler(
         IApiKeyRepository repository,
+        IUserClaimsPrincipalFactory<DemoUser> userClaimsPrincipalFactory,
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
@@ -38,6 +42,7 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
         : base(options, logger, encoder, clock)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _userClaimsPrincipalFactory = userClaimsPrincipalFactory ?? throw new ArgumentNullException(nameof(userClaimsPrincipalFactory));
     }
 
     /// <inheritdoc />
@@ -50,6 +55,12 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
             await ValidateApiKeyOrThrow(apiKey);
 
             DemoUser user = await _repository.GetUserFromApiKeyAsync(apiKey, CancellationToken.None);
+
+            ClaimsPrincipal claimsPrincipal = await CreateClaimsPrincipalFromUserOrThrow(user);            
+            Context.User = claimsPrincipal;
+
+            Logger.LogInformation("User {UserId} successfully logged in using Api-Key", user.Id);
+            return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, ApiKeyAuthenticationDefaults.SchemeName));            
 
         }
         catch (AuthenticationFailedException ex)
@@ -90,5 +101,25 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
     private ValueTask ValidateApiKeyOrThrow(string apiKey)
     {
         return ValueTask.FromException(new NotImplementedException());
+    }
+    private Task<ClaimsPrincipal> CreateClaimsPrincipalFromUserOrThrow(DemoUser user)
+    {
+        return _userClaimsPrincipalFactory.CreateAsync(user)
+            .ContinueWith(createTask =>
+            {
+                ClaimsPrincipal principal = createTask.Result;
+                createTask.Dispose();
+                ClaimsIdentity? identity = principal.Identities.FirstOrDefault();
+                if (identity is null)
+                {
+                    return principal;
+                }
+
+                identity.AddClaim(new Claim(ClaimDefinitions.AuthenticationMethod, ClaimDefinitions.PersonalIdentificationNumber)); // TODO: see if there's something better than pin
+                identity.AddClaim(new Claim(ClaimTypes.AuthenticationMethod, ApiKeyAuthenticationDefaults.SchemeName));
+
+                return principal;
+
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
     }
 }
