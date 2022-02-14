@@ -98,9 +98,13 @@ public sealed class ApiKeyAuthenticationHandler : AuthenticationHandler<Authenti
         return base.HandleChallengeAsync(properties);
     }
 
-    private ValueTask ValidateApiKeyOrThrow(string apiKey)
+    private static ValueTask ValidateApiKeyOrThrow(string apiKey)
     {
-        return ValueTask.FromException(new NotImplementedException());
+        return apiKey switch
+        {
+            {Length: 0} => ValueTask.FromException(new AuthenticationFailedException(AuthenticateResult.NoResult(), "api key cannot be empty")),
+            _ => ValueTask.CompletedTask,
+        };
     }
     private Task<ClaimsPrincipal> CreateClaimsPrincipalFromUserOrThrow(DemoUser user)
     {
