@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TSMoreland.Authorization.Demo.LocalUsers.Abstractions;
@@ -22,10 +23,12 @@ namespace TSMoreland.Authorization.Demo.LocalUsers;
 public sealed class ApiKeyRepository : IApiKeyRepository
 {
     private readonly AuthenticationDbContext _dbContext;
+    private readonly SignInManager<DemoUser> _signInManager;
 
-    public ApiKeyRepository(AuthenticationDbContext dbContext)
+    public ApiKeyRepository(AuthenticationDbContext dbContext, SignInManager<DemoUser> signInManager)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
     }
 
     /// <inheritdoc />
@@ -36,11 +39,15 @@ public sealed class ApiKeyRepository : IApiKeyRepository
             return ValueTask.FromException<DemoUser>(new ArgumentNullException(nameof(apiKey)));
         }
 
-        return GetUserFromApiKey(_dbContext, apiKey, cancellationToken);
+
+        return apiKey is not { Length: > 0 }
+            ? ValueTask.FromException<DemoUser>(new ArgumentNullException(nameof(apiKey)))
+            : GetUserFromApiKey(_dbContext, apiKey, FilterVisitor, cancellationToken);
 
         static async ValueTask<DemoUser> GetUserFromApiKey(
             AuthenticationDbContext dbContext,
             string apiKey,
+            Func<DemoUser, bool> filterVisitor,
             CancellationToken cancellationToken)
         {
             Guid userId = await dbContext.ApiKeys
@@ -53,13 +60,32 @@ public sealed class ApiKeyRepository : IApiKeyRepository
                 throw new ApiKeyNotFoundException();
             }
 
-            DemoUser? user = await dbContext.Users
-                .AsNoTracking()
-                .Where(e => e.Id == userId)
-                .FirstOrDefaultAsync(cancellationToken);
+            try
+            {
+                DemoUser? user = await dbContext.Users
+                    .AsNoTracking()
+                    .Where(e => e.Id == userId)
+                    .SingleOrDefaultAsync(cancellationToken);
+                return user is not null && await filterVisitor(user)
+                    ? user
+                    : throw new UserNotFoundException();
+            }
+            catch (Exception ex) when (ex is not UserNotFoundException)
+            {
+                throw new UserNotFoundException("error occurred searching for user", ex);
+            }
 
-            return user ?? throw new UserNotFoundException();
         }
+    }
+    /// <summary>
+    /// Determines if user can signin
+    /// </summary>
+    /// <remarks>
+    /// expectes to be run from an asyhronous thread and will lock that thread waiting for sigin 
+    /// </remarks>
+    private ValueTask<bool> FilterVisitor(DemoUser user)
+    {
+        return _signInManager.CanSignInAsync(user);
     }
 
     /// <inheritdoc />
