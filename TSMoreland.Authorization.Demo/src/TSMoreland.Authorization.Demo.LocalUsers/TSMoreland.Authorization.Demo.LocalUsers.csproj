@@ -18,4 +18,8 @@
     <ProjectReference Include="..\TSMoreland.Authorization.Demo.LocalUsers.Abstractions\TSMoreland.Authorization.Demo.LocalUsers.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 </Project>
