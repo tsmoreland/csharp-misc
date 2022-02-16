@@ -11,6 +11,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,8 @@ public sealed class TargetedMessageConsumer : IConsumer<TargetedMessage>
     /// <inheritdoc />
     public Task Consume(ConsumeContext<TargetedMessage> context)
     {
-        _logger.LogInformation("Targeted Received {Message}", context.Message.Content);
-        return Task.CompletedTask;
+        _logger.LogInformation("Targeted Received {Message}", context.Message.Id);
+        return context.RespondAsync<TargetedMessageResult>(
+            new TargetedMessageResult(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)));
     }
 }

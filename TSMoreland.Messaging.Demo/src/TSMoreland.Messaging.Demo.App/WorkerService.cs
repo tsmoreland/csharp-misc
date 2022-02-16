@@ -22,12 +22,17 @@ namespace TSMoreland.Messaging.Demo.App;
 public sealed class WorkerService : IHostedService, IDisposable
 {
     private readonly IBus _bus;
+    private readonly IRequestClient<TargetedMessage> _requestClient;
     private readonly Timer _timer;
     private readonly ILogger<WorkerService> _logger;
 
-    public WorkerService(IBus bus, ILoggerFactory loggerFactory)
+    public WorkerService(
+        IBus bus,
+        IRequestClient<TargetedMessage> requestClient,
+        ILoggerFactory loggerFactory)
     {
         _bus = bus;
+        _requestClient = requestClient;
         _logger = loggerFactory.CreateLogger<WorkerService>();
         _timer = new Timer(Callback, this, Timeout.Infinite, Timeout.Infinite);
     }
@@ -45,14 +50,12 @@ public sealed class WorkerService : IHostedService, IDisposable
         try
         {
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
-            string content = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-            Message message = new(content);
-            TargetedMessage targetedMessage = new(content);
+            TargetedMessage targetedMessage = new(Guid.NewGuid());
 
-            Task messageTask = _bus.Publish(message, CancellationToken.None);
-            Task targettedMessageTask = _bus.Publish(targetedMessage, CancellationToken.None);
-            await Task.WhenAll(messageTask, targettedMessageTask)
-                .ConfigureAwait(false);
+            Response<TargetedMessageResult> response = await _requestClient.GetResponse<TargetedMessageResult>(targetedMessage, CancellationToken.None);
+
+            Message message = new(response.Message.Content);
+            await _bus.Publish(message, CancellationToken.None);
         }
         finally
         {

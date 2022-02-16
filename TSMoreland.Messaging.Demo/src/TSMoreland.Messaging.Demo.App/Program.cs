@@ -34,6 +34,8 @@ builder.ConfigureServices((hostContext, services) =>
                 factoryConfigurator.ConfigureEndpoints(busRegistrationContext);
             });
 
+            configureTransit.AddRequestClient<TargetedMessage>();
+
         })
         .AddMassTransitHostedService()
         .AddHostedService<WorkerService>();
