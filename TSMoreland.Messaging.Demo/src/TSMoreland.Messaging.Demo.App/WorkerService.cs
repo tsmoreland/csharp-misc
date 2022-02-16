@@ -45,9 +45,13 @@ public sealed class WorkerService : IHostedService, IDisposable
         try
         {
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
-            Message message = new(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
+            string content = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            Message message = new(content);
+            TargetedMessage targetedMessage = new(content);
 
-            await _bus.Publish(message, CancellationToken.None)
+            Task messageTask = _bus.Publish(message, CancellationToken.None);
+            Task targettedMessageTask = _bus.Publish(targetedMessage, CancellationToken.None);
+            await Task.WhenAll(messageTask, targettedMessageTask)
                 .ConfigureAwait(false);
         }
         finally
