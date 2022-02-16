@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Immutable;
+using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MassTransit;
@@ -15,14 +16,20 @@ builder
             .AddConsole());
 builder.ConfigureServices((hostContext, services) =>
 {
+    const string rootNamespace = "TSMoreland.Messaging";
+
     services
         .AddMassTransit(configureTransit =>
         {
             Assembly entry = Assembly.GetEntryAssembly()!;
-            IEnumerable<Type> consumers = entry.GetTypes()
+
+            IEnumerable<Type> allTypes = entry.GetTypes()
                 .Union(entry.GetReferencedAssemblies()
-                    .Where(assemblyName => assemblyName.FullName.StartsWith("TSMoreland"))
+                    .Where(assemblyName => assemblyName.FullName.StartsWith(rootNamespace))
                     .SelectMany(assemblyName => Assembly.Load(assemblyName).GetTypes()))
+                .ToImmutableArray();
+
+            IEnumerable<Type> consumers = allTypes
                 .Where(type => typeof(IConsumer).IsAssignableFrom(type));
             foreach (Type consumer in consumers)
             {
@@ -34,8 +41,12 @@ builder.ConfigureServices((hostContext, services) =>
                 factoryConfigurator.ConfigureEndpoints(busRegistrationContext);
             });
 
-            configureTransit.AddRequestClient<TargetedMessage>();
-
+            IEnumerable<Type> serviceRequests = allTypes
+                .Where(type => typeof(IServiceRequest).IsAssignableFrom(type));
+            foreach (Type serviceRequest in serviceRequests)
+            {
+                configureTransit.AddRequestClient(serviceRequest);
+            }
         })
         .AddMassTransitHostedService()
         .AddHostedService<WorkerService>();

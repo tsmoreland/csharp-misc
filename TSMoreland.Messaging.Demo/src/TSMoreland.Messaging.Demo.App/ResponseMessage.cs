@@ -19,4 +19,4 @@ using System.Threading.Tasks;
 
 namespace TSMoreland.Messaging.Demo.App;
 
-public sealed record class TargetedMessageResult(string Content);
+public sealed record class ResponseMessage(string Content);

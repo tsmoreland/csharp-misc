@@ -11,13 +11,26 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+using MassTransit;
+using Microsoft.Extensions.Logging;
+
 namespace TSMoreland.Messaging.Demo.App;
 
-internal class TargetedMessageQueueConsumerPair : IConsumerQueuePair
+public sealed class RequestMessageConsumer : IConsumer<RequestMessage>
 {
-    /// <inheritdoc />
-    public Type ConsumerType => typeof(TargetedMessageConsumer);
+    private readonly ILogger<RequestMessageConsumer> _logger;
+
+    public RequestMessageConsumer(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<RequestMessageConsumer>();
+    }
 
     /// <inheritdoc />
-    public string QueueName => "targeted-queue";
+    public Task Consume(ConsumeContext<RequestMessage> context)
+    {
+        _logger.LogInformation("Targeted Received {Message}", context.Message.Id);
+        return context.RespondAsync<ResponseMessage>(
+            new ResponseMessage(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)));
+    }
 }

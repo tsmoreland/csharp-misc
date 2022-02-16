@@ -13,4 +13,10 @@
 
 namespace TSMoreland.Messaging.Demo.App;
 
-public sealed record class TargetedMessage(Guid Id);
+/// <summary>
+/// Common base interface for all servic requests, used to identify them
+/// and configure request clients
+/// </summary>
+public interface IServiceRequest
+{
+}

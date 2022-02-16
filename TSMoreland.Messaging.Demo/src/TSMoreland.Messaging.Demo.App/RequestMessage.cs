@@ -11,13 +11,6 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using MassTransit;
-
 namespace TSMoreland.Messaging.Demo.App;
 
-public interface IConsumerQueuePair
-{
-    public Type ConsumerType { get; }
-    public string QueueName { get; }
-
-}
+public sealed record class RequestMessage(Guid Id) : IServiceRequest;

@@ -22,13 +22,13 @@ namespace TSMoreland.Messaging.Demo.App;
 public sealed class WorkerService : IHostedService, IDisposable
 {
     private readonly IBus _bus;
-    private readonly IRequestClient<TargetedMessage> _requestClient;
+    private readonly IRequestClient<RequestMessage> _requestClient;
     private readonly Timer _timer;
     private readonly ILogger<WorkerService> _logger;
 
     public WorkerService(
         IBus bus,
-        IRequestClient<TargetedMessage> requestClient,
+        IRequestClient<RequestMessage> requestClient,
         ILoggerFactory loggerFactory)
     {
         _bus = bus;
@@ -50,9 +50,9 @@ public sealed class WorkerService : IHostedService, IDisposable
         try
         {
             _timer.Change(Timeout.Infinite, Timeout.Infinite);
-            TargetedMessage targetedMessage = new(Guid.NewGuid());
+            RequestMessage requestMessage = new(Guid.NewGuid());
 
-            Response<TargetedMessageResult> response = await _requestClient.GetResponse<TargetedMessageResult>(targetedMessage, CancellationToken.None);
+            Response<ResponseMessage> response = await _requestClient.GetResponse<ResponseMessage>(requestMessage, CancellationToken.None);
 
             Message message = new(response.Message.Content);
             await _bus.Publish(message, CancellationToken.None);
