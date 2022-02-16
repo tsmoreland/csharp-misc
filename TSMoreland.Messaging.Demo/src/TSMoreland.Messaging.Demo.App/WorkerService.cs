@@ -56,6 +56,10 @@ public sealed class WorkerService : IHostedService, IDisposable
 
             Message message = new(response.Message.Content);
             await _bus.Publish(message, CancellationToken.None);
+
+            QueueMessage queueMessage = new(response.Message.Content);
+            ISendEndpoint endpoint = await _bus.GetSendEndpoint(new Uri("queue:queue1"));
+            await endpoint.Send(queueMessage);
         }
         finally
         {

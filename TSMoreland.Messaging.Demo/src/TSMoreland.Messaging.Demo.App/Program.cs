@@ -33,11 +33,20 @@ builder.ConfigureServices((hostContext, services) =>
                 .Where(type => typeof(IConsumer).IsAssignableFrom(type));
             foreach (Type consumer in consumers)
             {
-                configureTransit.AddConsumer(consumer);
+                if (consumer.FullName != typeof(QueueMessageConsumer).FullName)
+                {
+                    configureTransit.AddConsumer(consumer);
+                }
             }
 
             configureTransit.UsingInMemory((busRegistrationContext, factoryConfigurator) =>
             {
+                factoryConfigurator.ReceiveEndpoint("queue1", receiveEndpointConfigurer =>
+                {
+                    // relies on parameterless constructor, injection would require a configurer type which could also accept injected types or factories
+                    receiveEndpointConfigurer.Consumer<QueueMessageConsumer>();
+                });
+
                 factoryConfigurator.ConfigureEndpoints(busRegistrationContext);
             });
 
