@@ -11,9 +11,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using MassTransit;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -22,16 +21,19 @@ namespace TSMoreland.Messaging.Demo.App;
 public sealed class WorkerService : IHostedService, IDisposable
 {
     private readonly IBus _bus;
+    private readonly IMediator _mediator;
     private readonly IRequestClient<RequestMessage> _requestClient;
     private readonly Timer _timer;
     private readonly ILogger<WorkerService> _logger;
 
     public WorkerService(
         IBus bus,
+        IMediator mediator,
         IRequestClient<RequestMessage> requestClient,
         ILoggerFactory loggerFactory)
     {
         _bus = bus;
+        _mediator = mediator;
         _requestClient = requestClient;
         _logger = loggerFactory.CreateLogger<WorkerService>();
         _timer = new Timer(Callback, this, Timeout.Infinite, Timeout.Infinite);
@@ -54,12 +56,27 @@ public sealed class WorkerService : IHostedService, IDisposable
 
             Response<ResponseMessage> response = await _requestClient.GetResponse<ResponseMessage>(requestMessage, CancellationToken.None);
 
-            Message message = new(response.Message.Content);
-            await _bus.Publish(message, CancellationToken.None);
-
             QueueMessage queueMessage = new(response.Message.Content);
             ISendEndpoint endpoint = await _bus.GetSendEndpoint(new Uri("queue:queue1"));
             await endpoint.Send(queueMessage);
+    
+            Message message = new(response.Message.Content);
+
+            Task<Message> reflectedTask = _mediator.Send(new Ping(message), CancellationToken.None);
+            Task busTask = _bus.Publish(message, CancellationToken.None);
+
+            await Task.WhenAll(reflectedTask, busTask);
+
+            Message reflected = reflectedTask.Result;
+            if (reflected == message)
+            {
+                _logger.LogInformation("Message reflected back via medaitor on {Thread}", Environment.CurrentManagedThreadId);
+            }
+
+            // like thread this will publish to the current thread, essentially a decoupled event - but still an event whil Bus uses
+            // thread pool.  For in process MediatR is still the better option (for simplicity) but worth noting the difference anyway
+            _logger.LogInformation("publish notification from {Thread}", Environment.CurrentManagedThreadId);
+            await _mediator.Publish(new GreekLetterNotification(DateTime.UtcNow.ToShortTimeString()), CancellationToken.None);
         }
         finally
         {
