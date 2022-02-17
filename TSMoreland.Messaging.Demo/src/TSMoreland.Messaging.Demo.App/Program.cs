@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MassTransit;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using TSMoreland.Messaging.Demo.App;
 using IMsHost = Microsoft.Extensions.Hosting.IHost;
@@ -18,15 +19,19 @@ builder.ConfigureServices((hostContext, services) =>
 {
     const string rootNamespace = "TSMoreland.Messaging";
 
+    Assembly entry = Assembly.GetEntryAssembly()!;
+    Assembly[] assemblies = entry.GetReferencedAssemblies()
+        .Where(assemblyName => assemblyName.FullName.StartsWith(rootNamespace))
+        .Select(Assembly.Load)
+        .Union(new [] { entry })
+        .ToArray();
+
     services
+        .AddMediatR(assemblies)
         .AddMassTransit(configureTransit =>
         {
-            Assembly entry = Assembly.GetEntryAssembly()!;
-
-            IEnumerable<Type> allTypes = entry.GetTypes()
-                .Union(entry.GetReferencedAssemblies()
-                    .Where(assemblyName => assemblyName.FullName.StartsWith(rootNamespace))
-                    .SelectMany(assemblyName => Assembly.Load(assemblyName).GetTypes()))
+            ImmutableArray<Type> allTypes = entry.GetTypes()
+                .Union(assemblies.SelectMany(assembly => assembly.GetTypes()))
                 .ToImmutableArray();
 
             IEnumerable<Type> consumers = allTypes
