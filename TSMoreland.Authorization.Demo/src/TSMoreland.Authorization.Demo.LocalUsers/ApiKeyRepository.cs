@@ -47,7 +47,7 @@ public sealed class ApiKeyRepository : IApiKeyRepository
         static async ValueTask<DemoUser> GetUserFromApiKey(
             AuthenticationDbContext dbContext,
             string apiKey,
-            Func<DemoUser, bool> filterVisitor,
+            Func<DemoUser, Task<bool>> filterVisitor,
             CancellationToken cancellationToken)
         {
             Guid userId = await dbContext.ApiKeys
@@ -83,7 +83,7 @@ public sealed class ApiKeyRepository : IApiKeyRepository
     /// <remarks>
     /// expectes to be run from an asyhronous thread and will lock that thread waiting for sigin 
     /// </remarks>
-    private ValueTask<bool> FilterVisitor(DemoUser user)
+    private Task<bool> FilterVisitor(DemoUser user)
     {
         return _signInManager.CanSignInAsync(user);
     }
