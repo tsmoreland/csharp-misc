@@ -65,18 +65,26 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return ValueTask.CompletedTask;
         }
 
-        WindowState = WindowState.Normal;
-        Left = 0;
-        Top = 0;
-        Width = SystemParameters.PrimaryScreenWidth - 0.5;
-        Height = SystemParameters.PrimaryScreenWidth - 0.5;
+        Uri? uri = null;
+        try
+        {
+            WindowState = WindowState.Normal;
+            Left = 0;
+            Top = 0;
+            Width = SystemParameters.PrimaryScreenWidth - 0.5;
+            Height = SystemParameters.PrimaryScreenWidth - 0.5;
 
-        var uri = new Uri(_files[_index]);
-        ImageSource = new BitmapImage(uri);
-        Title = _files[_index];
+            uri = new Uri(_files[_index]);
+            ImageSource = new BitmapImage(uri);
+            Title = _files[_index];
 
-        Width = SystemParameters.PrimaryScreenWidth;
-        Height = SystemParameters.PrimaryScreenWidth;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Height = SystemParameters.PrimaryScreenWidth;
+        }
+        catch (Exception)
+        {
+            MessageBox.Show($"Failed to read {uri}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
 
         return ValueTask.CompletedTask;
     }
