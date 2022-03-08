@@ -17,19 +17,19 @@ namespace TSMoreland.Authorization.Demo.Middleware;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSecurityHeaders(this IServiceCollection servics)
+    public static IServiceCollection AddSecurityHeaders(this IServiceCollection services)
     {
-        return servics.Configure<SecurityHeadersOptions>(options =>
+        return services.Configure<SecurityHeadersOptions>(options =>
         {
         });
     }
 
-    public static IServiceCollection AddSecurityHeaders(this IServiceCollection servics, Action<SecurityHeadersOptions> setupAction)
+    public static IServiceCollection AddSecurityHeaders(this IServiceCollection services, Action<SecurityHeadersOptions> setupAction)
     {
-        ArgumentNullException.ThrowIfNull(servics, nameof(servics));
+        ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-        servics.Configure(setupAction);
+        services.Configure(setupAction);
 
-        return servics;
+        return services;
     }
 }
