@@ -149,7 +149,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             Multiselect = true,
             Filter = "Jpeg Images (.jpg)|*.jpg",
-            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+            InitialDirectory = Environment.CurrentDirectory,
         };
 
         bool? result = dialog.ShowDialog();
