@@ -136,10 +136,8 @@ namespace WebUI.Controllers
             if (HttpContext.User.Identity?.IsAuthenticated != true)
                 return View();
 
-            string redirectUrl = ViewBag.ReturnUrl.ToString();
-
-            return Url.IsLocalUrl(redirectUrl)
-                ? Redirect(redirectUrl)
+            return Url.IsLocalUrl(returnUrl)
+                ? Redirect(returnUrl)
                 : RedirectToAction(nameof(Index), "Home");
         }
 
