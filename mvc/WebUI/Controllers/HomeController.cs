@@ -136,7 +136,7 @@ namespace WebUI.Controllers
             if (HttpContext.User.Identity?.IsAuthenticated != true)
                 return View();
 
-            return Url.IsLocalUrl(returnUrl)
+            return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
                 ? Redirect(returnUrl)
                 : RedirectToAction(nameof(Index), "Home");
         }
