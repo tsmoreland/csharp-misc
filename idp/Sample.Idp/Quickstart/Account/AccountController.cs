@@ -85,7 +85,7 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 if (context != null)
                 {
-                    // if the user cancels, send a result back into IdentityServer as if they 
+                    // if the user cancels, send a result back into IdentityServer as if they
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
                     await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
@@ -98,7 +98,9 @@ namespace IdentityServerHost.Quickstart.UI
                         return this.LoadingPage("Redirect", model.ReturnUrl);
                     }
 
-                    return Redirect(model.ReturnUrl);
+                    // this will only redirect to this site, if we need more then we should
+                    // consider an allow-list
+                    return LocalRedirect(model.ReturnUrl);
                 }
                 else
                 {
@@ -115,7 +117,7 @@ namespace IdentityServerHost.Quickstart.UI
                     var user = _users.FindByUsername(model.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username, clientId: context?.Client.ClientId));
 
-                    // only set explicit expiration here if user chooses "remember me". 
+                    // only set explicit expiration here if user chooses "remember me".
                     // otherwise we rely upon expiration configured in cookie middleware.
                     AuthenticationProperties props = null;
                     if (AccountOptions.AllowRememberLogin && model.RememberLogin)
@@ -135,6 +137,8 @@ namespace IdentityServerHost.Quickstart.UI
 
                     await HttpContext.SignInAsync(isuser, props);
 
+                    // if we need non-local redirects then consider an allow list
+
                     if (context != null)
                     {
                         if (context.IsNativeClient())
@@ -145,13 +149,13 @@ namespace IdentityServerHost.Quickstart.UI
                         }
 
                         // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                        return Redirect(model.ReturnUrl);
+                        return LocalRedirect(model.ReturnUrl);
                     }
 
                     // request for a local page
                     if (Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        return LocalRedirect(model.ReturnUrl);
                     }
                     else if (string.IsNullOrEmpty(model.ReturnUrl))
                     {
@@ -173,7 +177,7 @@ namespace IdentityServerHost.Quickstart.UI
             return View(vm);
         }
 
-        
+
         /// <summary>
         /// Show logout page
         /// </summary>
