@@ -3,11 +3,6 @@
 using System.Threading.Channels;
 using TSMoreland.BackgroundWorker.Console;
 
-Console.WriteLine("Hello, World!");
-
-string line;
-
-
 
 Channel<Message> channel = Channel.CreateBounded<Message>(new BoundedChannelOptions(10));
 Worker worker = new(channel);
@@ -15,6 +10,7 @@ Worker worker = new(channel);
 CancellationTokenSource cancelSource = new();
 await worker.StartAsync(cancelSource.Token);
 
+string line;
 do
 {
     line = Console.ReadLine()?.ToUpperInvariant() ?? string.Empty;
