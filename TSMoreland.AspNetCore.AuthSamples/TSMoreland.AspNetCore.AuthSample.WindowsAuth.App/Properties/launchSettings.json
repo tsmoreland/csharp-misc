@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "TSMoreland.AspNetCore.AuthSample.WindowsAuth.App": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7071;http://localhost:5071",
+      "environmentVariables": {
+        "ASPNETCORE_SERVER": "HttpSys",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
