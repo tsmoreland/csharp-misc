@@ -21,6 +21,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import java.io.IOException;
 import java.security.Security;
 import java.util.List;
 import java.util.Scanner;
@@ -34,7 +37,7 @@ public class Application implements CommandLineRunner {
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
-        Security.setProperty("auth.login.defaultCallbackHandler", "net.curiousprogrammer.auth.kerberos.example.KerberosCallBackHandler");
+        Security.setProperty("auth.login.defaultCallbackHandler", "tsmoreland.authsample.consumer.AuthCallbackHandler");
 
         try (ConfigurableApplicationContext context = SpringApplication.run(Application.class, args)) {
 
@@ -47,8 +50,8 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        //hello();
-        helloUsingJaas();
+        hello();
+        //helloUsingJaas();
     }
 
     private void printResponse(CloseableHttpResponse response) throws Exception {
