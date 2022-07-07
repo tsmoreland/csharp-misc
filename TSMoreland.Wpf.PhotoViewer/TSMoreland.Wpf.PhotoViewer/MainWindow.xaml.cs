@@ -103,7 +103,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         else if (e.Key == Key.Delete)
         {
             int index = _index;
-            index++;
+            _index++;
             await RefreshImage();
             string filename = _files[index];
             if (index != _index)
@@ -114,6 +114,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
+                    _files.Remove(filename);
                     File.Delete(filename);
                 }
             }
