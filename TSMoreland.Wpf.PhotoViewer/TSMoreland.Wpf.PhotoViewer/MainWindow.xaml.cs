@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -98,6 +99,24 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         else if (e.Key == Key.Right)
         {
             _index++;
+        }
+        else if (e.Key == Key.Delete)
+        {
+            int index = _index;
+            index++;
+            await RefreshImage();
+            string filename = _files[index];
+            if (index != _index)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    $"Delete {filename}?",
+                    "Are you sure?",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    File.Delete(filename);
+                }
+            }
         }
         else
         {
