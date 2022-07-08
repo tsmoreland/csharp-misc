@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TSMoreland.Wpf.PhotoViewer": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

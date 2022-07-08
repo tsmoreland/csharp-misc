@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,6 +21,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private readonly List<string> _files = new();
     private int _index = -1;
     private readonly Random _random = new();
+    private readonly List<string> _toDelete = new();
 
     public MainWindow()
     {
@@ -30,6 +32,43 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         MouseDown += MainWindow_MouseDown;
         Loaded += MainWindow_Loaded;
 
+    }
+
+
+    protected override async void OnClosing(CancelEventArgs e)
+    {
+        ImageSource = null!;
+        MainGrid.Children.Clear();
+
+        bool errored = false;
+        int count = 0;
+        await Task.Delay(1000);
+
+        foreach (string filename in _toDelete)
+        {
+            try
+            {
+                File.Delete(filename);
+                count++;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                MessageBox.Show(ex.Message);
+                errored = true;
+            }
+        }
+
+        if (errored)
+        {
+            MessageBox.Show("Failed to remove one or more files");
+        }
+        else if (count > 0)
+        {
+            MessageBox.Show($"Removed {count} files.", "Files deleted.");
+        }
+
+        base.OnClosing(e);
     }
 
     public ImageSource ImageSource
@@ -75,8 +114,17 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             Width = SystemParameters.PrimaryScreenWidth - 0.5;
             Height = SystemParameters.PrimaryScreenWidth - 0.5;
 
+            ImageSource = null!;
+
             uri = new Uri(_files[_index]);
-            ImageSource = new BitmapImage(uri);
+            BitmapImage image = new();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = uri;
+            image.EndInit();
+
+            ImageSource = image;
+
             Title = _files[_index];
 
             Width = SystemParameters.PrimaryScreenWidth;
@@ -104,7 +152,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             int index = _index;
             _index++;
-            await RefreshImage();
             string filename = _files[index];
             if (index != _index)
             {
@@ -114,10 +161,12 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
+                    await RefreshImage();
                     _files.Remove(filename);
-                    File.Delete(filename);
+                    _toDelete.Add(filename);
                 }
             }
+            return;
         }
         else
         {
