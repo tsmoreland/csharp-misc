@@ -65,6 +65,9 @@ interface ISimpleObject2 : ISimpleObject
 {
     [id(5), helpstring("Description"), propget]
     HRESULT Description([ out, retval ] BSTR * result);
+
+    [id(6), helpstring("Convert string to uppercase")]
+    HRESULT ToUpper([in] BSTR input, [ out, retval ] BSTR * result);
 }
 
 

@@ -1,6 +1,9 @@
 // SimpleOutOfProcessCOM.cpp : Implementation of WinMain
 
 
+// ReSharper disable CppInconsistentNaming
+// ReSharper disable CppClangTidyBugproneReservedIdentifier
+// ReSharper disable CppClangTidyClangDiagnosticReservedIdentifier
 #include "pch.h"
 #include "framework.h"
 #include "resource.h"
@@ -21,6 +24,8 @@ public :
 CSimpleOutOfProcessCOMModule _AtlModule;
 
 
+#pragma warning(push)
+#pragma warning( disable : C28251 )
 
 //
 extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/,
@@ -29,3 +34,4 @@ extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstan
 	return _AtlModule.WinMain(nShowCmd);
 }
 
+#pragma warning(pop)

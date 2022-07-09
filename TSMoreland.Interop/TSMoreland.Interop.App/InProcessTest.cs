@@ -25,7 +25,9 @@ internal static class InProcessTest
     {
         string? line;
 
-        List<dynamic> items = new();
+        Console.WriteLine("Press enter to stop");
+        List<object?> items = new();
+        List<CallSite> callsites = new();
         do
         {
             if (!TryCreateComObject(out object? @object))
@@ -34,41 +36,111 @@ internal static class InProcessTest
             }
 
 
-            CallSite<Func<CallSite, object?, string>> callsite = CallSite<Func<CallSite, object?, string>>.Create(Binder.Convert(CSharpBinderFlags.None, typeof (string), typeof (InProcessTest)));
-            // ISSUE: reference to a compiler-generated field
-            Func<CallSite, object?, string> target = callsite.Target;
-            // ISSUE: reference to a compiler-generated field
-            CallSite<Func<CallSite, object?, string>> p1 = callsite;
-            // ISSUE: reference to a compiler-generated field
-            CallSite<Func<CallSite, object?, object?>> nameCallSite = CallSite<Func<CallSite, object?, object?>>.Create(Binder.GetMember(CSharpBinderFlags.None, "Name", typeof (InProcessTest), (IEnumerable<CSharpArgumentInfo>) new CSharpArgumentInfo[1]
+            CallSite<Func<CallSite, object?, object?>> nameCallSite = CallSite<Func<CallSite, object?, object?>>.Create(Binder.GetMember(CSharpBinderFlags.None, "Name", typeof (InProcessTest), new []
             {
                 CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, (string?) null)
             }));
-            // ISSUE: reference to a compiler-generated field
-            // ISSUE: reference to a compiler-generated field
+            callsites.Add(nameCallSite);
             object? maybeName = nameCallSite.Target(nameCallSite, @object);
-            if (maybeName is string value)
+            if (maybeName is string name)
             {
-                Console.WriteLine($"name from callsite {value}");
+                Console.WriteLine($"name from callsite '{name}'");
+            }
+            else
+            {
+                name = "unknown";
             }
 
+
+            CallSite<Func<CallSite, object?, int, object?>> setNumericCallSite = CallSite<Func<CallSite, object?, int, object?>>.Create(Binder.SetMember(CSharpBinderFlags.None, "Numeric", typeof (InProcessTest), new []
+            {
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, (string?) null),
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.Constant, (string?) null)
+            }));
+            callsites.Add(setNumericCallSite);
+            Console.WriteLine("Set Numeric");
+            setNumericCallSite.Target(setNumericCallSite, @object, 24);
+
+            CallSite<Func<CallSite, object?, object?>> numericCallSite = CallSite<Func<CallSite, object?, object?>>.Create(Binder.GetMember(CSharpBinderFlags.None, "Numeric", typeof (InProcessTest), new []
+            {
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, (string?) null)
+            }));
+            callsites.Add(numericCallSite);
+            object? numeric = numericCallSite.Target(numericCallSite, @object);
+            if (numeric is int numericValue)
+            {
+                Console.WriteLine($"numeric from callsite {numericValue}");
+            }
+
+
+            CallSite<Func<CallSite, object?, string, object?>> toUpperCallsite = CallSite<Func<CallSite, object?, string, object?>>.Create(Binder.InvokeMember(CSharpBinderFlags.None, "ToUpper", null, typeof(InProcessTest), new[]
+            {
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, (string?) null),
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.UseCompileTimeType, (string?) null)
+            }));
+            callsites.Add(toUpperCallsite);
+            object? maybeUpperName = toUpperCallsite.Target(toUpperCallsite, @object, name);
+            if (maybeName is string upperName)
+            {
+                Console.WriteLine($"Name (uppercase) = {upperName}");
+            }
+
+            line = Console.ReadLine();
+            items.Add(@object);
+
+        } while (line?.ToUpperInvariant() != "QUIT");
+
+        foreach (IDisposable item in items.OfType<IDisposable>())
+        {
+            item.Dispose(); // it won't but we just to keep these objects alive until here to test for leaks
+        }
+
+        items.Clear();
+        Console.WriteLine("Present enter to clear call sites");
+        _ = Console.ReadLine();
+        callsites.Clear();
+        Console.WriteLine("Present enter to clear call exit");
+        _ = Console.ReadLine();
+    }
+
+    public static void VerifyMemoryUseWithDynamic()
+    {
+        string? line;
+        Console.WriteLine("Press enter to stop");
+        List<object?> items = new();
+        List<CallSite> callsites = new();
+        do
+        {
+            if (!TryCreateComObject(out object? @object))
+            {
+                return;
+            }
 
             dynamic instance = @object!;
             string name = instance.Name;
             Console.WriteLine($"Name = {name}");
 
-            line = Console.ReadLine();
-            if (items.Count >= 5)
-            {
-                items.Clear();
-            }
+            instance.Numeric = 24;
+            int value = instance.Numeric;
+            Console.WriteLine($"Numeric = {value}");
 
-            items.Add(instance);
+            string upperName = instance.ToUpper(name);
+            Console.WriteLine($"Name (uppercase) = {upperName}");
+
+            line = Console.ReadLine();
+            items.Add(@object);
+            @object = null;
 
         } while (line?.ToUpperInvariant() != "QUIT");
 
-    }
+        items.Clear();
+        Console.WriteLine("Present enter to clear call sites");
+        _ = Console.ReadLine();
+        callsites.Clear();
+        Console.WriteLine("Present enter to clear call exit");
+        _ = Console.ReadLine();
 
+    }
 
     public static void Verify()
     {

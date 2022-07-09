@@ -20,7 +20,17 @@ if (!OperatingSystem.IsWindows())
 
 try
 {
+    Console.WriteLine("Presss enter to begin");
+    Console.ReadLine();
+
+    Console.WriteLine("Test for leaks against manual callsite usage");
     InProcessTest.VerifyMemoryUse();
+
+    Console.WriteLine("Presss enter to begin phase II");
+    Console.ReadLine();
+
+    Console.WriteLine("Test for leaks against dynamic usage");
+    InProcessTest.VerifyMemoryUseWithDynamic();
 }
 catch (Exception ex)
 {
