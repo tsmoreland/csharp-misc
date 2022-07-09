@@ -11,14 +11,64 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using Microsoft.CSharp.RuntimeBinder;
 using TSMoreland.Interop.SimpleObjectCOMProxy;
 
 namespace TSMoreland.Interop.App;
 
 internal static class InProcessTest
 {
+    public static void VerifyMemoryUse()
+    {
+        string? line;
+
+        List<dynamic> items = new();
+        do
+        {
+            if (!TryCreateComObject(out object? @object))
+            {
+                return;
+            }
+
+
+            CallSite<Func<CallSite, object?, string>> callsite = CallSite<Func<CallSite, object?, string>>.Create(Binder.Convert(CSharpBinderFlags.None, typeof (string), typeof (InProcessTest)));
+            // ISSUE: reference to a compiler-generated field
+            Func<CallSite, object?, string> target = callsite.Target;
+            // ISSUE: reference to a compiler-generated field
+            CallSite<Func<CallSite, object?, string>> p1 = callsite;
+            // ISSUE: reference to a compiler-generated field
+            CallSite<Func<CallSite, object?, object?>> nameCallSite = CallSite<Func<CallSite, object?, object?>>.Create(Binder.GetMember(CSharpBinderFlags.None, "Name", typeof (InProcessTest), (IEnumerable<CSharpArgumentInfo>) new CSharpArgumentInfo[1]
+            {
+                CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, (string?) null)
+            }));
+            // ISSUE: reference to a compiler-generated field
+            // ISSUE: reference to a compiler-generated field
+            object? maybeName = nameCallSite.Target(nameCallSite, @object);
+            if (maybeName is string value)
+            {
+                Console.WriteLine($"name from callsite {value}");
+            }
+
+
+            dynamic instance = @object!;
+            string name = instance.Name;
+            Console.WriteLine($"Name = {name}");
+
+            line = Console.ReadLine();
+            if (items.Count >= 5)
+            {
+                items.Clear();
+            }
+
+            items.Add(instance);
+
+        } while (line?.ToUpperInvariant() != "QUIT");
+
+    }
+
 
     public static void Verify()
     {

@@ -20,6 +20,16 @@ if (!OperatingSystem.IsWindows())
 
 try
 {
+    InProcessTest.VerifyMemoryUse();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("error occurred testing in process COM: " + ex);
+}
+
+#if VERIFY
+try
+{
     InProcessTest.Verify();
 }
 catch (Exception ex)
@@ -37,3 +47,4 @@ catch (Exception ex)
     Console.WriteLine("error occurred testing out of process COM: " + ex);
 }
 
+#endif
