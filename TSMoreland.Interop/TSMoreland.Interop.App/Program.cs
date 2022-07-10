@@ -24,13 +24,13 @@ try
     Console.ReadLine();
 
     Console.WriteLine("Test for leaks against manual callsite usage");
-    InProcessTest.VerifyMemoryUse();
+    OutOfProcessTest.VerifyMemoryUse();
 
     Console.WriteLine("Presss enter to begin phase II");
     Console.ReadLine();
 
     Console.WriteLine("Test for leaks against dynamic usage");
-    InProcessTest.VerifyMemoryUseWithDynamic();
+    OutOfProcessTest.VerifyMemoryUseWithDynamic();
 }
 catch (Exception ex)
 {

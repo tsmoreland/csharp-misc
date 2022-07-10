@@ -24,14 +24,12 @@ public :
 CSimpleOutOfProcessCOMModule _AtlModule;
 
 
-#pragma warning(push)
-#pragma warning( disable : C28251 )
 
 //
+#pragma warning( disable : 28251 )
 extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/,
 								LPTSTR /*lpCmdLine*/, int nShowCmd)
 {
 	return _AtlModule.WinMain(nShowCmd);
 }
 
-#pragma warning(pop)

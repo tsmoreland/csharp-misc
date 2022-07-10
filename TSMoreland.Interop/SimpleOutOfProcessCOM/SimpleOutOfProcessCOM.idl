@@ -47,6 +47,9 @@ interface ISimpleOOPObject2 : ISimpleOOPObject
 {
     [id(4), helpstring("Description"), propget]
     HRESULT Description([out, retval]BSTR * result);
+
+    [id(5), helpstring("Convert string to uppercase")]
+    HRESULT ToUpper([in] BSTR input, [ out, retval ] BSTR * result);
 }
 
 [

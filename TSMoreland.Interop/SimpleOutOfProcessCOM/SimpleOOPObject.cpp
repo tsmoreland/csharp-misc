@@ -12,7 +12,6 @@
 //
 
 #include "pch.h"
-#include <algorithm>
 #include "SimpleOOPObject.h"
 
 #include <memory>
@@ -71,6 +70,19 @@ STDMETHODIMP CSimpleOOPObject::get_Description(BSTR *result) noexcept  {
     CComBSTR value{L"OOP Description"};
     *result = value.Detach();
 
+    return S_OK;
+}
+
+STDMETHODIMP CSimpleOOPObject::ToUpper(BSTR input, BSTR* result) noexcept {
+    if (input == nullptr || result == nullptr) {
+        return E_INVALIDARG;
+    }
+
+    std::wstring upper{input};
+    std::ranges::for_each(upper, [](wchar_t& ch) { ch = ::towupper(ch); });
+
+    CComBSTR output{upper.c_str()};
+    *result = output.Detach();
     return S_OK;
 }
 

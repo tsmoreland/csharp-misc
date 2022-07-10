@@ -45,6 +45,14 @@ public:
     STDMETHOD(put_Numeric)(LONG value) noexcept override;
     STDMETHOD(get_Description)(BSTR* result) noexcept override;
 
+    /// <summary>
+    /// Convert input to upper case
+    /// </summary>
+    /// <param name="input">source to convert</param>
+    /// <param name="result">stores the upper case result</param>
+    /// <returns>S_OK on success; otherwise E_INVALIDARG if input is a nullptr</returns>
+    STDMETHOD(ToUpper)(BSTR input, BSTR* result) noexcept override;
+
 #pragma region infrastructure
 
     CSimpleOOPObject() = default;
