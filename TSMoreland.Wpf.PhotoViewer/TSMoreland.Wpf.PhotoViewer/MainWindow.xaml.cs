@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private int _index = -1;
     private readonly Random _random = new();
     private readonly List<string> _toDelete = new();
+    private byte[]? _buffer = null;
 
     public MainWindow()
     {
@@ -35,15 +37,23 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     }
 
 
-    protected override async void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(CancelEventArgs e)
     {
         ImageSource = null!;
-        MainGrid.Children.Clear();
 
         bool errored = false;
         int count = 0;
-        await Task.Delay(1000);
 
+        MainGrid.Children.Clear();
+
+        if (_toDelete.Count == 0)
+        {
+            return;
+        }
+        System.Threading.Thread.Sleep(500);
+        _files.Clear();
+
+        MessageBox.Show($"Deleting {_toDelete.Count} files.");
         foreach (string filename in _toDelete)
         {
             try
@@ -105,7 +115,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return ValueTask.CompletedTask;
         }
 
-        Uri? uri = null;
         try
         {
             WindowState = WindowState.Normal;
@@ -114,13 +123,32 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             Width = SystemParameters.PrimaryScreenWidth - 0.5;
             Height = SystemParameters.PrimaryScreenWidth - 0.5;
 
+            if (ImageSource is BitmapImage { StreamSource: MemoryStream stream })
+            {
+                if (_buffer is not null)
+                {
+                    ArrayPool<byte>.Shared.Return(_buffer);
+                }
+                stream.Dispose();
+            }
+
             ImageSource = null!;
 
-            uri = new Uri(_files[_index]);
+            long size = new FileInfo(_files[_index]).Length;
+            _buffer = ArrayPool<byte>.Shared.Rent((int)size);
+
+            using (FileStream fs = new(_files[_index], FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
+            {
+                size = fs.Read(_buffer, 0, (int)size);
+                fs.Close();
+            }
+
+
+            MemoryStream ms = new(_buffer, 0, (int)size);
+
             BitmapImage image = new();
             image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.UriSource = uri;
+            image.StreamSource = ms;
             image.EndInit();
 
             ImageSource = image;
@@ -132,7 +160,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (Exception)
         {
-            MessageBox.Show($"Failed to read {uri}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Failed to read file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         return ValueTask.CompletedTask;
@@ -163,7 +191,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 {
                     await RefreshImage();
                     _files.Remove(filename);
-                    _toDelete.Add(filename);
+                    try
+                    {
+                        File.Delete(filename);
+                        MessageBox.Show($"File {filename} removed.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"{ex.GetType().Name}: {ex.Message} {ex.InnerException} ");
+                        _toDelete.Add(filename);
+                    }
                 }
             }
             return;
