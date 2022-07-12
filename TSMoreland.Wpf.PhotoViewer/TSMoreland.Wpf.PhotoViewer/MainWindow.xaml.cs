@@ -41,7 +41,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         ImageSource = null!;
 
-        bool errored = false;
         int count = 0;
 
         MainGrid.Children.Clear();
@@ -50,6 +49,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             return;
         }
+
         System.Threading.Thread.Sleep(500);
         _files.Clear();
 
@@ -65,15 +65,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             {
                 Trace.WriteLine(ex);
                 MessageBox.Show(ex.Message);
-                errored = true;
             }
         }
 
-        if (errored)
-        {
-            MessageBox.Show("Failed to remove one or more files");
-        }
-        else if (count > 0)
+        string location = Path.GetDirectoryName(AppContext.BaseDirectory)!;
+
+        string deleteCommands = string.Join(Environment.NewLine, _toDelete.Select(f => $"del {f}"));
+        File.WriteAllText(Path.Combine(location, "delete.bat"), $"@echo off{Environment.NewLine}{deleteCommands}");
+
+        if (count > 0)
         {
             MessageBox.Show($"Removed {count} files.", "Files deleted.");
         }
@@ -143,7 +143,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 fs.Close();
             }
 
-
             MemoryStream ms = new(_buffer, 0, (int)size);
 
             BitmapImage image = new();
@@ -166,6 +165,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         return ValueTask.CompletedTask;
     }
 
+    
     private async void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Left)
