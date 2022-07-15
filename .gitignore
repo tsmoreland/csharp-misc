@@ -359,3 +359,5 @@ MigrationBackup/
 *.db-shm
 
 **/Generated/
+/TSMoreland.AspNetCore.AuthSamples/certificate.pem
+/TSMoreland.AspNetCore.AuthSamples/certificate.key
