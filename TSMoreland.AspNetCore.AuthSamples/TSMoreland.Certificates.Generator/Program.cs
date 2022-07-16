@@ -17,6 +17,20 @@ using TSMoreland.Certificates;
 using TSMoreland.Certificates.Extensions;
 
 byte[] serialNumber = RandomNumberGenerator.GetBytes(20);
+
+const string certificateAuth = "1.3.6.1.5.5.7.3.2";
+ExtendedSignedCertificateSettings extendedSettings = new(
+    "CN=localhost",
+    2048,
+    DateTime.Today.Subtract(TimeSpan.FromDays(1)),
+    DateTime.Today.AddYears(1),
+    Array.Empty<string>(),
+    new[] { new Oid(certificateAuth) },
+    serialNumber,
+    X509KeyUsageFlags.NonRepudiation | X509KeyUsageFlags.DigitalSignature,
+    false);
+
+
 CertificateSettings settings = new(
     2048,
     DateTime.Today.Subtract(TimeSpan.FromDays(1)),
@@ -29,7 +43,7 @@ SignedCertificateSettings signedCertSettings = new(
     "CN=localhost",
     serialNumber);
 
-(X509Certificate2 root, _) = CertificateFactory.Build(settings, signedCertSettings);
+(_, X509Certificate2 root) = CertificateFactory.Build(extendedSettings);
 
 string? password = Console.ReadLine();
 
@@ -37,4 +51,3 @@ string? password = Console.ReadLine();
 
 File.WriteAllText("certificate.pem", certificate);
 File.WriteAllText("certificate.key", privateKey);
-
