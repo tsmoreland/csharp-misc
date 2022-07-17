@@ -49,5 +49,5 @@ string? password = Console.ReadLine();
 
 (string certificate, string privateKey) = root.ToPemEncodedCertificateKeyPair(password);
 
-File.WriteAllText("certificate.pem", certificate);
+File.WriteAllText("certificate.cer", certificate);
 File.WriteAllText("certificate.key", privateKey);
