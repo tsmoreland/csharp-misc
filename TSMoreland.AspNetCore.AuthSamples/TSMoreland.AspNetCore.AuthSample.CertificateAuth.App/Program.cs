@@ -27,7 +27,8 @@ builder.Services
 
                 if (!validationService.ValidateCertificate(context.ClientCertificate))
                 {
-                    return Task.CompletedTask; // we could call context.Fail here but that may prevent subsequent auth handlers from being used, we'll experiment and find out
+                    return
+                        Task.CompletedTask; // we could call context.Fail here but that may prevent subsequent auth handlers from being used, we'll experiment and find out
                 }
 
                 Claim[] claims = new[]
@@ -41,7 +42,8 @@ builder.Services
                 context.Success();
                 return Task.CompletedTask;
             }
-        });
+        };
+    });
 
 
 WebApplication app = builder.Build();

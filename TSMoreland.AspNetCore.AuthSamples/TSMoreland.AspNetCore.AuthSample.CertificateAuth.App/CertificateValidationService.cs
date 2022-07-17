@@ -19,6 +19,8 @@ public sealed class CertificateValidationService : ICertificateValidationService
     /// <inheritdoc />
     public bool ValidateCertificate(X509Certificate2 contextClientCertificate)
     {
-        throw new NotImplementedException();
+        _ = contextClientCertificate;
+
+        return true;
     }
 }
