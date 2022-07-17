@@ -361,3 +361,4 @@ MigrationBackup/
 **/Generated/
 /TSMoreland.AspNetCore.AuthSamples/certificate.pem
 /TSMoreland.AspNetCore.AuthSamples/certificate.key
+/TSMoreland.AspNetCore.AuthSamples/certificate.cer
