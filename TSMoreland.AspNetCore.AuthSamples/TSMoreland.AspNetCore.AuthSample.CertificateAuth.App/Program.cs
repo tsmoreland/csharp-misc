@@ -1,5 +1,8 @@
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication.Certificate;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using TSMoreland.AspNetCore.AuthSample.CertificateAuth.App;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -7,6 +10,29 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services
+    .Configure<KestrelServerOptions>(options =>
+    {
+        options.AddServerHeader = false;
+        options.ConfigureHttpsDefaults(static options =>
+        {
+
+            string root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+
+            string certificatePemFile = Path.Combine(root, "certificate.cer");
+            string certificateKeyFile = Path.Combine(root, "certificate.key");
+
+            X509Certificate2 certificate = X509Certificate2.CreateFromEncryptedPemFile(
+                certificatePemFile,
+                "",
+                certificateKeyFile);
+
+            options.ServerCertificate = certificate;
+            options.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+
+        });
+    });
 
 // certificate to use must include Oid 1.3.6.1.5.5.7.3.2 - client auth
 
@@ -19,6 +45,12 @@ builder.Services
         options.AllowedCertificateTypes = CertificateTypes.All;
         options.Events = new CertificateAuthenticationEvents
         {
+            OnAuthenticationFailed = context =>
+            {
+                _ = context;
+
+                return Task.CompletedTask;
+            },
             OnCertificateValidated = context =>
             {
 
@@ -40,6 +72,12 @@ builder.Services
                 };
                 context.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));
                 context.Success();
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                _ = context;
+
                 return Task.CompletedTask;
             }
         };

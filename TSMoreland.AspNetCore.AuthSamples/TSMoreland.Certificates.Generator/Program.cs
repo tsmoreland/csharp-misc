@@ -18,6 +18,7 @@ using TSMoreland.Certificates.Extensions;
 
 byte[] serialNumber = RandomNumberGenerator.GetBytes(20);
 
+const string serverAuth = "1.3.6.1.5.5.7.3.1";
 const string certificateAuth = "1.3.6.1.5.5.7.3.2";
 ExtendedSignedCertificateSettings extendedSettings = new(
     "CN=localhost",
@@ -25,7 +26,7 @@ ExtendedSignedCertificateSettings extendedSettings = new(
     DateTime.Today.Subtract(TimeSpan.FromDays(1)),
     DateTime.Today.AddYears(1),
     Array.Empty<string>(),
-    new[] { new Oid(certificateAuth) },
+    new[] { new Oid(serverAuth), new Oid(certificateAuth) },
     serialNumber,
     X509KeyUsageFlags.NonRepudiation | X509KeyUsageFlags.DigitalSignature,
     false);

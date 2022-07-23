@@ -12,6 +12,7 @@
 //
 
 using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TSMoreland.AspNetCore.AuthSample.CertificateAuth.App.Controllers;
@@ -24,6 +25,7 @@ public sealed class HelloApiController : ControllerBase
     [HttpGet]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [Authorize]
     public IActionResult Get([FromQuery] string? reflectedMessage = null)
     {
         return Ok(new { Message = reflectedMessage, UserName = HttpContext.User.Identity?.Name ?? "Anonymous" });
