@@ -14,8 +14,8 @@ namespace Tsmoreland.EntityFramework.Core.Experimental.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false),
                     last_name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    first_name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true)
+                    first_name = table.Column<string>(type: "TEXT", nullable: true),
+                    _firstname = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {

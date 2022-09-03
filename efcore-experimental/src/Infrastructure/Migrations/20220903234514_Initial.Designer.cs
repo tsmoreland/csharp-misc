@@ -10,7 +10,7 @@ using Tsmoreland.EntityFramework.Core.Experimental.Infrastructure;
 namespace Tsmoreland.EntityFramework.Core.Experimental.Infrastructure.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20220903224044_Initial")]
+    [Migration("20220903234514_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,17 +26,18 @@ namespace Tsmoreland.EntityFramework.Core.Experimental.Infrastructure.Migrations
                         .HasColumnName("last_name");
 
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("_firstName")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT")
                         .HasColumnName("first_name");
+
+                    b.Property<string>("_firstname")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("LastName", "Id");
 

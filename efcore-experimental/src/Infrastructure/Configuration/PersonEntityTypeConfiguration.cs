@@ -26,8 +26,9 @@ public sealed class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Per
 
         builder
             .Property(m => m.Id)
-            .HasValueGenerator<AutoIncrementWithLastNamePartitionValueGenerator>();
+            .HasValueGeneratorFactory<PeopleValueGeneratorFactory>();
 
+        builder.Ignore(m => m.FirstName);
         builder.Ignore(m => m.FullName);
     }
 }

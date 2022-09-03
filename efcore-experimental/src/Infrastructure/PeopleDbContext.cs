@@ -28,7 +28,7 @@ public sealed class PeopleDbContext : DbContext
         _modelConfiguration = modelConfiguration ?? throw new ArgumentNullException(nameof(modelConfiguration));
     }
 
-    public DbSet<Person> Persons { get; set; } = null!;
+    public DbSet<Person> People { get; set; } = null!;
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)

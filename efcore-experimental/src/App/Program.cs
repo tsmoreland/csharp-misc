@@ -11,13 +11,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Tsmoreland.EntityFramework.Core.Experimental.App;
-using Tsmoreland.EntityFramework.Core.Experimental.Domain.Models;
 using Tsmoreland.EntityFramework.Core.Experimental.Infrastructure;
 using Tsmoreland.EntityFramework.Core.Experimental.Infrastructure.Configuration;
 
@@ -28,6 +25,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services
             .AddDbContext<PeopleDbContext>(optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextFactory<PeopleDbContext>()
+            .AddDbContextPool<PeopleDbContext>(_ => { })
+            .AddPooledDbContextFactory<PeopleDbContext>(_ => { })
             .AddSingleton<IModelConfiguration, SqliteModelConfiguration>()
             .AddHostedService<WorkerService>();
     })

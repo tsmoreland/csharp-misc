@@ -25,20 +25,22 @@ public sealed class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Per
         builder.HasKey(m => new { m.LastName, m.Id });
 
         builder
-            .Property<string>("_firstName")
+            .Property<string>("_firstname")
             .UsePropertyAccessMode(PropertyAccessMode.Field)
-            .HasMaxLength(100);
+            .HasMaxLength(100)
+            .IsRequired();
 
         builder
             .Property(m => m.LastName)
             .HasMaxLength(100)
             .IsRequired();
 
-        /*
+        builder
+            .Property(m => m.Id)
+            .IsRequired();
         builder
             .Property(m => m.Id)
             .ValueGeneratedOnAdd();
-        */
 
     }
 }

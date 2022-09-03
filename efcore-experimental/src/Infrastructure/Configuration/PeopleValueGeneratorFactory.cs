@@ -10,36 +10,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Tsmoreland.EntityFramework.Core.Experimental.Domain.Models;
 
 namespace Tsmoreland.EntityFramework.Core.Experimental.Infrastructure.Configuration;
 
-public sealed class AutoIncrementWithLastNamePartitionValueGenerator : ValueGenerator<int>
+public sealed class PeopleValueGeneratorFactory : ValueGeneratorFactory
 {
     /// <inheritdoc />
-    public override int Next(EntityEntry entry)
+    public override ValueGenerator Create(IProperty property, IEntityType entityType)
     {
-        if (entry.Context is not PeopleDbContext context)
+        if (property.DeclaringEntityType.Name != typeof(Person).FullName)
         {
             throw new NotSupportedException();
         }
 
-        if (entry.Entity is not Person person)
+        return property.Name switch
         {
-            throw new NotSupportedException();
-        }
-
-        string lastname = person.LastName;
-        int max = context.People.AsNoTracking()
-            .Where(m => m.LastName == lastname)
-            .Max(m => (int?)m.Id) ?? 0; // use of (int?) is to avoid exception when no matching rows found, bit of a hack/work around
-
-        return max + 1;
+            nameof(Person.Id) => new AutoIncrementWithLastNamePartitionValueGenerator(),
+            _ => throw new KeyNotFoundException(),
+        };
     }
-
-    /// <inheritdoc />
-    public override bool GeneratesTemporaryValues => false;
 }

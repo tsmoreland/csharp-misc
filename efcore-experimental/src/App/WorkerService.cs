@@ -37,15 +37,20 @@ public sealed class WorkerService : BackgroundService
 
         await dbContext.Database.MigrateAsync(stoppingToken);
 
+        int max = dbContext.People.AsNoTracking()
+            .Where(m => m.LastName == "Smith")
+            .Max(m => (int?)m.Id) ?? 0; // use of (int?) is to avoid exception when no matching rows found, bit of a hack/work around
+        Console.WriteLine(max);
+
         Person p = new("Smith", "John");
-        dbContext.Persons.Add(p);
+        dbContext.People.Add(p);
         await dbContext.SaveChangesAsync(stoppingToken);
 
         Console.WriteLine(p.Id);
 
-        Person? maybePerson = await dbContext.Persons.AsNoTracking().FirstOrDefaultAsync(m => m.LastName == "Smith", stoppingToken);
+        Person? maybePerson = await dbContext.People.AsNoTracking().FirstOrDefaultAsync(m => m.LastName == "Smith", stoppingToken);
 
-        Console.WriteLine(maybePerson?.Id ?? -1);
+        Console.WriteLine($"{maybePerson?.Id ?? -1} {maybePerson?.FullName}");
 
     }
 }
