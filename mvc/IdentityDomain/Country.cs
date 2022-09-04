@@ -18,7 +18,7 @@ namespace IdentityDomain
     [DebuggerDisplay("{Id}")]
     public class Country
     {
-        public static Country None { get; } = new Country {Id = "NUL", Name = "None"};
+        public static Country None { get; } = new() {Id = "NUL", Name = "None"};
 
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

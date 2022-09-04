@@ -1,4 +1,5 @@
-﻿@*
+﻿@using System.Security.Claims
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -8,7 +9,7 @@
     @if (User != null)
     {
         <ul>
-            @foreach (var claim in User.Claims)
+            @foreach (Claim claim in User.Claims)
             {
                 <li class="text-left"><strong>@claim.Type</strong>: @claim.Value</li>
             }

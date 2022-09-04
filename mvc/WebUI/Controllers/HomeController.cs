@@ -77,7 +77,7 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            DemoUser user = await _userManager.FindByNameAsync(model.UserName);
             if (user != null)
             {
                 _logger.LogError("{userId} already exists, returning success to user without taking action", user.Id);
@@ -94,16 +94,16 @@ namespace WebUI.Controllers
             };
             user.CountryId = user.Country.Id;
 
-            var result = await _userManager.CreateAsync(user, model.Password ?? string.Empty);
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password ?? string.Empty);
             if (!result.Succeeded)
             {
-                foreach (var error in result.Errors)
+                foreach (IdentityError error in result.Errors)
                     ModelState.AddModelError(string.Empty, error.Description); // should use Code to look up correct localized string
                 return View();
             }
 
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            string confirmEmailUrl = Url.Action("ConfirmEmail", "Home", new {token, email = user.Email},
                 Request.Scheme);
             _logger.LogInformation("Todo: send {confirmEmailUrl} to {userId}",  Sanitize(confirmEmailUrl), user.Id);
             TempData["ConfirmEmailUrl"] = confirmEmailUrl;
@@ -122,7 +122,7 @@ namespace WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            DemoUser user = await _userManager.FindByEmailAsync(email);
             return (user != null && (await _userManager.ConfirmEmailAsync(user, token)).Succeeded)
                 ? View("EmailConfirmed")
                 : View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unknown"});
@@ -149,7 +149,7 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            DemoUser user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
                 return FailWithMessage("Invalid username or password");
 
@@ -172,18 +172,18 @@ namespace WebUI.Controllers
 
             if (await _userManager.GetTwoFactorEnabledAsync(user))
             {
-                var providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
+                IList<string> providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
                 if (providers.Contains(_userManager.Options.Tokens.AuthenticatorTokenProvider))
                     return await RedirectToTwoFactor(_userManager.Options.Tokens.AuthenticatorTokenProvider);
 
                 if (providers.Contains("Email"))
                 {
-                    var token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                    Task<string> token = _userManager.GenerateTwoFactorTokenAsync(user, "Email");
                     Console.WriteLine($"ToDo: send {token} to {user.Id}");
                     return await RedirectToTwoFactor("Email");
                 }
             }
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+            ClaimsPrincipal principal = await _userClaimsPrincipalFactory.CreateAsync(user);
             await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
 
             return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
@@ -191,10 +191,10 @@ namespace WebUI.Controllers
                 : RedirectToAction(nameof(Index));
 
             static ClaimsPrincipal Store2FactorAuth(string userId, string provider) =>
-                new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+                new(new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim("sub", userId),
-                    new Claim("amr", provider)
+                    new("sub", userId),
+                    new("amr", provider)
                 }, IdentityConstants.TwoFactorUserIdScheme));
 
             async Task<IActionResult> RedirectToTwoFactor(string tokenProvider)
@@ -216,12 +216,12 @@ namespace WebUI.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            DemoUser user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
                 // redirect to e-mail sent page
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
+                string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string resetUrl = Url.Action("ResetPassword", "Home", new {token, email = user.Email}, Request.Scheme);
                 _ = resetUrl;
                 Console.WriteLine($"ToDo: send the '{token}' to {user.Id}");
             }
@@ -249,16 +249,16 @@ namespace WebUI.Controllers
                 return View(); // add extension method to sanitize output of ModelState errors
             }
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            DemoUser user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 return View();
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            IdentityResult result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
             if (!result.Succeeded)
             {
-                foreach (var error in result.Errors)
+                foreach (IdentityError error in result.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
                 return View();
             }
@@ -281,18 +281,18 @@ namespace WebUI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TwoFactor(TwoFactorModel model)
         {
-            var result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
+            AuthenticateResult result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
             if (!result.Succeeded)
                 return FailWithMessage("Invalid token");
 
             if (!ModelState.IsValid)
                 return View();
 
-            var user = await _userManager.FindByIdAsync(result.Principal.FindFirstValue("sub"));
+            DemoUser user = await _userManager.FindByIdAsync(result.Principal.FindFirstValue("sub"));
             if (user == null)
                 return FailWithMessage("Invalid request");
 
-            var isValid = await _userManager
+            bool isValid = await _userManager
                 .VerifyTwoFactorTokenAsync(user, result.Principal.FindFirstValue("amr"), model.Token);
             if (!isValid)
                 return FailWithMessage("Invalid token");
@@ -303,7 +303,7 @@ namespace WebUI.Controllers
             async Task CompleteSignInAsync()
             {
                 await HttpContext.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
-                var  principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                ClaimsPrincipal  principal = await _userClaimsPrincipalFactory.CreateAsync(user);
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
             }
         }
@@ -312,21 +312,21 @@ namespace WebUI.Controllers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "Constant URI required for QR code")]
         public async Task<IActionResult> RegisterAuthenticator()
         {
-            var user = await _userManager.GetUserAsync(User);
+            DemoUser user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 await HttpContext.SignOutAsync();
                 return RedirectToAction(nameof(Login));
             }
 
-            var authenticatorKey = await GetExistingOrNewAuthentictorKeyAsync();
+            string authenticatorKey = await GetExistingOrNewAuthentictorKeyAsync();
             ViewBag.AuthenticatorUri = GenerateQrCodeUri(user.Email, authenticatorKey);
 
             return View(new RegisterAuthenticatorModel {AuthenticatorKey = authenticatorKey});
 
             async Task<string> GetExistingOrNewAuthentictorKeyAsync()
             {
-                var key = await _userManager.GetAuthenticatorKeyAsync(user);
+                string key = await _userManager.GetAuthenticatorKeyAsync(user);
                 if (key != null)
                 {
                     ViewBag.RecoveryCodes = (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToArray();
@@ -357,14 +357,14 @@ namespace WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterAuthenticator(RegisterAuthenticatorModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            DemoUser user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 await HttpContext.SignOutAsync();
                 return RedirectToAction(nameof(Login));
             }
 
-            var isValid = await _userManager.VerifyTwoFactorTokenAsync(user,
+            bool isValid = await _userManager.VerifyTwoFactorTokenAsync(user,
                 _userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
 
             if (!isValid)
@@ -381,13 +381,13 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ExternalLogin(string provider)
         {
-            var schemas = (await _signInManager.GetExternalAuthenticationSchemesAsync())
+            AuthenticationScheme[] schemas = (await _signInManager.GetExternalAuthenticationSchemesAsync())
                 .ToArray();
 
             if (schemas.All(schema => schema.Name != provider))
                 return View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unknown"});
 
-            var properties = new AuthenticationProperties
+            AuthenticationProperties properties = new()
             {
                 RedirectUri = Url.Action(nameof(ExternalLoginCallback)),
                 Items = {{"scheme", provider}}
@@ -398,21 +398,21 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback()
         {
-            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
-            var externalUserId = result.Principal.FindFirstValue("sub")
-                                 ?? result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                                 ?? string.Empty; // alternately throw exception because it's invalid
-            var provider = result.Properties?.Items["scheme"] ?? string.Empty;
+            AuthenticateResult result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            string externalUserId = result.Principal.FindFirstValue("sub")
+                                    ?? result.Principal.FindFirstValue(ClaimTypes.NameIdentifier)
+                                    ?? string.Empty; // alternately throw exception because it's invalid
+            string provider = result.Properties?.Items["scheme"] ?? string.Empty;
 
             if (string.IsNullOrEmpty(externalUserId))
                 return View("Error", new ErrorViewModel {RequestId = Activity.Current?.Id ?? "Unkown"});
 
-            var user = await _userManager.FindByLoginAsync(provider, externalUserId);
+            DemoUser user = await _userManager.FindByLoginAsync(provider, externalUserId);
             if (user != null)
                 return await CompleteSignin();
 
-            var email = result.Principal.FindFirstValue("email") ??
-                        result.Principal.FindFirstValue(ClaimTypes.Email);
+            string email = result.Principal.FindFirstValue("email") ??
+                           result.Principal.FindFirstValue(ClaimTypes.Email);
             if (email == null)
                 return View(nameof(Error));
 
@@ -431,7 +431,7 @@ namespace WebUI.Controllers
             async Task<IActionResult> CompleteSignin()
             {
                 await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-                var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
+                ClaimsPrincipal principal = await _userClaimsPrincipalFactory.CreateAsync(user);
                 await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
                 return RedirectToAction(nameof(Index));
             }

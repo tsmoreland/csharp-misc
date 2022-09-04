@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text.Json;
 using IdentityDomain;
 using IdentityDomain.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -55,11 +56,11 @@ namespace WebUI
 
             services.AddHttpsRedirection(optionss =>
             {
-                var rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
-                if (int.TryParse(rawSslPort, out var sslPort))
+                string rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
+                if (int.TryParse(rawSslPort, out int sslPort))
                     optionss.HttpsPort = sslPort; // from launchSettings.json but should probably come from config
             });
-            var migrationAssembly = GetType().Assembly.GetName().Name;
+            string migrationAssembly = GetType().Assembly.GetName().Name;
 
             // SQLite connection strings:
             // - default: Data Source=<filename>;Cache=Shared
@@ -72,7 +73,7 @@ namespace WebUI
                 .AddDbContext<DemoDbContext>(options =>
                 {
                     options.EnableSensitiveDataLogging();
-                    var connectionString = Configuration.GetConnectionString("IdentityDemoSQLite");
+                    string connectionString = Configuration.GetConnectionString("IdentityDemoSQLite");
                     options.UseSqlite(connectionString, sqlOptions => sqlOptions.MigrationsAssembly(migrationAssembly));
                 });
             services.AddScoped<IDemoRepository, DemoRepository>();
@@ -148,10 +149,10 @@ namespace WebUI
                 });
             });
 
-            var authBuilder = services
+            AuthenticationBuilder authBuilder = services
                 .AddAuthentication();
-            var clientId = Configuration["Google:ClientId"];
-            var clientSecret = Configuration["Google:ClientSecret"];
+            string clientId = Configuration["Google:ClientId"];
+            string clientSecret = Configuration["Google:ClientSecret"];
             if (!string.IsNullOrEmpty(clientSecret) && !string.IsNullOrEmpty(clientId))
                 authBuilder.AddGoogle("google", options =>
                 {
@@ -201,10 +202,10 @@ namespace WebUI
                 app.UseHsts();
 
             }
-            var rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
-            if (int.TryParse(rawSslPort, out var sslPort))
+            string rawSslPort = Configuration["IdentityDemo:HTTPS:SSLPort"] ?? string.Empty;
+            if (int.TryParse(rawSslPort, out int sslPort))
             {
-                var rewriteOptions = new RewriteOptions()
+                RewriteOptions rewriteOptions = new RewriteOptions()
                     .AddRedirectToHttps(StatusCodes.Status308PermanentRedirect, sslPort);
                 app.UseRewriter(rewriteOptions);
             }

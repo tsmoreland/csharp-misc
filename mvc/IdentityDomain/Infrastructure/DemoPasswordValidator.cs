@@ -27,12 +27,12 @@ namespace IdentityDomain.Infrastructure
 
         public async Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user, string password)
         {
-            var errors = new List<IdentityError>();
-            var username = await manager.GetUserNameAsync(user) ?? string.Empty;
+            List<IdentityError> errors = new();
+            string username = await manager.GetUserNameAsync(user) ?? string.Empty;
             if (password.Contains(username, StringComparison.InvariantCultureIgnoreCase))
                 errors.Add(Error("Password cannot contain username"));
 
-            var reverseUsername = new string(username.ToCharArray().Reverse().ToArray());
+            string reverseUsername = new(username.ToCharArray().Reverse().ToArray());
             if (password.Contains(reverseUsername, StringComparison.InvariantCultureIgnoreCase))
                 errors.Add(Error("Password cannot contain reversed username"));
 
@@ -40,7 +40,7 @@ namespace IdentityDomain.Infrastructure
                 ? IdentityResult.Success
                 : IdentityResult.Failed(errors.ToArray());
 
-            static IdentityError Error(string description) => new IdentityError {Description = description};
+            static IdentityError Error(string description) => new() {Description = description};
         }
     }
 }

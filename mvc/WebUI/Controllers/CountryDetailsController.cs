@@ -18,11 +18,13 @@ namespace WebUI.Controllers
 {
     public class CountryDetailsController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         [Authorize(Policy = "Canadian")]
         public IActionResult Canada()
         {

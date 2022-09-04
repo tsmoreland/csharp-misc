@@ -30,7 +30,7 @@ namespace IdentityDomain.Infrastructure
         /// <inheritdoc />
         protected override async Task<ClaimsIdentity> GenerateClaimsAsync(DemoUser user)
         {
-            var identity = await base.GenerateClaimsAsync(user);
+            ClaimsIdentity? identity = await base.GenerateClaimsAsync(user);
 
             if (!string.IsNullOrEmpty(user.Locale))
                 identity.AddClaim(new Claim("locale", user.Locale));

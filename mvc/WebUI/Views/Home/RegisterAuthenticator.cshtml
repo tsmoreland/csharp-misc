@@ -9,7 +9,7 @@
         <p><strong>Put these codes in a safe place.</strong></p>
         <div class="row">
             <div class="col-md-12">
-                @for (var row = 0; row < ViewBag.RecoveryCodes.Length; row += 2)
+                @for (int row = 0; row < ViewBag.RecoveryCodes.Length; row += 2)
                 {
                     <code>@ViewBag.RecoveryCodes[row]</code><text>&nbsp;</text><code>@ViewBag.RecoveryCodes[row + 1]</code><br />
                 }

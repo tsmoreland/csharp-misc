@@ -39,8 +39,8 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var countries = new List<Country>();
-            await foreach (var country in _repository.GetAllCountriesAsync())
+            List<Country> countries = new();
+            await foreach (Country country in _repository.GetAllCountriesAsync())
                 countries.Add(country);
             return Ok(countries);
         }
@@ -49,7 +49,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetById(string id)
         {
             id = id?.ToUpperInvariant() ?? string.Empty;
-            var country = await _repository.FindByIdAsync(id, CancellationToken.None);
+            Country country = await _repository.FindByIdAsync(id, CancellationToken.None);
             return country != null
                 ? (IActionResult) Ok(country.ToModel())
                 : NotFound();
