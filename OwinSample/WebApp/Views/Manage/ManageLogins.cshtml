@@ -1,4 +1,5 @@
 ﻿@model OwinSample.WebApp.Models.ManageLoginsViewModel
+@using Microsoft.AspNet.Identity
 @using Microsoft.Owin.Security
 @{
     ViewBag.Title = "Manage your external logins";
@@ -8,7 +9,7 @@
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 @{
-    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    IEnumerable<AuthenticationDescription> loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Count() == 0) {
         <div>
             <p>
@@ -24,7 +25,7 @@
             <h4>Registered Logins</h4>
             <table class="table">
                 <tbody>
-                    @foreach (var account in Model.CurrentLogins)
+                    @foreach (UserLoginInfo account in Model.CurrentLogins)
                     {
                         <tr>
                             <td>@account.LoginProvider</td>
