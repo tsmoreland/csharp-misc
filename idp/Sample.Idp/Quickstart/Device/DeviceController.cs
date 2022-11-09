@@ -204,7 +204,7 @@ namespace IdentityServerHost.Quickstart.UI
             };
         }
 
-        public ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check)
+        private static ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check)
         {
             return new ScopeViewModel
             {
