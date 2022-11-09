@@ -56,6 +56,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/Index
+        [HttpGet]
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage = message switch
@@ -107,6 +108,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/AddPhoneNumber
+        [HttpGet]
         public ActionResult AddPhoneNumber()
         {
             return View();
@@ -168,6 +170,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/VerifyPhoneNumber
+        [HttpGet]
         public async Task<ActionResult> VerifyPhoneNumber(string? phoneNumber)
         {
             string? code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
@@ -228,6 +231,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/ChangePassword
+        [HttpGet]
         public ActionResult ChangePassword()
         {
             return View();
@@ -259,6 +263,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/SetPassword
+        [HttpGet]
         public ActionResult SetPassword()
         {
             return View();
@@ -291,6 +296,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/ManageLogins
+        [HttpGet]
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage = message switch
