@@ -27,6 +27,7 @@ namespace IdentityServerHost.Quickstart.UI
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             if (_environment.IsDevelopment())
@@ -42,6 +43,7 @@ namespace IdentityServerHost.Quickstart.UI
         /// <summary>
         /// Shows the error page
         /// </summary>
+        [HttpGet]
         public async Task<IActionResult> Error(string errorId)
         {
             var vm = new ErrorViewModel();
