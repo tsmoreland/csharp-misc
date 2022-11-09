@@ -333,6 +333,7 @@ namespace OwinSample.WebApp.Controllers
 
         //
         // GET: /Manage/LinkLoginCallback
+        [HttpGet]
         public async Task<ActionResult> LinkLoginCallback()
         {
             ExternalLoginInfo? loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
