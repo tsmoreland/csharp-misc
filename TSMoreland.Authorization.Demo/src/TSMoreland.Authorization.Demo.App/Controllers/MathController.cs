@@ -26,6 +26,7 @@ public class MathController : ControllerBase
     public record IntegerMathInputDto([Required] int X, [Required] int Y);
 
     [HttpPost]
+    [IgnoreAntiforgeryToken]
     [Produces(typeof(IntegerMathResult))]
     [Consumes(typeof(IntegerMathResult), MediaTypeNames.Application.Json)]
     [Route("add")]
