@@ -4,37 +4,31 @@ namespace TSMoreland.MauiSample.PhotoFrame.App;
 
 public partial class MainPage : ContentPage
 {
-    private readonly IFolderPicker _folderPicker;
-    int _count = 0;
+    //private readonly IFolderPicker _folderPicker;
+    //private readonly IImageProvider _imageProvider;
 
+    //public MainPage(IFolderPicker folderPicker, IImageProvider imageProvider)
     public MainPage(IFolderPicker folderPicker)
     {
         InitializeComponent();
-        _folderPicker = folderPicker ?? throw new ArgumentNullException(nameof(folderPicker));
-    }
+        //_folderPicker = folderPicker ?? throw new ArgumentNullException(nameof(folderPicker));
+        //_imageProvider = imageProvider ?? throw new ArgumentNullException(nameof(imageProvider));
 
-    private void OnCounterClicked(object sender, EventArgs e)
-    {
-        _count++;
-
-        if (_count == 1)
-            CounterBtn.Text = $"Clicked {_count} time";
-        else
-            CounterBtn.Text = $"Clicked {_count} times";
-
-        SemanticScreenReader.Announce(CounterBtn.Text);
     }
 
     private async void SelectFolderButton_Clicked(object sender, EventArgs e)
     {
+        await Task.CompletedTask;
+        /*
         string? path = await _folderPicker.PickFolderAsync(default);
         if (path is not { Length: > 0 })
         {
             return;
         }
 
-
-        
+        await _imageProvider.InitializeFromFolder(path, true, true, default);
+        await _imageProvider.NextAsync(null, default);
+    */
     }
 }
 

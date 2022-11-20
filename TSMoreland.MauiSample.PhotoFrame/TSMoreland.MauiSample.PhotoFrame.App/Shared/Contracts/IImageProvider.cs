@@ -26,14 +26,9 @@ public interface IImageProvider
     bool Repeat { get; }
 
     /// <summary>
-    /// Returns <see langword="true"/> if provider has at least one more image
-    /// </summary>
-    bool HasNext { get; }
-
-    /// <summary>
     /// Returns the next image
     /// </summary>
-    Task<ImageSource> NextAsync(CancellationToken cancellationToken);
+    Task<ImageSource?> NextAsync(ImageSource? current, CancellationToken cancellationToken);
 
     /// <summary>
     /// initialzies the provider with the provided path and settings

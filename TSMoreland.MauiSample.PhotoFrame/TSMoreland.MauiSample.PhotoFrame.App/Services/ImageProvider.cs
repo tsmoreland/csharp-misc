@@ -12,10 +12,12 @@
 //
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Media.Imaging;
 using TSMoreland.MauiSample.PhotoFrame.App.Shared.Contracts;
 
 namespace TSMoreland.MauiSample.PhotoFrame.App.Services;
@@ -26,6 +28,7 @@ public sealed class ImageProvider : IImageProvider
     private readonly object _filesLock = new();
     private readonly Random _random = new();
     private int _index = -1;
+    private byte[]? _buffer = null;
 
 
     /// <inheritdoc />
@@ -35,21 +38,35 @@ public sealed class ImageProvider : IImageProvider
     public bool Repeat { get; private set; }
 
     /// <inheritdoc />
-    public bool HasNext
+    public Task<ImageSource?> NextAsync(ImageSource? current, CancellationToken cancellationToken)
     {
-        get
+        _index++;
+        if (_index >= _files.Count)
         {
-            lock (_filesLock)
+            if (!Repeat)
             {
-                return _files.Any();
+                return Task.FromResult<ImageSource?>(null);
             }
         }
+
+        string file = _files[_index];
+        return GetImagesSourceFromFile(file);
     }
 
-    /// <inheritdoc />
-    public Task<ImageSource> NextAsync(CancellationToken cancellationToken)
+    private async Task<ImageSource?> GetImagesSourceFromFile(string filename)
     {
-        throw new NotImplementedException();
+        long size = new FileInfo(filename).Length;
+        _buffer = ArrayPool<byte>.Shared.Rent((int)size);
+
+        await using (FileStream fs = new(_files[_index], FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
+        {
+            Memory<byte> memory = new(_buffer);
+            size = await fs.ReadAsync(memory);
+            fs.Close();
+        }
+        MemoryStream ms = new(_buffer, 0, (int)size);
+        ImageSource source = ImageSource.FromStream(() => ms);
+        return source;
     }
 
     /// <inheritdoc />
@@ -79,23 +96,9 @@ public sealed class ImageProvider : IImageProvider
                 }
             }
 
-            _index = 0;
+            _index = -1;
         }
 
-        return LoadImageAsync();
-    }
-
-    private async Task LoadImageAsync()
-    {
-        try
-        {
-
-
-        }
-        catch (Exception)
-        {
-        }
-
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 }

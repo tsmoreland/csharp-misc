@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using TSMoreland.MauiSample.PhotoFrame.App.Services;
 using TSMoreland.MauiSample.PhotoFrame.App.Shared.Contracts;
 
 namespace TSMoreland.MauiSample.PhotoFrame.App;
@@ -16,6 +17,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        builder.Services.AddTransient<IImageProvider, ImageProvider>();
 #if WINDOWS
 		builder.Services.AddTransient<IFolderPicker, Platforms.Windows.FolderPicker>();
 #elif ANDROID
