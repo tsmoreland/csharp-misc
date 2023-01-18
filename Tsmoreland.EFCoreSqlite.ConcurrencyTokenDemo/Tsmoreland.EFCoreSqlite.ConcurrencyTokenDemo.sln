@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo", "Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo\Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo.csproj", "{1B88F41C-44FF-4BED-B7B3-B94D9A58E85E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6361B8E8-D835-4D89-9819-DBE237195CE0}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B88F41C-44FF-4BED-B7B3-B94D9A58E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B88F41C-44FF-4BED-B7B3-B94D9A58E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B88F41C-44FF-4BED-B7B3-B94D9A58E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B88F41C-44FF-4BED-B7B3-B94D9A58E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BBCDBFD2-B5AE-4603-8FF4-DDC178C39227}
+	EndGlobalSection
+EndGlobal
