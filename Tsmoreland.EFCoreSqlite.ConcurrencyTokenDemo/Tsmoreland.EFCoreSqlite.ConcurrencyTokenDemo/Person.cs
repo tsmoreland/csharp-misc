@@ -15,7 +15,7 @@ namespace Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo;
 public sealed class Person
 {
     public Person(string firstName, string lastName, Address address, string email)
-        : this(Guid.NewGuid(), firstName, lastName, address, email, Guid.NewGuid().ToString("N"))
+        : this(Guid.NewGuid(), firstName, lastName, address, email, string.Empty)
     {
     }
     private Person(Guid id, string firstName, string lastName, Address address, string email, string timestamp)

@@ -14,14 +14,20 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo;
 
 IServiceCollection services = new ServiceCollection();
 
 services
     .AddDbContext<PeopleDbContext>(options =>
+    {
         options.UseSqlite("Data Source=people.db",
-            ob => ob.MigrationsAssembly(typeof(PeopleDbContext).Assembly.FullName)));
+            ob => ob.MigrationsAssembly(typeof(PeopleDbContext).Assembly.FullName));
+        options.LogTo(Console.WriteLine, LogLevel.Information);
+        options.EnableDetailedErrors(true);
+        options.EnableSensitiveDataLogging(true);
+    });
 
 IServiceProvider provider = services.BuildServiceProvider();
 
@@ -49,15 +55,22 @@ Person p1 = (await dbCtx1.People.FindAsync(new object[] { person.Id }, Cancellat
 Person p2 = (await dbCtx1.People.FindAsync(new object[] { person.Id }, CancellationToken.None))!;
 
 p1.Email = "anonymous@gmail.com";
-p2.Email = "anonymous@outlook.com";
 
 await dbCtx1.SaveChangesAsync();
 
+p2.Email = "anonymous@outlook.com";
+
 try
 {
-    await dbCtx2.SaveChangesAsync();
+    int changedRows = await dbCtx2.SaveChangesAsync();
 }
 catch (DBConcurrencyException ex)
+{
+    Console.WriteLine("---- Failed to save ---- ");
+    Console.WriteLine(ex);
+    Console.WriteLine("------------------------ ");
+}
+catch (Exception ex)
 {
     Console.WriteLine("---- Failed to save ---- ");
     Console.WriteLine(ex);
