@@ -19,6 +19,8 @@ using Tsmoreland.EFCoreSqlite.ConcurrencyTokenDemo;
 
 IServiceCollection services = new ServiceCollection();
 
+// alternate strategy - use IsConcurrencyToken instead of IsRowVersion and manully update the property prior to each save
+
 services
     .AddDbContext<PeopleDbContext>(options =>
     {
@@ -52,7 +54,7 @@ PeopleDbContext dbCtx1 = scope1.ServiceProvider.GetRequiredService<PeopleDbConte
 PeopleDbContext dbCtx2 = scope2.ServiceProvider.GetRequiredService<PeopleDbContext>();
 
 Person p1 = (await dbCtx1.People.FindAsync(new object[] { person.Id }, CancellationToken.None))!;
-Person p2 = (await dbCtx1.People.FindAsync(new object[] { person.Id }, CancellationToken.None))!;
+Person p2 = (await dbCtx2.People.FindAsync(new object[] { person.Id }, CancellationToken.None))!;
 
 p1.Email = "anonymous@gmail.com";
 
@@ -62,17 +64,31 @@ p2.Email = "anonymous@outlook.com";
 
 try
 {
-    int changedRows = await dbCtx2.SaveChangesAsync();
+    await dbCtx2.SaveChangesAsync();
 }
-catch (DBConcurrencyException ex)
+catch (DbUpdateConcurrencyException ex)
 {
     Console.WriteLine("---- Failed to save ---- ");
     Console.WriteLine(ex);
     Console.WriteLine("------------------------ ");
+
+    // this in theory should be in a loop -- creating new people dbcontext should clear the cache, alternatively uses FirstOrDefault (because Find willr return previous value and just repeat the exception)
+    using IServiceScope scope3 = provider.CreateScope();
+    // using scope3 because GetRequiredService<PeopleDbContext>() on either scope1 or scope2 would return their copies, in this scenario we may want a dbcontextfactory (if attempting to recover within the same scope/request)
+    await ReloadPersonAndReApplyChanges(p2, scope3.ServiceProvider.GetRequiredService<PeopleDbContext>());
+
+    Console.WriteLine("Save after reload/reapply successful.");
 }
 catch (Exception ex)
 {
     Console.WriteLine("---- Failed to save ---- ");
     Console.WriteLine(ex);
     Console.WriteLine("------------------------ ");
+}
+
+static async Task ReloadPersonAndReApplyChanges(Person p, PeopleDbContext dbCtx)
+{
+    Person existing = (await dbCtx.People.FindAsync(new object[] { p.Id }, CancellationToken.None))!;
+    existing.Email = p.Email;
+    await dbCtx.SaveChangesAsync();
 }
