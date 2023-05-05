@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2020 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -14,18 +14,17 @@
 using IdentityDemo.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityDemo.Api.Models
-{
-    public class CountryDbContext : DbContext
-    {
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Province> Provinces { get; set; }
+namespace IdentityDemo.Api.Models;
 
-        /// <inheritdoc />
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Province>().Ignore(p => p.State);
-            base.OnModelCreating(modelBuilder);
-        }
+public class CountryDbContext : DbContext
+{
+    public DbSet<Country> Countries => Set<Country>();
+    public DbSet<Province> Provinces => Set<Province>();
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Province>().Ignore(p => p.State);
+        base.OnModelCreating(modelBuilder);
     }
 }

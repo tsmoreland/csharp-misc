@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2020 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -14,15 +14,14 @@
 
 using System;
 
-namespace IdentityDemo.App.Services
-{
-    public interface ITokenProvider
-    {
-        string XsrfToken { get; set; }
-        string AccessToken { get; }
-        string RefreshToken { get; }
-        DateTimeOffset ExpiresAt { get; }
+namespace IdentityDemo.App.Services;
 
-        void SetOAuthTokens(string accessToken, string refreshToken, DateTimeOffset expiresAt);
-    }
+public interface ITokenProvider
+{
+    string XsrfToken { get; set; }
+    string AccessToken { get; }
+    string RefreshToken { get; }
+    DateTimeOffset ExpiresAt { get; }
+
+    void SetOAuthTokens(string accessToken, string refreshToken, DateTimeOffset expiresAt);
 }
