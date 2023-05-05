@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <nullable>enable</nullable>
-    <langversion>8.0</langversion>
+    <langversion>11</langversion>
   </PropertyGroup>
 
 </Project>

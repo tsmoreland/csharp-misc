@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2020 Terry Moreland
+// Copyright (c) 2023 Terry Moreland
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -14,18 +14,17 @@
 using IdentityDemo.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityDemo.Api
+namespace IdentityDemo.Api;
+
+internal static class ExtentionMethods
 {
-    internal static class ExtentionMethods
-    {
-        public static EntityState ToEntityState(this ObjectState state) =>
-            state switch
-            {
-                ObjectState.Added => EntityState.Added,
-                ObjectState.Deleted => EntityState.Deleted,
-                ObjectState.Modified => EntityState.Modified,
-                ObjectState.Unchanged => EntityState.Unchanged,
-                _ => EntityState.Unchanged,
-            };
-    }
+    public static EntityState ToEntityState(this ObjectState state) =>
+        state switch
+        {
+            ObjectState.Added => EntityState.Added,
+            ObjectState.Deleted => EntityState.Deleted,
+            ObjectState.Modified => EntityState.Modified,
+            ObjectState.Unchanged => EntityState.Unchanged,
+            _ => EntityState.Unchanged,
+        };
 }

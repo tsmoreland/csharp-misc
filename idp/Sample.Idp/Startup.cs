@@ -10,27 +10,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using IdentityServerHost.Quickstart.UI;
+using Sample.Idp.Quickstart;
 
-namespace Sample.Idp
+namespace Sample.Idp;
+
+public class Startup
 {
-    public class Startup
+    public IWebHostEnvironment Environment { get; }
+    public IConfiguration Configuration { get; }
+
+    public Startup(IWebHostEnvironment environment, IConfiguration configuration)
     {
-        public IWebHostEnvironment Environment { get; }
-        public IConfiguration Configuration { get; }
+        Environment = environment;
+        Configuration = configuration;
+    }
 
-        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
-        {
-            Environment = environment;
-            Configuration = configuration;
-        }
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews();
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllersWithViews();
+        var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            var builder = services.AddIdentityServer(options =>
+        var builder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
@@ -40,55 +41,54 @@ namespace Sample.Idp
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                 options.EmitStaticAudienceClaim = true;
             })
-                .AddTestUsers(TestUsers.Users)
-                // this adds the config data from DB (clients, resources, CORS)
-                .AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseSqlite(connectionString);
-                })
-                // this adds the operational data from DB (codes, tokens, consents)
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseSqlite(connectionString);
-
-                    // this enables automatic token cleanup. this is optional.
-                    options.EnableTokenCleanup = true;
-                });
-
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
-
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to https://localhost:5001/signin-google
-                    options.ClientId = "copy client ID from Google here";
-                    options.ClientSecret = "copy client secret from Google here";
-                });
-            services.AddDatabaseDeveloperPageExceptionFilter();
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+            .AddTestUsers(TestUsers.Users)
+            // this adds the config data from DB (clients, resources, CORS)
+            .AddConfigurationStore(options =>
             {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-
-            app.UseStaticFiles();
-
-            app.UseRouting();
-            app.UseIdentityServer();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
+                options.ConfigureDbContext = b => b.UseSqlite(connectionString);
+            })
+            // this adds the operational data from DB (codes, tokens, consents)
+            .AddOperationalStore(options =>
             {
-                endpoints.MapDefaultControllerRoute();
+                options.ConfigureDbContext = b => b.UseSqlite(connectionString);
+
+                // this enables automatic token cleanup. this is optional.
+                options.EnableTokenCleanup = true;
             });
+
+        // not recommended for production - you need to store your key material somewhere secure
+        builder.AddDeveloperSigningCredential();
+
+        services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                // register your IdentityServer with Google at https://console.developers.google.com
+                // enable the Google+ API
+                // set the redirect URI to https://localhost:5001/signin-google
+                options.ClientId = "copy client ID from Google here";
+                options.ClientSecret = "copy client secret from Google here";
+            });
+        services.AddDatabaseDeveloperPageExceptionFilter();
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseMigrationsEndPoint();
         }
+
+        app.UseStaticFiles();
+
+        app.UseRouting();
+        app.UseIdentityServer();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+        });
     }
 }
