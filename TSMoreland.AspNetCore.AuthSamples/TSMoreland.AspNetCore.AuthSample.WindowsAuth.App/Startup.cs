@@ -39,7 +39,7 @@ public sealed class Startup
                 {
                     options.EnableLdap(settings =>
                     {
-                        settings.Domain = Configuration["ldap:domain"];
+                        settings.Domain = Configuration["ldap:domain"] ?? string.Empty;
                         settings.IgnoreNestedGroups = true;
                     });
                 }

@@ -18,6 +18,7 @@ string root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", ".."
 
 string certificatePemFile = Path.Combine(root, "certificate.cer");
 string certificateKeyFile = Path.Combine(root, "certificate.key");
+string certificatePfxFile = Path.Combine(root, "certificate.pfx");
 
 IConfigurationRoot configuration = new ConfigurationBuilder()
     .AddUserSecrets("3c6140af-715e-4445-841f-7705e4474291")
@@ -25,16 +26,23 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
 
 string? password = configuration["password"];
 
+/* This doesn't work, for due to some issue within HttpClientHandler, for whatever reason swapping this
+   to load the PFX file worked, while PEM and Key did not
 X509Certificate2 certificate = X509Certificate2.CreateFromEncryptedPemFile(
     certificatePemFile,
     password,
     certificateKeyFile);
+*/
+X509Certificate2 certificate = new(certificatePfxFile, password);
 
-using HttpClientHandler handler = new();
-handler.ClientCertificates.Add(certificate);
-handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+using HttpClient client = new(new HttpClientHandler
+{
+    ClientCertificateOptions = ClientCertificateOption.Manual,
+    SslProtocols = System.Security.Authentication.SslProtocols.Tls12,
+    ClientCertificates = { certificate },
+    ServerCertificateCustomValidationCallback = (_, cert, _, _) => cert is not null,
+});
 
-using HttpClient client = new(handler, false);
 // see CertificateAuth.App launch settings
 client.BaseAddress = new Uri("https://localhost:7141");
 
@@ -43,13 +51,25 @@ Console.ReadLine();
 
 try
 {
-    HttpResponseMessage response = await client.GetAsync("api/hello");
+    HttpResponseMessage response = await client.GetAsync(@"api/hello?reflectedMessage=""hello""");
 
     if (!response.IsSuccessStatusCode)
     {
         Console.WriteLine($"Unsuccessful {response.StatusCode}");
-        Console.ReadLine();
-        return;
+
+        HttpRequestMessage request = new()
+        {
+            RequestUri = new Uri(@"api/hello?reflectedMessage=""hello""", UriKind.Relative),
+            Method = HttpMethod.Get,
+        };
+        request.Headers.Add("X-APR-ClientCert", certificate.GetRawCertDataString());
+        response = await client.SendAsync(request);
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"Unsuccessful with APR header: {response.StatusCode}");
+            Console.ReadLine();
+            return;
+        }
     }
 
     string message = await response.Content.ReadAsStringAsync();

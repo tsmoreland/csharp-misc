@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
@@ -11,35 +10,29 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+
 builder.Services
     .Configure<KestrelServerOptions>(options =>
     {
         options.AddServerHeader = false;
-        options.ConfigureHttpsDefaults(static options =>
+        options.ConfigureHttpsDefaults(httpsOptions =>
         {
-
-            string root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
-
-            string certificatePemFile = Path.Combine(root, "certificate.cer");
-            string certificateKeyFile = Path.Combine(root, "certificate.key");
-
-            X509Certificate2 certificate = X509Certificate2.CreateFromEncryptedPemFile(
-                certificatePemFile,
-                "",
-                certificateKeyFile);
-
-            options.ServerCertificate = certificate;
-            options.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-
+            httpsOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+            httpsOptions.CheckCertificateRevocation = false;
+            httpsOptions.ClientCertificateValidation = (_, _, _) => true;
         });
     });
 
 // certificate to use must include Oid 1.3.6.1.5.5.7.3.2 - client auth
-
 builder.Services
+    .AddScoped<ICertificateValidationService, CertificateValidationService>()
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
-    .AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
+    .AddAuthentication(static options =>
+    {
+        options.DefaultAuthenticateScheme = CertificateAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CertificateAuthenticationDefaults.AuthenticationScheme;
+    })
     .AddCertificate(options =>
     {
         options.AllowedCertificateTypes = CertificateTypes.All;
@@ -95,6 +88,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
