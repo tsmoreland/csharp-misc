@@ -3,7 +3,6 @@ using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MassTransit;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using TSMoreland.Messaging.Demo.App;
 using IMsHost = Microsoft.Extensions.Hosting.IHost;
@@ -15,7 +14,7 @@ builder
             .SetMinimumLevel(LogLevel.Information)
             .AddDebug()
             .AddConsole());
-builder.ConfigureServices((hostContext, services) =>
+builder.ConfigureServices((_, services) =>
 {
     const string rootNamespace = "TSMoreland.Messaging";
 
@@ -27,7 +26,10 @@ builder.ConfigureServices((hostContext, services) =>
         .ToArray();
 
     services
-        .AddMediatR(assemblies)
+        .AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblies(assemblies);
+        })
         .AddMassTransit(configureTransit =>
         {
             ImmutableArray<Type> allTypes = entry.GetTypes()
