@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.33711.374
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dpapi.App", "Dpapi.App\Dpapi.App.csproj", "{8D709520-07C4-4888-AA2F-97C2672F2284}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dpapi.Net48.App", "Dpapi.Net48.App\Dpapi.Net48.App.csproj", "{30C3BCE8-73FD-41C3-8C49-F9E0E0430927}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D709520-07C4-4888-AA2F-97C2672F2284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D709520-07C4-4888-AA2F-97C2672F2284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D709520-07C4-4888-AA2F-97C2672F2284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D709520-07C4-4888-AA2F-97C2672F2284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C3BCE8-73FD-41C3-8C49-F9E0E0430927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C3BCE8-73FD-41C3-8C49-F9E0E0430927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C3BCE8-73FD-41C3-8C49-F9E0E0430927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C3BCE8-73FD-41C3-8C49-F9E0E0430927}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C52937AE-836C-4332-B21A-AA2ACCB9F1B2}
+	EndGlobalSection
+EndGlobal
