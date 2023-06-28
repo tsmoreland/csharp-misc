@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>11</LangVersion>
+
+    <!-- DNNE Specific features -->
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <DnneNativeBinaryName>netframework_library</DnneNativeBinaryName>
+    <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DNNE" Version="2.0.1" />
+  </ItemGroup>
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="$(OutDir)dnne.h" DestinationFolder="$(ProjectDir)..\..\inc\" />
+    <Copy SourceFiles="$(OutDir)netframework_library.h" DestinationFolder="$(ProjectDir)..\..\inc\" />
+    <Copy SourceFiles="$(OutDir)netframework_library.lib" DestinationFolder="$(ProjectDir)..\..\lib\" />
+    <Copy SourceFiles="$(OutDir)netframework_library.pdb" DestinationFolder="$(ProjectDir)..\..\lib\" />
+    <Copy SourceFiles="$(OutDir)netframework_library.dll" DestinationFolder="$(ProjectDir)..\..\lib\" />
+    <Copy SourceFiles="$(OutDir)NetframeworkLibrary.dll" DestinationFolder="$(ProjectDir)..\..\lib\" />
+  </Target>
+
+</Project>

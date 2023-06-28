@@ -362,3 +362,5 @@ MigrationBackup/
 /TSMoreland.AspNetCore.AuthSamples/certificate.pem
 /TSMoreland.AspNetCore.AuthSamples/certificate.key
 /TSMoreland.AspNetCore.AuthSamples/certificate.cer
+/DnneDemo/inc
+/DnneDemo/lib

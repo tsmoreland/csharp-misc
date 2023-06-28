@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFrameworkLibrary", "src\NetFrameworkLibrary\NetFrameworkLibrary.csproj", "{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DemoApp", "src\DemoApp\DemoApp.vcxproj", "{6FED736C-BA94-4572-A000-D3D383BCB195}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Debug|x64.Build.0 = Debug|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Release|x64.ActiveCfg = Release|Any CPU
+		{84FAD43C-EE46-40FF-B7B5-1732A5FD5893}.Release|x64.Build.0 = Release|Any CPU
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Debug|Any CPU.Build.0 = Debug|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Debug|x64.ActiveCfg = Debug|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Debug|x64.Build.0 = Debug|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Release|Any CPU.ActiveCfg = Release|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Release|Any CPU.Build.0 = Release|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Release|x64.ActiveCfg = Release|x64
+		{6FED736C-BA94-4572-A000-D3D383BCB195}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE1E4C28-5E18-4458-B1EF-20B236EA2F4B}
+	EndGlobalSection
+EndGlobal
