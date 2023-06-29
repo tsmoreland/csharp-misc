@@ -9,6 +9,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <DnneNativeBinaryName>netframework_library</DnneNativeBinaryName>
     <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

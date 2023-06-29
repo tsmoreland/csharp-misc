@@ -11,11 +11,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// ReSharper disable once CheckNamespace 
-namespace DNNE
+using System.Runtime.InteropServices;
+
+namespace NetFrameworkLibrary;
+
+[StructLayout(LayoutKind.Sequential)]
+public struct SampleStruct
 {
-    internal class ExportAttribute : Attribute
-    {
-        public string? EntryPoint { get; set; }
-    }
+    public int Length;
+    public int IsValid;
 }

@@ -13,13 +13,12 @@
 
 namespace NetFrameworkLibrary;
 
-public sealed class Exported
+public sealed class Exported2X
 {
-
     [DNNE.Export(EntryPoint = "get_2x")]
     public static int Get2X(int x)
     {
         return 2 * x;
     }
-}
 
+}
