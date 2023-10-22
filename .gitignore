@@ -364,3 +364,6 @@ MigrationBackup/
 /TSMoreland.AspNetCore.AuthSamples/certificate.cer
 /DnneDemo/inc
 /DnneDemo/lib
+
+# JetBrains cache
+.idea
